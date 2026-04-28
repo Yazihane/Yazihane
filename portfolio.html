@@ -155,17 +155,16 @@
         
         .current-sector-title { font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(4rem, 15vw, 12rem); font-weight: 900; color: var(--text-cream); text-transform: uppercase; line-height: 0.8; letter-spacing: -2px; }
         
-        /* GIANT MODE (Tüm İşler) Tasarımı (Tipografi Ezilmesi Çözüldü - Line-Height Artırıldı) */
+        /* GIANT MODE (Tüm İşler) Tasarımı */
         .portfolio-header.giant-mode { padding: clamp(60px, 12vh, 120px) 0 40px; display: flex; flex-direction: column; gap: clamp(40px, 6vh, 80px); }
         
         .portfolio-header.giant-mode .current-sector-title { 
             font-size: clamp(5rem, 18vw, 24rem); text-align: center; width: 100%; 
-            line-height: 1.05; /* Türkçe harf noktalarının ezilmesini engeller */
-            padding-top: 25px; /* Üstten ekstra nefes payı */
+            line-height: 1.05; 
+            padding-top: 25px; 
             margin-bottom: 0; padding-bottom: clamp(10px, 2vh, 30px); letter-spacing: -0.02em; 
         }
         
-        /* Arapça gibi diller için */
         html:lang(ar) .portfolio-header.giant-mode .current-sector-title { line-height: 1.15; }
 
         .portfolio-header.giant-mode .filter-nav-wrapper {
@@ -569,60 +568,84 @@
         // --- MATRİS VE SEKTÖRLER ---
         const ALL_SERVICES = ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"];
         const SECTORS = {
-            turizm: { name: "Turizm", services: ["Tanıtım Filmleri", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf"] },
-            tekstil: { name: "Tekstil", services: ["Tanıtım Filmleri", "Fotoğraf", "Tasarım", "Sosyal Medya"] },
-            saglik: { name: "Sağlık", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Sosyal Medya"] },
-            insaat: { name: "İnşaat", services: ["Tanıtım Filmleri", "Drone", "Video Prodüksiyon", "Fotoğraf", "Tasarım"] },
-            eglence: { name: "Eğlence", services: ["TV", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            emlak: { name: "Emlak", services: ["Tanıtım Filmleri", "Drone", "Fotoğraf", "Sosyal Medya"] },
-            finans: { name: "Finans", services: ["Tanıtım Filmleri", "TV", "Tasarım"] },
-            egitim: { name: "Eğitim", services: ["Tanıtım Filmleri", "Sosyal Medya", "Fotoğraf", "Video Prodüksiyon"] },
-            lojistik: { name: "Lojistik", services: ["Tanıtım Filmleri", "Drone", "Video Prodüksiyon"] },
-            medya: { name: "Medya", services: ["TV", "Sosyal Medya", "Tasarım", "Video Prodüksiyon"] },
-            mimari: { name: "Mimari", services: ["Tanıtım Filmleri", "Drone", "Fotoğraf", "Tasarım"] },
+            turizm: { name: "Turizm", services: ["Tanıtım Filmleri", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            tekstil: { name: "Tekstil", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            saglik: { name: "Sağlık", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            insaat: { name: "İnşaat", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            eglence: { name: "Eğlence", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            emlak: { name: "Emlak", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            finans: { name: "Finans", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            egitim: { name: "Eğitim", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            lojistik: { name: "Lojistik", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            medya: { name: "Medya", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            mimari: { name: "Mimari", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
             genel: { name: "TÜM İŞLER", services: ALL_SERVICES } 
         };
 
+        // KESİN, NET VE TAVİZSİZ HASHTAG KURALLARI (SADECE BUNLAR)
+        const SECTOR_TAGS = {
+            'turizm': ['turizm'],
+            'tekstil': ['tekstil'],
+            'saglik': ['saglik'],
+            'insaat': ['insaat'],
+            'eglence': ['eglence'],
+            'emlak': ['emlak'],
+            'finans': ['finans'],
+            'egitim': ['egitim'],
+            'lojistik': ['lojistik'],
+            'medya': ['medya'],
+            'mimari': ['mimari']
+        };
+
+        const SERVICE_TAGS = {
+            'Tanıtım Filmleri': ['tanitim', 'tanitimfilmi', 'promo'],
+            'TV': ['tv', 'reklam', 'tvc'],
+            'Video Prodüksiyon': ['video', 'produksiyon'],
+            'Drone': ['drone'],
+            'Sosyal Medya': ['sosyal', 'social', 'sosyalmedya']
+        };
+
+        // Hashtag okuyucu (SADECE '#' İŞARETİ OLANLARI YAKALAR)
         const HASH_RE = /(^|\s)#([\p{L}\p{M}\.\-_0-9]+)/giu;
+        
+        // Türkçe/İngilizce İ ve Ş gibi harfleri tek bir evrensel baza dönüştüren akıllı kod.
         const normTR = s => (s||'').toLowerCase().replace(/ı/g,'i').replace(/ş/g,'s').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ö/g,'o').replace(/ü/g,'u');
 
         function extractHashtags(text) {
             const out = new Set(); let m;
-            while((m = HASH_RE.exec(String(text||''))) !== null) out.add(normTR(m[2]));
+            // Metindeki SADECE # ile başlayan kelimeleri yakalar. "drone" yazsa almaz, "#drone" yazması ZORUNLUDUR.
+            while((m = HASH_RE.exec(String(text||''))) !== null) {
+                out.add(normTR(m[2]));
+            }
             return out;
         }
-
-        const SECTOR_TAGS = {
-            'turizm': ['turizm', 'otel'], 'tekstil': ['tekstil', 'moda', 'giyim'], 'saglik': ['saglik', 'hastane', 'klinik'],
-            'insaat': ['insaat', 'yapi', 'proje'], 'eglence': ['eglence', 'mekan', 'konser'],
-            'emlak': ['emlak', 'gayrimenkul'], 'finans': ['finans', 'ekonomi', 'banka'],
-            'egitim': ['egitim', 'okul', 'kolej'], 'lojistik': ['lojistik', 'nakliyat'], 'medya': ['medya'],
-            'mimari': ['mimari', 'icmimari']
-        };
-        const SERVICE_TAGS = {
-            'Tanıtım Filmleri': ['tanitim', 'promo'], 'TV': ['tv', 'reklam', 'tvc'],
-            'Video Prodüksiyon': ['video', 'produksiyon', 'klip'], 'Drone': ['drone', 'fpv', 'havacekimi'],
-            'Sosyal Medya': ['sosyalmedya', 'reels', 'shorts', 'tiktok']
-        };
 
         let allVideos = [];
         let activeSector = '';
         let currentService = '';
         const SESSION_ID = Date.now(); 
 
-        // --- 1. YOUTUBE VERİLERİNİ ÇEK ---
+        // --- 1. YOUTUBE VERİLERİNİ ÇEK VE ACIMASIZCA FİLTRELE ---
         async function fetchYouTubeData() {
             try {
                 const res = await fetch(`/.netlify/functions/youtube?ts=${SESSION_ID}`);
                 if(res.ok) {
                     const data = await res.json();
-                    allVideos = data.map(v => {
+                    allVideos = []; // Sıfırdan başlıyoruz
+                    
+                    data.forEach(v => {
                         const tags = new Set([...extractHashtags(v.title), ...extractHashtags(v.description)]);
+                        
+                        // Sektör Etiketlerini Ara
                         let vSectors = Object.keys(SECTOR_TAGS).filter(sec => SECTOR_TAGS[sec].some(t => tags.has(t)));
-                        if(!vSectors.length) vSectors = ['genel'];
+                        // Hizmet Etiketlerini Ara
                         let vServices = Object.keys(SERVICE_TAGS).filter(srv => SERVICE_TAGS[srv].some(t => tags.has(t)));
-                        if(!vServices.length) vServices = ['Tanıtım Filmleri'];
-                        return { ...v, sectors: vSectors, services: vServices };
+                        
+                        // ACIMASIZ KURAL: Videoda bizim listemizdeki Sektör VE Hizmet hashtag'lerinden YOKSA, 
+                        // o videoyu çöpe at, portfolyoda ASLA GÖSTERME.
+                        if (vSectors.length > 0 && vServices.length > 0) {
+                            allVideos.push({ ...v, sectors: vSectors, services: vServices });
+                        }
                     });
                 }
             } catch(e) { console.error("YouTube veri çekme hatası:", e); }
@@ -662,13 +685,11 @@
                     PRELOADED_CACHE[`${sec}_Fotoğraf`] = scanFolder(`images/${sec}/foto/`, EXT_PRIORITY);
                     PRELOADED_CACHE[`${sec}_Tasarım`] = scanFolder(`images/${sec}/tsrm/`, EXT_PRIORITY);
                     
-                    // Sektörel logolar doğrudan kök /logolar/ dizininde prefix ile aranır (örn: turizm1.png)
                     const p = scanFolder(`/logolar/`, LOGO_EXT_PRIORITY, sec, 4);
                     PRELOADED_CACHE[`${sec}_Logolar`] = p;
                     logoPromises.push(p);
                 }
             });
-            // "Tüm İşler" için logolar, diğer sektörlerde bulunan tüm logoların harmanlanmış halidir.
             PRELOADED_CACHE[`genel_Logolar`] = Promise.all(logoPromises).then(results => results.flat());
         }
 
@@ -687,7 +708,7 @@
 
             grid.innerHTML = ''; 
             if(!targetUrls || targetUrls.length === 0) {
-                grid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1;">${i18n[activeLang].empty_msg}</div>`;
+                grid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
                 return;
             }
 
@@ -731,7 +752,8 @@
             }
         }
 
-        function renderSectorUI(sectorKey) {
+        // --- DİNAMİK MENÜ YARATICI ---
+        async function renderSectorUI(sectorKey) {
             const sector = SECTORS[sectorKey];
             viewEntry.style.display = 'none';
             viewPortfolio.style.display = 'block';
@@ -744,13 +766,51 @@
 
             sectorDisplayName.textContent = i18n[activeLang][`sec_${sectorKey === 'genel' ? 'all' : sectorKey}`] || sector.name;
 
-            dynamicFilters.innerHTML = sector.services.map((service, index) => {
+            // Hangi hizmetlerin o sektörde içerik barındırdığını kontrol et
+            const availableServices = [];
+            for (let srv of sector.services) {
+                let hasContent = false;
+                
+                if (srv === 'Fotoğraf' || srv === 'Tasarım') {
+                    // Cache'e bakıp o klasörde görsel var mı kontrol ediyoruz
+                    let targetUrls = [];
+                    if (sectorKey === 'genel') {
+                        const promises = Object.keys(SECTORS).filter(s => s !== 'genel').map(s => PRELOADED_CACHE[`${s}_${srv}`]);
+                        const results = await Promise.all(promises);
+                        targetUrls = results.flat();
+                    } else {
+                        targetUrls = await PRELOADED_CACHE[`${sectorKey}_${srv}`];
+                    }
+                    if (targetUrls && targetUrls.length > 0) hasContent = true;
+                } else {
+                    // YouTube videolarına bakıp içerik var mı kontrol ediyoruz
+                    const hasVideo = allVideos.some(v => {
+                        const matchSec = sectorKey === 'genel' || v.sectors.includes(sectorKey) || v.sectors.includes('genel');
+                        return matchSec && v.services.includes(srv);
+                    });
+                    if (hasVideo) hasContent = true;
+                }
+                
+                // Eğer içerik varsa menüye ekle
+                if (hasContent) {
+                    availableServices.push(srv);
+                }
+            }
+
+            // Sadece içi dolu olan kategorileri ekrana bas
+            dynamicFilters.innerHTML = availableServices.map((service, index) => {
                 const trKey = SERVICE_KEYS[service];
                 const translatedName = i18n[activeLang][trKey] || service;
                 return `<a onclick="applySubFilter(event, '${service}')" class="${index === 0 ? 'active' : ''}" data-service-key="${trKey}">${translatedName}</a>`;
             }).join('');
 
-            applySubFilter(null, sector.services[0]);
+            // Eğer içerik varsa ilk kategoriye otomatik tıkla, yoksa boş uyarısı ver
+            if (availableServices.length > 0) {
+                applySubFilter(null, availableServices[0]);
+            } else {
+                portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
+            }
+
             renderLogoWall(sectorKey);
         }
 
@@ -771,7 +831,7 @@
                 return matchSector && v.services.includes(service);
             });
             if(!filtered.length) {
-                portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1;">${i18n[activeLang].empty_msg}</div>`;
+                portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
                 return;
             }
             let htmlBuffer = '';
