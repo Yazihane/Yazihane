@@ -1,0 +1,88 @@
+<main>
+    <section id="services-hero">
+        <div class="sh-typography reveal-up">
+            <div class="sh-top" data-i18n="srv_hero_1">BİZ</div>
+            <h1 class="sh-middle" data-i18n="srv_hero_2">DİJİTAL</h1>
+            <div class="sh-bottom" data-i18n="srv_hero_3">ÇÖZÜM UZMANLARIYIZ</div>
+        </div>
+
+        <div class="sh-visual reveal-up">
+            <video autoplay loop muted playsinline>
+                <source src="https://muratsaglam.co/video/iletisim.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <p class="sh-intro-p reveal-up" data-i18n="srv_intro_p">
+            Yazıhane olarak biz de çalıştığımız tüm markalarımıza aynı özveri ve samimiyetle yaklaşıyor, onların kendi şirketlerine duydukları bağlılık ve müşterilerine hizmet verirken hissettikleri heyecana ortak oluyoruz. Bu yüzden, ilk olarak markayı derinlemesine tecrübe ediyor, özümsüyor ve bütünleşiyoruz. Ardından, bu eşsiz hikayeyi 360° bir perspektifle anlatmaya başlıyoruz. Kimi hikayeler keşfedilmeyi, kimileri ise doğru kişiye anlatılmayı bekler. Yazıhane, markaların hikayelerini keşfeder ve en yenilikçi anlatım yöntemleriyle hedef kitleleriyle buluşturur.
+        </p>
+    </section>
+
+    <section id="services-interactive">
+        
+        <div id="services-list-view" class="reveal-up">
+            <h2 class="services-section-title" data-i18n="srv_list_title">HİZMETLERİMİZ</h2>
+            
+            <div class="services-wrapper">
+                <div class="service-row" onclick="openService('srv_1')">
+                    <span class="s-num">01</span>
+                    <span class="s-name" data-i18n="srv_1_title">360° Hizmet</span>
+                    <span class="s-arrow">↗</span>
+                </div>
+                <div class="service-row" onclick="openService('srv_2')">
+                    <span class="s-num">02</span>
+                    <span class="s-name" data-i18n="srv_2_title">Video Prodüksiyon</span>
+                    <span class="s-arrow">↗</span>
+                </div>
+                <div class="service-row" onclick="openService('srv_3')">
+                    <span class="s-num">03</span>
+                    <span class="s-name" data-i18n="srv_3_title">Sosyal Medya Yönetimi</span>
+                    <span class="s-arrow">↗</span>
+                </div>
+                <div class="service-row" onclick="openService('srv_4')">
+                    <span class="s-num">04</span>
+                    <span class="s-name" data-i18n="srv_4_title">Grafik Tasarım</span>
+                    <span class="s-arrow">↗</span>
+                </div>
+                <div class="service-row" onclick="openService('srv_5')">
+                    <span class="s-num">05</span>
+                    <span class="s-name" data-i18n="srv_5_title">Kreatif Çözümler</span>
+                    <span class="s-arrow">↗</span>
+                </div>
+                <div class="service-row" onclick="openService('srv_6')">
+                    <span class="s-num">06</span>
+                    <span class="s-name" data-i18n="srv_6_title">Dijital Pazarlama ve Reklam</span>
+                    <span class="s-arrow">↗</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="service-detail-view">
+            <button class="back-btn" onclick="closeService()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span data-i18n="srv_back">DİĞER HİZMETLER</span>
+            </button>
+            
+            <h2 class="sd-title" id="sd-title">Video Prodüksiyon</h2>
+            
+            <div class="sd-content">
+                <div class="sd-desc" id="sd-desc">Detay metni burada yer alacak.</div>
+                <div class="sd-visual">
+                    <video autoplay loop muted playsinline>
+                        <source src="https://muratsaglam.co/video/iletisim.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section id="brands">
+        <div class="brands-title-wrapper reveal-up">
+            <span class="bt-red" data-i18n="br_title_1">Küresel markalarla</span><br>
+            <span class="bt-white" data-i18n="br_title_2">çözüm ortağıyız</span>
+        </div>
+        
+        <div class="logo-wall-grid reveal-up" id="logo-wall-grid" style="display: none;"></div>
+    </section>
+
+</main>
