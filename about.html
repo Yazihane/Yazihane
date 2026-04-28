@@ -7,14 +7,14 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Syne:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&family=Space+Grotesk:wght@600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --bg: #070707; 
             --text-cream: #E1DBC8; 
             --iris-red: #E61E25; 
-            --border-color: rgba(225, 219, 200, 0.12);
+            --border-color: rgba(225, 219, 200, 0.15);
             --header-h: 90px;
             --sidebar-w: 60px;
         }
@@ -29,7 +29,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        body.no-scroll { overflow: hidden !important; touch-action: none; }
         a { text-decoration: none; color: inherit; }
 
         body::before {
@@ -38,10 +37,17 @@
             opacity: 0.06; pointer-events: none; z-index: 9999;
         }
 
-        /* --- AÇILIŞ VE GEÇİŞ ANİMASYONLARI --- */
-        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes slideUpFade { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .page-enter > * { opacity: 0; animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        /* --- SCROLL ANİMASYONLARI --- */
+        .reveal-up {
+            opacity: 0; transform: translateY(60px);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.is-visible { opacity: 1; transform: none; } 
+
+        .reveal-fade {
+            opacity: 0; transition: opacity 1.5s ease-in-out;
+        }
+        .reveal-fade.is-visible { opacity: 1; }
 
         /* --- DİKEY SIDEBAR --- */
         #vertical-ticker {
@@ -53,26 +59,31 @@
         .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
         #local-time { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--iris-red); font-weight: 700; }
+        
         .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
         .ticker-text {
-            font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 2vh, 20px); letter-spacing: clamp(0.15em, 0.3vh, 0.35em); 
-            white-space: nowrap; font-weight: 700; background: linear-gradient(to bottom, var(--iris-red) 50%, var(--text-cream) 50%);
-            background-size: 100% 200%; background-position: 0% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: background-position 0.1s ease-out;
+            font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 2vh, 20px); 
+            letter-spacing: clamp(0.15em, 0.3vh, 0.35em); white-space: nowrap; font-weight: 700;
+            background: linear-gradient(to bottom, var(--iris-red) 50%, var(--text-cream) 50%);
+            background-size: 100% 200%; background-position: 0% 100%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: background-position 0.1s ease-out;
         }
+
         html[dir="rtl"] #vertical-ticker { left: auto; right: 0; border-right: none; border-left: 1px solid var(--border-color); }
-        html[dir="rtl"] header, html[dir="rtl"] main { padding-left: 0; padding-right: var(--sidebar-w); margin-left: 0; margin-right: 0; }
+        html[dir="rtl"] header, html[dir="rtl"] main { padding-left: 0; padding-right: var(--sidebar-w); }
 
         /* --- GLOBAL HEADER --- */
         header {
             position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: var(--header-h);
             background: rgba(7, 7, 7, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-color);
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 4vw; z-index: 2000;
-            transition: background 0.3s ease, border-color 0.3s ease; gap: clamp(5px, 2vw, 20px); animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: background 0.3s ease, border-color 0.3s ease; gap: clamp(5px, 2vw, 20px);
         }
         .header-nav { display: flex; gap: clamp(8px, 1.5vw, 3vw); align-items: center; flex-wrap: nowrap; white-space: nowrap; }
         .nav-right { justify-content: flex-end; }
         .header-logo { display: flex; justify-content: center; }
         .header-logo img { height: clamp(35px, 4vw, 48px); object-fit: contain; cursor: pointer; transition: transform 0.4s ease, filter 0.4s ease; }
+        
         @keyframes logoGlitch {
             0%, 92%, 100% { transform: scale(1.15); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%); }
             94% { transform: scale(1.15) translate(-3px, 2px); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%) drop-shadow(-3px 0 0 rgba(0,255,255,0.7)); }
@@ -81,178 +92,247 @@
         }
         header.scrolled .header-logo img { animation: logoGlitch 4s infinite linear; }
         .header-logo img:hover { transform: scale(1.3) rotate(-5deg) !important; animation: none !important; filter: brightness(1.2) drop-shadow(0 0 10px rgba(230,30,37,0.5)) !important; }
+
         .roll-link { position: relative; display: inline-block; font-family: 'Syne', sans-serif; font-size: clamp(8px, 0.9vw, 14px); font-weight: 700; letter-spacing: clamp(0.05em, 0.2vw, 0.3em); text-transform: uppercase; cursor: pointer; }
         .roll-link .original, .roll-link .glitch { display: block; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s, filter 0.3s; }
         .roll-link .original { color: var(--text-cream); }
         .roll-link .glitch { position: absolute; top: 0; left: 0; right: 0; color: var(--iris-red); opacity: 0; transform: translateY(15px) skewX(-10deg); filter: blur(3px); }
         .roll-link:hover .original { transform: translateY(-15px) skewX(10deg); opacity: 0; filter: blur(3px); }
         .roll-link:hover .glitch { transform: translateY(0) skewX(0); opacity: 1; filter: blur(0px); }
-        
+
         .desktop-lang-dropdown, .mobile-lang-dropdown { position: relative; font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 1vw, 12px); font-weight: 700; color: var(--text-cream); cursor: pointer; z-index: 2001; }
         .desktop-lang-dropdown { margin-left: clamp(5px, 1vw, 15px); border-left: 1px solid var(--border-color); padding-left: clamp(5px, 1vw, 15px); }
         .desktop-lang-current, .mobile-lang-current { display: flex; align-items: center; gap: 4px; padding: 5px; color: rgba(225, 219, 200, 0.6); transition: 0.3s; }
         .desktop-lang-dropdown:hover .desktop-lang-current, .mobile-lang-dropdown:hover .mobile-lang-current { color: var(--text-cream); }
         .desktop-lang-list, .mobile-lang-list { position: absolute; top: 100%; right: 0; background: rgba(7,7,7,0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-color); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 5px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .desktop-lang-dropdown.active .desktop-lang-list, .mobile-lang-dropdown.active .mobile-lang-list { opacity: 1; pointer-events: auto; }
-        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; transition: color 0.2s; }
+        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; }
         .lang-btn.active, .lang-btn:hover, .lang-btn-mobile.active, .lang-btn-mobile:hover { color: var(--text-cream); }
 
         .mobile-header-btn { display: none; align-items: center; color: var(--text-cream); cursor: pointer; background: none; border: none; }
         .mobile-header-right { display: none; align-items: center; gap: 15px; }
 
         /* --- MOBİL MENÜ OVERLAY --- */
-        #mobile-menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg); z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        #mobile-menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg); z-index: 3000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
         #mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
         .mobile-menu-close { position: absolute; top: 30px; right: 5vw; background: none; border: none; color: var(--text-cream); cursor: pointer; }
         .mobile-menu-links { display: flex; flex-direction: column; gap: 15px; text-align: center; }
         .mobile-menu-links a { font-family: 'Big Shoulders Display', sans-serif; font-size: 12vw; font-weight: 900; color: var(--text-cream); text-transform: uppercase; line-height: 0.9; }
 
-        /* --- ABOUT SAYFASI ÖZEL TASARIM --- */
-        main { margin-left: var(--sidebar-w); overflow: hidden; padding-top: var(--header-h); }
-        
-        .about-hero {
-            padding: clamp(60px, 12vh, 120px) 5vw 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        main { margin-left: var(--sidebar-w); overflow: hidden; }
 
-        /* TİPOGRAFİ EZİLMESİNE KESİN ÇÖZÜM */
-        .about-manifesto {
-            font-family: 'Big Shoulders Display', sans-serif;
-            font-size: clamp(3rem, 9vw, 9rem);
-            font-weight: 900;
-            /* Mac/Safari'de satırların birbirine girmemesi için line-height hesaplandı */
-            line-height: 1.15; 
-            padding-top: 0.1em; /* Üstteki harflerin (Ö, İ, Ü) noktaları kesilmesin diye */
-            padding-bottom: 0.1em; /* Alttaki harflerin (Ş, Ç) kuyrukları kesilmesin diye */
-            text-transform: uppercase;
-            color: var(--text-cream);
-            margin: 0;
-            letter-spacing: -0.02em;
+        /* --- 1. HERO BÖLÜMÜ (MÜKEMMEL ADAPTASYON) --- */
+        #about-hero {
+            height: 100vh; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 0 5vw; text-align: center; overflow: hidden;
         }
         
-        /* Ekstra güvenlik: Safari ve Firefox gibi motorlar için */
-        @-moz-document url-prefix() { .about-manifesto { line-height: 1.2; } }
+        .bg-logo-anim {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: clamp(300px, 40vw, 800px); opacity: 0.08; pointer-events: none; z-index: 0;
+            animation: slowRotate 40s linear infinite; filter: brightness(0.5);
+        }
+        @keyframes slowRotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .hero-typography {
+            z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;
+        }
+
+        .ht-line {
+            font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(2.5rem, 10vw, 15rem);
+            font-weight: 900; color: var(--text-cream); line-height: 0.85; text-transform: uppercase;
+            letter-spacing: -0.02em; display: flex; align-items: center; justify-content: center; gap: clamp(5px, 2vw, 30px);
+            white-space: nowrap;
+        }
+
+        .ht-line-middle {
+            display: flex; align-items: center; justify-content: center; gap: clamp(5px, 2vw, 40px);
+            width: 100%; flex-wrap: nowrap; 
+        }
+
+        .ht-small-red {
+            font-family: 'Playfair Display', serif; font-size: clamp(0.7rem, 2vw, 2.5rem);
+            font-weight: 400; font-style: italic; color: var(--iris-red); letter-spacing: normal; text-transform: none; white-space: nowrap;
+        }
+
+        .ht-bottom-wrapper {
+            display: flex; align-items: center; justify-content: center; gap: clamp(5px, 2vw, 20px);
+            flex-wrap: nowrap; 
+        }
+
+        .ht-vertical {
+            writing-mode: vertical-rl; transform: rotate(180deg);
+            font-family: 'Space Grotesk', sans-serif; font-size: clamp(6px, 0.8vw, 14px);
+            font-weight: 700; color: var(--text-cream); text-transform: uppercase; letter-spacing: 0.2em;
+            opacity: 0.7; border-left: 1px solid var(--iris-red); padding-left: clamp(3px, 0.5vw, 10px); margin: 0 clamp(3px, 0.5vw, 10px);
+        }
+
+        /* --- 2. BİZ YAZIHANEYİZ (İNTRO) --- */
+        #about-intro {
+            padding: clamp(80px, 15vh, 150px) 10vw; display: flex; flex-direction: column; align-items: center; text-align: center; 
+            position: relative; overflow: visible; border-bottom: none;
+        }
+
+        .floating-img {
+            position: absolute; pointer-events: none; z-index: 0; filter: grayscale(1) brightness(0.8);
+            transition: transform 0.3s ease-out; opacity: 0; animation: fadeFloat 2s forwards 1s;
+        }
+        @keyframes fadeFloat { to { opacity: 0.6; } }
         
-        .about-subtext {
-            font-family: 'Libre Baskerville', serif;
-            font-style: italic;
-            font-size: clamp(1.2rem, 2vw, 2rem);
-            line-height: 1.6;
-            color: rgba(225, 219, 200, 0.7);
-            max-width: 900px;
-        }
+        .float-1 { top: 10%; left: 15%; width: clamp(80px, 12vw, 150px); }
+        .float-2 { top: 40%; right: 10%; width: clamp(100px, 15vw, 200px); }
+        .float-3 { bottom: 5%; left: 20%; width: clamp(120px, 18vw, 250px); }
 
-        /* --- DİNAMİK EKİP KARTLARI (NUMARALI SİSTEM) --- */
-        .team-section {
-            padding: 40px 5vw 8vw;
-            border-top: 1px solid var(--border-color);
+        .intro-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+        
+        .intro-title {
+            font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 400; 
+            line-height: 0.9; letter-spacing: -0.02em; color: var(--iris-red); margin-bottom: 10px;
         }
         
-        .team-section-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 12px;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: var(--iris-red);
-            margin-bottom: 40px;
+        .intro-subtitle {
+            font-family: 'Inter', sans-serif; font-size: clamp(2rem, 5vw, 5rem); font-weight: 300; 
+            color: var(--text-cream); margin-bottom: 40px; line-height: 0.9; letter-spacing: -0.03em;
+        }
+        .intro-subtitle em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; display: block; margin-top: 5px; }
+
+        .intro-p {
+            font-family: 'Inter', sans-serif; font-size: clamp(1rem, 1.2vw, 1.2rem); font-weight: 400; line-height: 1.6;
+            color: rgba(225, 219, 200, 0.7); max-width: 800px; margin-bottom: 50px;
         }
 
-        .team-grid {
-            display: grid;
-            /* Her çözünürlüğe tam adaptive: PC'de 4'lü, tablette 2'li, mobilde tekli olur */
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+        .link-line {
+            font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-cream); border-bottom: 1px solid var(--text-cream); padding-bottom: 5px; transition: color 0.3s, border-color 0.3s;
+        }
+        .link-line:hover { color: var(--iris-red); border-color: var(--iris-red); }
+
+        /* --- 3. HOW WE WORK (SMOOTH GEÇİŞ VE YENİ DÜZEN) --- */
+        #hww-wrapper {
+            background: #000; /* Keskin siyah maskenin arkaplanı */
+            display: flex; flex-direction: column; width: 100%; border: none;
         }
 
-        .team-card {
-            background: rgba(225, 219, 200, 0.03);
+        #how-we-work {
+            position: relative; width: 100%; height: auto; min-height: 70vh; 
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+
+        .hww-video-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .hww-video-layer video { 
+            width: 100%; height: 100%; object-fit: cover; display: block; 
+            opacity: 0; filter: grayscale(1) brightness(0.8); 
+        }
+        .hww-video-layer.is-visible video { animation: videoFadeIn 2s forwards; }
+        @keyframes videoFadeIn { to { opacity: 0.6; } }
+
+        .hww-text-mask-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+            background: #000; /* Saf siyah kullanıldı ki renk sapması olmasın */
+            color: #fff; mix-blend-mode: multiply;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            font-family: 'Oswald', sans-serif; 
+            font-size: clamp(5rem, 16vw, 22rem); 
+            font-weight: 300; line-height: 0.8; text-transform: uppercase; letter-spacing: 0.02em;
+        }
+
+        .hww-content-layer {
+            position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 0px; 
+            transform: translateY(2vh); 
+        }
+
+        .hww-item {
+            font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 4rem); 
+            font-weight: 400; font-style: normal; color: var(--iris-red); text-align: center; line-height: 1;
+            display: flex; align-items: center; justify-content: center; text-transform: uppercase;
+        }
+        .hww-item span.hww-num { 
+            font-family: 'Playfair Display', serif; font-size: 0.4em; font-weight: 400; font-style: italic; 
+            margin-right: 15px; opacity: 0.8; transform: translateY(-8px); 
+        }
+
+        /* NELER YAPTIK? BUTONU (YUMUŞAK GEÇİŞ ALANI) */
+        .hww-link-wrapper { 
+            /* Siyahtan (#000), sitenin kendi arkaplan rengine (var(--bg)) kusursuz smooth geçiş */
+            background: linear-gradient(to bottom, #000 0%, var(--bg) 100%);
+            width: 100%; display: flex; justify-content: center; align-items: center;
+            padding-top: 48px; padding-bottom: 80px; z-index: 10; border: none;
+        }
+        .hww-link-wrapper .link-line {
+            font-size: clamp(16px, 1.5vw, 24px); 
+        }
+
+        /* --- 4. BİZ KİMİZ (GELİŞMİŞ HEADER VE GRİD) --- */
+        #team-grid-section { padding: clamp(40px, 6vh, 100px) 5vw 150px; background: var(--bg); position: relative; }
+        
+        .team-section-header { 
+            display: flex; flex-direction: row; justify-content: space-between; align-items: flex-end; 
+            margin-bottom: clamp(40px, 8vh, 80px); gap: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 30px;
+        }
+        .ts-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 6rem); font-weight: 400; color: var(--text-cream); letter-spacing: -0.02em; line-height: 0.9; }
+        
+        .ts-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; }
+        .ts-number-container { display: flex; flex-direction: column; width: fit-content; align-items: flex-end; }
+        .ts-number { 
+            font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; 
+            font-size: clamp(5rem, 12vw, 12rem); color: var(--iris-red); line-height: 0.8; 
+            letter-spacing: -0.05em; margin-bottom: 5px; text-align: right;
+        }
+        /* Justify silindi, sağa yaslı derli toplu yapıldı */
+        .ts-desc { 
+            font-family: 'Inter', sans-serif; font-size: clamp(10px, 1vw, 14px); font-weight: 400; 
+            color: var(--text-cream); margin-top: 5px; text-align: right; 
+        }
+
+        .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(15px, 2vw, 30px); }
+
+        .team-member {
+            aspect-ratio: 3 / 4; background: #111; position: relative; display: flex; flex-direction: column;
+            cursor: pointer; border-radius: 4px;
+        }
+        
+        .tm-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; border-radius: 4px; }
+        .tm-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.6s ease; }
+        
+        @media (hover: hover) {
+            .team-member:hover .tm-img img { filter: grayscale(0); transform: scale(1.05); }
+        }
+
+        .tm-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(to top, rgba(7,7,7,0.9) 0%, rgba(7,7,7,0.1) 50%, transparent 100%); z-index: 2; transition: background 0.4s ease; border-radius: 4px; }
+        
+        @media (hover: hover) {
+            .team-member:hover .tm-overlay { background: linear-gradient(to top, rgba(7,7,7,0.9) 0%, rgba(7,7,7,0.4) 50%, transparent 100%); }
+        }
+
+        .tm-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: clamp(15px, 2vw, 25px); z-index: 3; display: flex; flex-direction: column; pointer-events: none; }
+        .tm-name { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 1.8vw, 1.8rem); font-weight: 700; line-height: 1.1; color: var(--text-cream); margin-bottom: 5px; }
+        .tm-role { font-family: 'Space Grotesk', sans-serif; font-size: clamp(8px, 0.8vw, 10px); color: var(--iris-red); text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* Mobil Pop-up Kart Modu (Z-index sorunu çözüldü) */
+        .team-member.popup-active {
+            position: fixed !important; top: 50% !important; left: 50% !important; 
+            transform: translate(-50%, -50%) scale(1.1) !important;
+            width: 80vw; max-width: 320px; z-index: 4000 !important; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.4s ease, border-color 0.4s ease;
         }
-        
-        .team-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(225, 219, 200, 0.3);
+        .team-member.popup-active .tm-img img { filter: grayscale(0); }
+        #popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 3999; display: none; opacity: 0; transition: opacity 0.3s ease;
         }
-
-        .team-img-wrapper {
-            width: 100%;
-            aspect-ratio: 3/4; /* Profesyonel portre oranı */
-            overflow: hidden;
-            background: #111;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .team-photo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%) contrast(1.1); /* Siyah beyaz şık görünüm */
-            transition: filter 0.5s ease, transform 0.5s ease;
-        }
-
-        .team-card:hover .team-photo {
-            filter: grayscale(0%) contrast(1); /* Hover olunca renklenir */
-            transform: scale(1.05);
-        }
-
-        .team-info {
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .team-name {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text-cream);
-        }
-
-        .team-role {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: rgba(225, 219, 200, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
+        #popup-overlay.active { display: block; opacity: 1; }
 
         /* --- FOOTER --- */
-        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; }
+        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
         .footer-giant { text-align: center; position: relative; width: 100%; }
-        
-        .footer-giant a { 
-            display: inline-flex; align-items: center; justify-content: center; position: relative;
-            font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(3rem, 11vw, 18rem); 
-            font-weight: 900; 
-            line-height: 0.8; color: var(--text-cream); letter-spacing: -0.01em; transition: color 0.4s ease; white-space: nowrap; 
-        }
+        .footer-giant a { display: inline-flex; align-items: center; justify-content: center; position: relative; font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(4rem, 20vw, 25rem); font-weight: 900; line-height: 0.8; color: var(--text-cream); letter-spacing: -0.01em; transition: color 0.4s ease; white-space: nowrap; width: 100%; }
         .footer-giant a:hover { color: rgba(225, 219, 200, 0.8); }
-        
-        .wax-seal {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 8vw; height: 8vw; min-width: 60px; min-height: 60px; 
-            background: #b0151a; 
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
-            pointer-events: none; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            border: 2px solid #d42027; 
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4);
-            z-index: 10;
-        }
+        .wax-seal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8vw; height: 8vw; min-width: 60px; min-height: 60px; background: #b0151a; border-radius: 50%; display: flex; justify-content: center; align-items: center; pointer-events: none; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); border: 2px solid #d42027; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4); z-index: 10; }
         .wax-seal img { width: 60%; height: 60%; object-fit: contain; filter: brightness(0); opacity: 0.7; }
         .footer-giant a:hover .wax-seal { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); }
-
         .footer-bottom { display: flex; justify-content: space-between; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; flex-wrap: wrap; gap: 30px; }
         .footer-socials { display: flex; gap: 3vw; }
         .footer-legal { display: flex; gap: 2.5vw; color: rgba(225, 219, 200, 0.5); }
@@ -260,37 +340,80 @@
         .footer-legal a:hover { color: var(--text-cream); }
         .footer-copyright { color: rgba(225, 219, 200, 0.5); text-align: right; }
 
-        /* --- MOBİL ADAPTASYON --- */
+        /* --- MOBİL ADAPTASYON (TEMİZLENMİŞ) --- */
+        @media (max-width: 1024px) {
+            .team-grid { grid-template-columns: repeat(2, 1fr); } 
+            .floating-img { display: none; } 
+        }
+
         @media (max-width: 768px) {
             #vertical-ticker { display: none; }
+            main { margin-left: 0; }
+            
             header { left: 0; grid-template-columns: auto 1fr auto; padding: 0 5vw; gap: 10px; }
             .header-nav { display: none !important; }
             .mobile-header-btn { display: flex !important; }
             .mobile-header-right { display: flex !important; }
             .desktop-lang-dropdown { display: none !important; }
             .header-logo { display: flex; justify-content: center; position: static; transform: none; }
-            main { margin-left: 0; }
             
-            .team-grid { grid-template-columns: 1fr; } /* Mobilde ekip kartları alt alta düşer */
+            /* Mobil Hero: Dikine yazı kilitlendi, alt alta düşmez */
+            .ht-line { font-size: clamp(1.5rem, 6vw, 5rem); white-space: nowrap; line-height: 0.9; }
+            .ht-vertical { font-size: 6px; margin: 0 4px; padding-left: 4px; }
+            .ht-line-middle { flex-wrap: nowrap; gap: 5px; margin: 10px 0; }
+            .ht-bottom-wrapper { gap: 5px; }
+            .ht-small-red { font-size: clamp(0.7rem, 2.5vw, 2rem); white-space: nowrap; }
 
-            .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 30px; }
-            .footer-socials { flex-direction: column; gap: 15px; }
+            /* Boşluklar Daraltıldı */
+            #about-intro { padding: 8vh 5vw; }
+            .intro-subtitle { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 20px; }
+            
+            #how-we-work { padding: 5vh 0; min-height: 50vh; }
+            .hww-text-mask-layer { font-size: clamp(4rem, 20vw, 8rem); }
+            .hww-item { font-size: clamp(1.5rem, 6vw, 3rem); }
+            .hww-link-wrapper { padding-top: 30px; padding-bottom: 50px; }
+
+            #team-grid-section { padding: 8vh 5vw; }
+            
+            /* Mobil Team Header: Alt alta düşmesin, yan yana hizalı */
+            .team-section-header { 
+                flex-direction: row; justify-content: space-between; align-items: flex-end; 
+                margin-bottom: 30px; padding-bottom: 15px; gap: 10px;
+            }
+            .ts-title { font-size: clamp(1.8rem, 6vw, 2.5rem); margin-bottom: 0; }
+            .ts-number { font-size: clamp(3rem, 10vw, 5rem); }
+            .ts-desc { font-size: 10px; margin-top: 2px; max-width: 140px; text-align: right; line-height: 1.2; }
+            
+            /* Mobil Grid: 3'lü kolon */
+            .team-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; } 
+            .tm-info { padding: 10px; }
+            .tm-name { font-size: 0.8rem; }
+            .tm-role { font-size: 7px; }
+
+            .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+            .footer-socials { flex-direction: column; gap: 10px; }
             .footer-legal { flex-direction: column; gap: 10px; }
+        }
+        @media (max-width: 400px) {
+            .team-grid { grid-template-columns: repeat(2, 1fr); } 
+            .ts-desc { max-width: 110px; }
         }
     </style>
 </head>
 <body>
+
+    <div id="popup-overlay"></div>
 
     <div id="mobile-menu-overlay">
         <button class="mobile-menu-close" id="mobile-close-btn">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
         <div class="mobile-menu-links">
-            <a href="/index" data-i18n="nav_home">ANA SAYFA</a>
-            <a href="/portfolio" data-i18n="nav_work">PORTFOLYO</a>
-            <a href="/about" data-i18n="nav_about">HAKKIMIZDA</a>
-            <a href="/services" data-i18n="nav_services">HİZMETLERİMİZ</a>
-            <a href="/careers" data-i18n="nav_careers">KARİYER</a>
+            <a href="index.html" data-i18n="nav_home">ANA SAYFA</a>
+            <a href="portfolio.html" data-i18n="nav_work">PORTFOLYO</a>
+            <a href="about.html" data-i18n="nav_about">HAKKIMIZDA</a>
+            <a href="services.html" data-i18n="nav_services">HİZMETLERİMİZ</a>
+            <a href="careers.html" data-i18n="nav_careers">KARİYER</a>
             <a href="mailto:bilgi@yazihane.com.tr" data-i18n="nav_contact">İLETİŞİM</a>
         </div>
     </div>
@@ -311,18 +434,18 @@
         </a>
 
         <nav class="header-nav nav-left">
-            <a href="/index" class="roll-link"><span class="original" data-i18n="nav_home">ANA SAYFA</span><span class="glitch" data-i18n="nav_home">ANA SAYFA</span></a>
-            <a href="/portfolio" class="roll-link"><span class="original" data-i18n="nav_work">PORTFOLYO</span><span class="glitch" data-i18n="nav_work">PORTFOLYO</span></a>
-            <a href="/about" class="roll-link"><span class="original" data-i18n="nav_about">HAKKIMIZDA</span><span class="glitch" data-i18n="nav_about">HAKKIMIZDA</span></a>
+            <a href="index.html" class="roll-link"><span class="original" data-i18n="nav_home">ANA SAYFA</span><span class="glitch" data-i18n="nav_home">ANA SAYFA</span></a>
+            <a href="portfolio.html" class="roll-link"><span class="original" data-i18n="nav_work">PORTFOLYO</span><span class="glitch" data-i18n="nav_work">PORTFOLYO</span></a>
+            <a href="about.html" class="roll-link"><span class="original" data-i18n="nav_about">HAKKIMIZDA</span><span class="glitch" data-i18n="nav_about">HAKKIMIZDA</span></a>
         </nav>
         
         <div class="header-logo">
-            <a href="/index"><img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Logo"></a>
+            <a href="index.html"><img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Logo"></a>
         </div>
 
         <nav class="header-nav nav-right">
-            <a href="/services" class="roll-link"><span class="original" data-i18n="nav_services">HİZMETLERİMİZ</span><span class="glitch" data-i18n="nav_services">HİZMETLERİMİZ</span></a>
-            <a href="/careers" class="roll-link"><span class="original" data-i18n="nav_careers">KARİYER</span><span class="glitch" data-i18n="nav_careers">KARİYER</span></a>
+            <a href="services.html" class="roll-link"><span class="original" data-i18n="nav_services">HİZMETLERİMİZ</span><span class="glitch" data-i18n="nav_services">HİZMETLERİMİZ</span></a>
+            <a href="careers.html" class="roll-link"><span class="original" data-i18n="nav_careers">KARİYER</span><span class="glitch" data-i18n="nav_careers">KARİYER</span></a>
             <a href="mailto:bilgi@yazihane.com.tr" class="roll-link"><span class="original" data-i18n="nav_contact">İLETİŞİM</span><span class="glitch" data-i18n="nav_contact">İLETİŞİM</span></a>
             
             <div class="desktop-lang-dropdown" id="desktop-lang-trigger">
@@ -352,65 +475,149 @@
         </div>
     </header>
 
-    <main class="page-enter">
-        <section class="about-hero">
-            <h1 class="about-manifesto" data-i18n="about_manifesto">
-                BİZ HİKAYELERİ GÖRSELLEŞTİREN,<br>
-                STRATEJİYİ SANATLA BULUŞTURAN<br>
-                YENİ NESİL BİR AJANSIZ.
-            </h1>
-            <p class="about-subtext" data-i18n="about_subtext">
-                Yazıhane Creative olarak markaların ruhunu anlıyor, onları doğru hedef kitleyle en estetik biçimde bir araya getiriyoruz.
-            </p>
-        </section>
-
-        <section class="team-section">
-            <h2 class="team-section-title" data-i18n="team_title">EKİBİMİZ</h2>
-            <div class="team-grid" id="team-grid">
+    <main>
+        <section id="about-hero">
+            <img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Logo Bg" class="bg-logo-anim">
+            
+            <div class="hero-typography reveal-up">
+                <div class="ht-line" data-i18n="ab_hero_1">SÖYLEYECEK</div>
+                
+                <div class="ht-line-middle">
+                    <span class="ht-small-red" data-i18n="ab_hero_red_1">Herkesin Bir</span>
+                    <span class="ht-line" data-i18n="ab_hero_2">SÖZÜ OLANLAR</span>
+                    <span class="ht-small-red" data-i18n="ab_hero_red_2">Hikayesi Vardır</span>
                 </div>
+                
+                <div class="ht-bottom-wrapper">
+                    <span class="ht-line" data-i18n="ab_hero_3a">İÇİN</span>
+                    <span class="ht-vertical" data-i18n="ab_hero_est">2016'DAN BERİ</span>
+                    <span class="ht-line" data-i18n="ab_hero_3b">BURADAYIZ.</span>
+                </div>
+            </div>
         </section>
 
-        <footer class="site-footer">
-            <div class="footer-giant">
-                <a href="mailto:bilgi@yazihane.com.tr">
-                    <span data-i18n="footer_contact">BİZEULAŞIN</span>
-                    <div class="wax-seal"><img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Seal"></div>
-                </a>
+        <section id="about-intro" class="reveal-up">
+            <img src="https://yazihane.com.tr/images/logo/default.png" class="floating-img float-1" alt="">
+            <img src="https://yazihane.com.tr/images/logo/default.png" class="floating-img float-2" alt="">
+            <img src="https://yazihane.com.tr/images/logo/default.png" class="floating-img float-3" alt="">
+
+            <div class="intro-content">
+                <h2 class="intro-title turn-red" data-i18n="ab_intro_title">Biz Yazıhaneyiz.</h2>
+                <h3 class="intro-subtitle"><span data-i18n="ab_intro_sub_1">Küresel çapta bir</span><em data-i18n="ab_intro_sub_2">Kreatif Ajans</em></h3>
+                <p class="intro-p" data-i18n="ab_intro_p">
+                    Farklı disiplinlerde uzmanlaşmış kreatif bir ekip olarak markaların var olan hikayelerini keşfetmeyi ya da baştan yaratmayı ve dijital dünyanın inovatif dinamiklerini kullanarak hedef kitlelerine anlatmayı çok seviyoruz.
+                </p>
+                <a href="services.html" class="link-line" data-i18n="ab_intro_link">HİZMETLERİMİZ ↗</a>
+            </div>
+        </section>
+
+        <section id="hww-wrapper">
+            <div id="how-we-work">
+                <div class="hww-video-layer reveal-fade">
+                    <video autoplay loop muted playsinline>
+                        <source src="https://muratsaglam.co/video/iletisim.mp4" type="video/mp4">
+                    </video>
+                </div>
+                
+                <div class="hww-text-mask-layer reveal-up" data-i18n="ab_hww_bg">NASIL<br>YAPTIK?</div>
+                
+                <div class="hww-content-layer reveal-up">
+                    <div class="hww-item"><span class="hww-num">01</span> <span data-i18n="ab_hww_1">PROAKTİFLİK</span></div>
+                    <div class="hww-item"><span class="hww-num">02</span> <span data-i18n="ab_hww_2">TUTKU</span></div>
+                    <div class="hww-item"><span class="hww-num">03</span> <span data-i18n="ab_hww_3">PERFORMANS</span></div>
+                </div>
             </div>
             
-            <div class="footer-bottom">
-                <div class="footer-socials">
-                    <a href="https://www.linkedin.com/company/yazihanecreative/" target="_blank" class="roll-link"><span class="original">LINKEDIN</span><span class="glitch">LINKEDIN</span></a>
-                    <a href="https://www.instagram.com/yazihanecreative" target="_blank" class="roll-link"><span class="original">INSTAGRAM</span><span class="glitch">INSTAGRAM</span></a>
-                    <a href="https://www.youtube.com/@yazihanereklamajansi" target="_blank" class="roll-link"><span class="original">YOUTUBE</span><span class="glitch">YOUTUBE</span></a>
+            <div class="hww-link-wrapper reveal-up">
+                <a href="portfolio.html" class="link-line" data-i18n="ab_hww_link">NELER YAPTIK? ↗</a>
+            </div>
+        </section>
+
+        <section id="team-grid-section">
+            <div class="team-section-header reveal-up">
+                <div class="ts-left">
+                    <div class="ts-title" data-i18n="ab_team_title">BİZ KİMİZ</div>
                 </div>
-                
-                <div class="footer-legal">
-                    <a href="/legal#kullanim" data-i18n="leg_1">KULLANIM KOŞULLARI</a>
-                    <a href="/legal#gizlilik" data-i18n="leg_2">GİZLİLİK POLİTİKASI</a>
-                    <a href="/legal#cerez" data-i18n="leg_3">ÇEREZ POLİTİKASI</a>
-                </div>
-                
-                <div class="footer-copyright" data-i18n="copy">
-                    2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.
+                <div class="ts-right">
+                    <div class="ts-number-container">
+                        <div class="ts-number">100+</div>
+                        <div class="ts-desc" data-i18n="ab_team_desc">Bugüne dek bize güvenen marka sayısı.</div>
+                    </div>
                 </div>
             </div>
-        </footer>
+
+            <div class="team-grid">
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">Ali Adnan Özgür</div><div class="tm-role" data-i18n="role_founder">Kurucu</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">Hakan Cigaoğlu</div><div class="tm-role" data-i18n="role_founder">Kurucu</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">Volkan Çelebi</div><div class="tm-role" data-i18n="role_gm">Genel Müdür</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">Murat Sağlam</div><div class="tm-role" data-i18n="role_cd">Kreatif Müdür</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İrem Gürleyik</div><div class="tm-role" data-i18n="role_marketing">Marketing & Business Dev.</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">Tarık Can Özkan</div><div class="tm-role" data-i18n="role_ad">Art Director</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">Özgür Sabukazan</div><div class="tm-role" data-i18n="role_hgd">Head of Graphic Design</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İsim Soyisim</div><div class="tm-role" data-i18n="role_video">Videographer</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İsim Soyisim</div><div class="tm-role" data-i18n="role_video">Videographer</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İsim Soyisim</div><div class="tm-role" data-i18n="role_gd">Graphic Designer</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İsim Soyisim</div><div class="tm-role" data-i18n="role_gd">Graphic Designer</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İsim Soyisim</div><div class="tm-role" data-i18n="role_gd">Graphic Designer</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İsim Soyisim</div><div class="tm-role" data-i18n="role_social">Social Media</div></div></div>
+                <div class="team-member reveal-up"><div class="tm-img"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">İsim Soyisim</div><div class="tm-role" data-i18n="role_social">Social Media</div></div></div>
+            </div>
+        </section>
     </main>
 
+    <footer class="site-footer reveal-up">
+        <div class="footer-giant">
+            <a href="mailto:bilgi@yazihane.com.tr">
+                <span data-i18n="footer_contact">BİZEULAŞIN</span>
+                <div class="wax-seal">
+                    <img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Seal">
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-socials">
+                <a href="https://www.linkedin.com/company/yazihanecreative/" target="_blank" class="roll-link"><span class="original">LINKEDIN</span><span class="glitch">LINKEDIN</span></a>
+                <a href="https://www.instagram.com/yazihanecreative" target="_blank" class="roll-link"><span class="original">INSTAGRAM</span><span class="glitch">INSTAGRAM</span></a>
+                <a href="https://www.youtube.com/@yazihanereklamajansi" target="_blank" class="roll-link"><span class="original">YOUTUBE</span><span class="glitch">YOUTUBE</span></a>
+            </div>
+            
+            <div class="footer-legal">
+                <a href="legal.html#kullanim" data-i18n="leg_1">KULLANIM KOŞULLARI</a>
+                <a href="legal.html#gizlilik" data-i18n="leg_2">GİZLİLİK POLİTİKASI</a>
+                <a href="legal.html#cerez" data-i18n="leg_3">ÇEREZ POLİTİKASI</a>
+            </div>
+            
+            <div class="footer-copyright" data-i18n="copy">
+                2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // --- DİL VE MENÜ MANTIĞI ---
-        const toggleDropdown = function(e) { if(e.target.classList.contains('lang-btn')) return; this.classList.toggle('active'); };
-        document.getElementById('desktop-lang-trigger')?.addEventListener('click', toggleDropdown);
-        document.getElementById('mobile-lang-trigger')?.addEventListener('click', toggleDropdown);
+        // --- DİL DROPDOWN MANTIĞI ---
+        const toggleDropdown = function(e) {
+            if(e.target.classList.contains('lang-btn') || e.target.classList.contains('lang-btn-mobile')) return; 
+            this.classList.toggle('active');
+        };
+        const desktopLangTrigger = document.getElementById('desktop-lang-trigger');
+        const mobileLangTrigger = document.getElementById('mobile-lang-trigger');
+        if(desktopLangTrigger) desktopLangTrigger.addEventListener('click', toggleDropdown);
+        if(mobileLangTrigger) mobileLangTrigger.addEventListener('click', toggleDropdown);
 
+        // --- MOBİL MENÜ MANTIĞI ---
         const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        document.getElementById('mobile-hamburger-btn')?.addEventListener('click', () => mobileMenuOverlay.classList.add('active'));
-        document.getElementById('mobile-close-btn')?.addEventListener('click', () => mobileMenuOverlay.classList.remove('active'));
+        const mobileHamburgerBtn = document.getElementById('mobile-hamburger-btn');
+        const mobileCloseBtn = document.getElementById('mobile-close-btn');
 
+        if(mobileHamburgerBtn) mobileHamburgerBtn.addEventListener('click', () => { mobileMenuOverlay.classList.add('active'); });
+        if(mobileCloseBtn) mobileCloseBtn.addEventListener('click', () => { mobileMenuOverlay.classList.remove('active'); });
+
+        // --- HEADER SCROLL ---
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
-            if (window.scrollY > 50) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
 
             const scrollPerc = window.scrollY / (document.body.scrollHeight - window.innerHeight);
             const ticker = document.querySelector('.ticker-text');
@@ -421,79 +628,126 @@
             }
         });
 
+        // --- SAAT ---
         setInterval(() => {
-            const lt = document.getElementById('local-time');
-            if(lt) lt.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
+            const localTimeEl = document.getElementById('local-time');
+            if(localTimeEl) localTimeEl.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
         }, 1000);
 
-        // --- I18N (ÇOK DİLLİ YAPI) ---
+        // --- YENİ SCROLL ANİMASYONLARI (FADE-IN-UP) ---
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Kırmızıya dönen text efekti
+                    if (entry.target.classList.contains('turn-red')) setTimeout(() => entry.target.classList.add('active'), 600);
+                }
+            });
+        }, { threshold: 0.1 }); 
+        
+        document.querySelectorAll('.reveal-up, .reveal-fade, .turn-red').forEach(el => scrollObserver.observe(el));
+
+        // --- MOBİL POP-UP MANTIĞI (TAKIM KARTLARI) ---
+        const popupOverlay = document.getElementById('popup-overlay');
+        
+        document.querySelectorAll('.team-member').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.stopPropagation();
+                    // Diğerlerini kapat
+                    document.querySelectorAll('.team-member').forEach(c => c.classList.remove('popup-active'));
+                    // Tıklananı aç
+                    this.classList.add('popup-active');
+                    popupOverlay.classList.add('active');
+                }
+            });
+        });
+
+        // Boşluğa veya overlay'e tıklayınca pop-up'ı kapat
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && !e.target.closest('.team-member')) {
+                document.querySelectorAll('.team-member').forEach(c => c.classList.remove('popup-active'));
+                popupOverlay.classList.remove('active');
+            }
+        });
+
+        // Kaydırınca pop-up'ı kapat
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768 && popupOverlay.classList.contains('active')) {
+                document.querySelectorAll('.team-member').forEach(c => c.classList.remove('popup-active'));
+                popupOverlay.classList.remove('active');
+            }
+        });
+
+        // --- ÇOK DİLLİ YAPI (i18n) VE HAFIZA ENTEGRASYONU ---
         const i18n = {
-            tr: { nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.", about_manifesto: "BİZ HİKAYELERİ GÖRSELLEŞTİREN,<br>STRATEJİYİ SANATLA BULUŞTURAN<br>YENİ NESİL BİR AJANSIZ.", about_subtext: "Yazıhane Creative olarak markaların ruhunu anlıyor, onları doğru hedef kitleyle en estetik biçimde bir araya getiriyoruz.", team_title: "EKİBİMİZ" },
-            en: { nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE.", about_manifesto: "WE ARE A NEW GENERATION AGENCY<br>THAT VISUALIZES STORIES AND<br>UNITES STRATEGY WITH ART.", about_subtext: "At Yazıhane Creative, we understand the soul of brands and bring them together with the right audience in the most aesthetic way.", team_title: "OUR TEAM" },
-            ru: { nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE.", about_manifesto: "МЫ АГЕНТСТВО НОВОГО ПОКОЛЕНИЯ,<br>ВИЗУАЛИЗИРУЮЩЕЕ ИСТОРИИ И<br>ОБЪЕДИНЯЮЩЕЕ СТРАТЕГИЮ С ИСКУССТВОМ.", about_subtext: "В Yazıhane Creative мы понимаем душу брендов и связываем их с правильной аудиторией самым эстетичным образом.", team_title: "НАША КОМАНДА" },
-            ar: { nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه.", about_manifesto: "نحن وكالة من الجيل الجديد<br>تجسد القصص وتجمع<br>بين الاستراتيجية والفن.", about_subtext: "في يازيحانه كريتيف، نفهم روح العلامات التجارية ونجمعها مع الجمهور المناسب بأكثر الطرق جمالية.", team_title: "فريقنا" }
+            tr: { 
+                nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.",
+                role_founder: "Kurucu", role_gm: "Genel Müdür", role_cd: "Kreatif Müdür", role_marketing: "Marketing & Business Dev.", role_ad: "Art Director", role_hgd: "Head of Graphic Design", role_video: "Videographer", role_gd: "Graphic Designer", role_social: "Social Media",
+                ab_hero_1: "SÖYLEYECEK", ab_hero_2: "SÖZÜ OLANLAR", ab_hero_3a: "İÇİN", ab_hero_3b: "BURADAYIZ.", ab_hero_red_1: "Herkesin Bir", ab_hero_red_2: "Hikayesi Vardır", ab_hero_est: "2016'DAN BERİ", ab_est: "EST. 2016",
+                ab_intro_title: "Biz Yazıhaneyiz.", ab_intro_sub_1: "Küresel çapta bir", ab_intro_sub_2: "Kreatif Ajans", ab_intro_p: "Farklı disiplinlerde uzmanlaşmış kreatif bir ekip olarak markaların var olan hikayelerini keşfetmeyi ya da baştan yaratmayı ve dijital dünyanın inovatif dinamiklerini kullanarak hedef kitlelerine anlatmayı çok seviyoruz.", ab_intro_link: "HİZMETLERİMİZ ↗",
+                ab_hww_bg: "NASIL<br>YAPTIK?", ab_hww_1: "PROAKTİFLİK", ab_hww_2: "TUTKU", ab_hww_3: "PERFORMANS", ab_hww_link: "NELER YAPTIK? ↗", ab_team_title: "BİZ KİMİZ", ab_team_desc: "Bugüne dek bize güvenen marka sayısı."
+            },
+            en: { 
+                nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE.",
+                role_founder: "Founder", role_gm: "General Manager", role_cd: "Creative Manager", role_marketing: "Marketing & Business Dev.", role_ad: "Art Director", role_hgd: "Head of Graphic Design", role_video: "Videographer", role_gd: "Graphic Designer", role_social: "Social Media",
+                ab_hero_1: "WE ARE HERE", ab_hero_2: "FOR THOSE WHO", ab_hero_3a: "HAVE", ab_hero_3b: "TO SAY.", ab_hero_red_1: "Everyone Has", ab_hero_red_2: "A Story", ab_hero_est: "SINCE 2016", ab_est: "EST. 2016",
+                ab_intro_title: "We are Yazıhane.", ab_intro_sub_1: "A global scale", ab_intro_sub_2: "Creative Agency", ab_intro_p: "As a creative team specializing in various disciplines, we love discovering or recreating the existing stories of brands and telling them to their target audiences using the innovative dynamics of the digital world.", ab_intro_link: "OUR SERVICES ↗",
+                ab_hww_bg: "HOW WE<br>WORK?", ab_hww_1: "PROACTIVITY", ab_hww_2: "PASSION", ab_hww_3: "PERFORMANCE", ab_hww_link: "VIEW OUR WORK ↗", ab_team_title: "WHO WE ARE", ab_team_desc: "Number of brands that have trusted us so far."
+            },
+            ru: { 
+                nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE.",
+                role_founder: "Учредитель", role_gm: "Генеральный Менеджер", role_cd: "Креативный Менеджер", role_marketing: "Маркетинг и Развитие", role_ad: "Арт-директор", role_hgd: "Руководитель Графического Дизайна", role_video: "Видеооператор", role_gd: "Графический Дизайнер", role_social: "Социальные Медиа",
+                ab_hero_1: "МЫ ЗДЕСЬ", ab_hero_2: "ДЛЯ ТЕХ КОМУ", ab_hero_3a: "ЕСТЬ ЧТО", ab_hero_3b: "СКАЗАТЬ.", ab_hero_red_1: "У Каждого Есть", ab_hero_red_2: "История", ab_hero_est: "С 2016 ГОДА", ab_est: "EST. 2016",
+                ab_intro_title: "Мы - Yazıhane.", ab_intro_sub_1: "Глобальное", ab_intro_sub_2: "Креативное Агентство", ab_intro_p: "Как творческая команда, специализирующаяся в различных дисциплинах, мы любим открывать или воссоздавать существующие истории брендов и рассказывать их целевой аудитории, используя инновационную динамику цифрового мира.", ab_intro_link: "НАШИ УСЛУГИ ↗",
+                ab_hww_bg: "КАК МЫ<br>РАБОТАЕМ?", ab_hww_1: "ПРОАКТИВНОСТЬ", ab_hww_2: "СТРАСТЬ", ab_hww_3: "ЭФФЕКТИВНОСТЬ", ab_hww_link: "СМОТРЕТЬ РАБОТЫ ↗", ab_team_title: "КТО МЫ", ab_team_desc: "Количество брендов, доверившихся нам на данный момент."
+            },
+            ar: { 
+                nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه.",
+                role_founder: "مؤسس", role_gm: "مدير عام", role_cd: "مدير إبداعي", role_marketing: "التسويق وتطوير الأعمال", role_ad: "مخرج فني", role_hgd: "رئيس قسم التصميم الجرافيكي", role_video: "مصور فيديو", role_gd: "مصمم جرافيك", role_social: "وسائل التواصل الاجتماعي",
+                ab_hero_1: "نحن هنا", ab_hero_2: "من أجل أولئك الذين", ab_hero_3a: "لديهم", ab_hero_3b: "ليقولوه.", ab_hero_red_1: "كل شخص لديه", ab_hero_red_2: "قصة", ab_hero_est: "منذ 2016", ab_est: "EST. 2016",
+                ab_intro_title: "نحن يازيهانه.", ab_intro_sub_1: "على نطاق عالمي", ab_intro_sub_2: "وكالة إبداعية", ab_intro_p: "كفريق إبداعي متخصص في تخصصات مختلفة، نحب اكتشاف أو إعادة إنشاء القصص الحالية للعلامات التجارية وروايتها لجمهورها المستهدف باستخدام الديناميكيات المبتكرة للعالم الرقمي.", ab_intro_link: "خدماتنا ↗",
+                ab_hww_bg: "كيف<br>نعمل؟", ab_hww_1: "استباقية", ab_hww_2: "شغف", ab_hww_3: "أداء", ab_hww_link: "تصفح أعمالنا ↗", ab_team_title: "من نحن", ab_team_desc: "عدد العلامات التجارية التي وثقت بنا حتى الآن."
+            }
         };
 
         const setLanguage = (lang) => {
             localStorage.setItem('yazihane_lang', lang);
             document.documentElement.lang = lang; 
+
             document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(b => b.classList.remove('active'));
             document.querySelectorAll(`.lang-btn[data-lang="${lang}"], .lang-btn-mobile[data-lang="${lang}"]`).forEach(b => b.classList.add('active'));
             
             const desktopCurrent = document.getElementById('desktop-lang-current-text');
             if(desktopCurrent) desktopCurrent.innerHTML = `${lang.toUpperCase()} <span style="font-size: 8px;">▼</span>`;
+            
             const mobileCurrent = document.querySelector('.mobile-lang-current');
             if(mobileCurrent) mobileCurrent.innerHTML = `${lang.toUpperCase()} <span style="font-size: 8px;">▼</span>`;
 
-            document.querySelectorAll('[data-i18n]').forEach(el => { if(i18n[lang][el.dataset.i18n]) el.innerHTML = i18n[lang][el.dataset.i18n]; });
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                if(i18n[lang][el.dataset.i18n]) {
+                    el.innerHTML = i18n[lang][el.dataset.i18n];
+                }
+            });
+            
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             document.body.style.fontFamily = lang === 'ar' ? "'Space Grotesk', sans-serif" : "'Inter', sans-serif";
             
-            document.getElementById('desktop-lang-trigger')?.classList.remove('active');
-            document.getElementById('mobile-lang-trigger')?.classList.remove('active');
+            if(mobileMenuOverlay) mobileMenuOverlay.classList.remove('active');
+            const desktopLangTrigger = document.getElementById('desktop-lang-trigger');
+            const mobileLangTrigger = document.getElementById('mobile-lang-trigger');
+            if(desktopLangTrigger) desktopLangTrigger.classList.remove('active');
+            if(mobileLangTrigger) mobileLangTrigger.classList.remove('active');
         };
 
-        document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(btn => btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang)));
-
-        // --- DİNAMİK EKİP (NUMARALI SİSTEM) ---
-        // Sadece buraya isim ve unvan ekleyeceksin abi. 
-        // Sistem 1. sıradaki kişi için images/team/1.jpg'yi otomatik çeker.
-        const TEAM_MEMBERS = [
-            { name: "Murat Sağlam", title: "Kurucu & Creative Director" },
-            { name: "İsim Soyisim", title: "Art Director" },
-            { name: "İsim Soyisim", title: "Video Editor" },
-            { name: "İsim Soyisim", title: "Sosyal Medya Uzmanı" }
-        ];
-
-        function renderTeam() {
-            const grid = document.getElementById('team-grid');
-            if(!grid) return;
-            
-            let html = '';
-            TEAM_MEMBERS.forEach((member, index) => {
-                const photoNum = index + 1; // 1, 2, 3 diye sayar
-                
-                // Resim yoksa onerror çalışır ve logoyu grileştirip koyar.
-                html += `
-                    <div class="team-card">
-                        <div class="team-img-wrapper">
-                            <img src="images/team/${photoNum}.jpg" alt="${member.name}" class="team-photo" 
-                                 onerror="this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';">
-                        </div>
-                        <div class="team-info">
-                            <h3 class="team-name">${member.name}</h3>
-                            <p class="team-role">${member.title}</p>
-                        </div>
-                    </div>
-                `;
-            });
-            grid.innerHTML = html;
-        }
-
+        document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(btn => {
+            btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang));
+        });
+        
+        // Site açılışında hafızadaki dili çek ve uygula
         window.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);
-            renderTeam(); // Ekip kartlarını oluşturur
         });
 
     </script>
