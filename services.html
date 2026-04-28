@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="tr" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hizmetlerimiz | Yazıhane Creative</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&family=Space+Grotesk:wght@600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #070707; 
+            --text-cream: #E1DBC8; 
+            --iris-red: #E61E25; 
+            --border-color: rgba(225, 219, 200, 0.15);
+            --header-h: 90px;
+            --sidebar-w: 60px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--text-cream); 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.06; pointer-events: none; z-index: 9999;
+        }
+
+        /* --- SCROLL ANİMASYONLARI --- */
+        .reveal-up { opacity: 0; transform: translateY(60px); transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-up.is-visible { opacity: 1; transform: none; } 
+
+        /* --- DİKEY SIDEBAR --- */
+        #vertical-ticker {
+            position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+            border-right: 1px solid var(--border-color); display: flex; flex-direction: column;
+            align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg);
+        }
+        .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
+        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
+        #local-time { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--iris-red); font-weight: 700; }
+        
+        .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
+        .ticker-text {
+            font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 2vh, 20px); 
+            letter-spacing: clamp(0.15em, 0.3vh, 0.35em); white-space: nowrap; font-weight: 700;
+            background: linear-gradient(to bottom, var(--iris-red) 50%, var(--text-cream) 50%);
+            background-size: 100% 200%; background-position: 0% 100%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: background-position 0.1s ease-out;
+        }
+
+        html[dir="rtl"] #vertical-ticker { left: auto; right: 0; border-right: none; border-left: 1px solid var(--border-color); }
+        html[dir="rtl"] header, html[dir="rtl"] main { padding-left: 0; padding-right: var(--sidebar-w); }
+
+        /* --- GLOBAL HEADER --- */
+        header {
+            position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: var(--header-h);
+            background: rgba(7, 7, 7, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-color);
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 4vw; z-index: 2000;
+            transition: background 0.3s ease, border-color 0.3s ease; gap: clamp(5px, 2vw, 20px);
+        }
+        .header-nav { display: flex; gap: clamp(8px, 1.5vw, 3vw); align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+        .nav-right { justify-content: flex-end; }
+        .header-logo { display: flex; justify-content: center; }
+        .header-logo img { height: clamp(35px, 4vw, 48px); object-fit: contain; cursor: pointer; transition: transform 0.4s ease, filter 0.4s ease; }
+        
+        @keyframes logoGlitch {
+            0%, 92%, 100% { transform: scale(1.15); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%); }
+            94% { transform: scale(1.15) translate(-3px, 2px); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%) drop-shadow(-3px 0 0 rgba(0,255,255,0.7)); }
+            96% { transform: scale(1.15) translate(3px, -2px); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%) drop-shadow(3px 0 0 rgba(230,30,37,0.7)); }
+            98% { transform: scale(1.15) translate(0); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%); }
+        }
+        header.scrolled .header-logo img { animation: logoGlitch 4s infinite linear; }
+        .header-logo img:hover { transform: scale(1.3) rotate(-5deg) !important; animation: none !important; filter: brightness(1.2) drop-shadow(0 0 10px rgba(230,30,37,0.5)) !important; }
+
+        .roll-link { position: relative; display: inline-block; font-family: 'Syne', sans-serif; font-size: clamp(8px, 0.9vw, 14px); font-weight: 700; letter-spacing: clamp(0.05em, 0.2vw, 0.3em); text-transform: uppercase; cursor: pointer; }
+        .roll-link .original, .roll-link .glitch { display: block; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s, filter 0.3s; }
+        .roll-link .original { color: var(--text-cream); }
+        .roll-link .glitch { position: absolute; top: 0; left: 0; right: 0; color: var(--iris-red); opacity: 0; transform: translateY(15px) skewX(-10deg); filter: blur(3px); }
+        .roll-link:hover .original { transform: translateY(-15px) skewX(10deg); opacity: 0; filter: blur(3px); }
+        .roll-link:hover .glitch { transform: translateY(0) skewX(0); opacity: 1; filter: blur(0px); }
+
+        .desktop-lang-dropdown, .mobile-lang-dropdown { position: relative; font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 1vw, 12px); font-weight: 700; color: var(--text-cream); cursor: pointer; z-index: 2001; }
+        .desktop-lang-dropdown { margin-left: clamp(5px, 1vw, 15px); border-left: 1px solid var(--border-color); padding-left: clamp(5px, 1vw, 15px); }
+        .desktop-lang-current, .mobile-lang-current { display: flex; align-items: center; gap: 4px; padding: 5px; color: rgba(225, 219, 200, 0.6); transition: 0.3s; }
+        .desktop-lang-dropdown:hover .desktop-lang-current, .mobile-lang-dropdown:hover .mobile-lang-current { color: var(--text-cream); }
+        .desktop-lang-list, .mobile-lang-list { position: absolute; top: 100%; right: 0; background: rgba(7,7,7,0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-color); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 5px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .desktop-lang-dropdown.active .desktop-lang-list, .mobile-lang-dropdown.active .mobile-lang-list { opacity: 1; pointer-events: auto; }
+        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; }
+        .lang-btn.active, .lang-btn:hover, .lang-btn-mobile.active, .lang-btn-mobile:hover { color: var(--text-cream); }
+
+        .mobile-header-btn { display: none; align-items: center; color: var(--text-cream); cursor: pointer; background: none; border: none; }
+        .mobile-header-right { display: none; align-items: center; gap: 15px; }
+
+        /* --- MOBİL MENÜ OVERLAY --- */
+        #mobile-menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg); z-index: 3000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        #mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu-close { position: absolute; top: 30px; right: 5vw; background: none; border: none; color: var(--text-cream); cursor: pointer; }
+        .mobile-menu-links { display: flex; flex-direction: column; gap: 15px; text-align: center; }
+        .mobile-menu-links a { font-family: 'Big Shoulders Display', sans-serif; font-size: 12vw; font-weight: 900; color: var(--text-cream); text-transform: uppercase; line-height: 0.9; }
+
+        main { margin-left: var(--sidebar-w); overflow: hidden; padding-top: var(--header-h); }
+
+        /* --- 1. SERVICES HERO BÖLÜMÜ --- */
+        #services-hero {
+            padding: clamp(60px, 10vh, 120px) 5vw; display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+
+        .sh-typography {
+            display: flex; flex-direction: column; width: 100%; max-width: 1600px; margin: 0 auto; text-align: left;
+        }
+
+        .sh-top {
+            font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 3rem); font-style: italic;
+            color: var(--iris-red); margin-bottom: 0; z-index: 2; padding-left: 2vw; align-self: flex-start;
+        }
+
+        .sh-middle {
+            font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(4rem, 18vw, 22rem);
+            font-weight: 900; color: var(--text-cream); line-height: 0.9; text-transform: uppercase;
+            letter-spacing: -0.02em; margin: 0; padding: 0; text-align: center; z-index: 1; width: 100%;
+        }
+
+        .sh-bottom {
+            font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 3rem); font-style: italic;
+            color: var(--iris-red); margin-top: 0; z-index: 2; padding-right: 2vw; align-self: flex-end;
+        }
+
+        html:lang(en) .sh-middle { font-size: clamp(3rem, 13vw, 18rem); letter-spacing: -0.01em; }
+        html:lang(ru) .sh-middle, html:lang(ar) .sh-middle { font-size: clamp(3rem, 11vw, 15rem); word-break: break-word; line-height: 0.9; }
+
+        .sh-visual {
+            width: 100%; max-width: 1200px; aspect-ratio: 21/9; background: #111; margin: clamp(40px, 8vh, 80px) auto;
+            border-radius: 4px; overflow: hidden; position: relative;
+        }
+        .sh-visual video, .sh-visual img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; filter: grayscale(1); }
+
+        .sh-intro-p {
+            font-family: 'Inter', sans-serif; font-size: clamp(1rem, 1.5vw, 1.5rem); font-weight: 300; line-height: 1.6;
+            color: rgba(225, 219, 200, 0.8); max-width: 1000px; margin: 0 auto clamp(60px, 10vh, 100px); text-align: left;
+        }
+
+        /* --- 2. DİNAMİK HİZMETLER LİSTESİ --- */
+        #services-interactive {
+            padding: 0 5vw 100px; min-height: 50vh; position: relative;
+        }
+
+        .services-section-title {
+            font-family: 'Big Shoulders Display', sans-serif; 
+            font-size: clamp(4rem, 11vw, 12rem); 
+            font-weight: 900; color: var(--text-cream); line-height: 0.9; text-transform: uppercase;
+            margin-bottom: 50px; letter-spacing: -0.02em;
+        }
+
+        #services-list-view { transition: opacity 0.5s ease, transform 0.5s ease; }
+        .services-wrapper { width: 100%; border-top: 1px solid rgba(225, 219, 200, 0.15); }
+        
+        .service-row { 
+            display: grid; grid-template-columns: 40px 1fr auto; align-items: center; 
+            padding: clamp(20px, 3vh, 30px) 0; border-bottom: 1px solid rgba(225, 219, 200, 0.15); 
+            transition: background 0.4s ease, padding 0.4s ease; cursor: pointer; 
+        }
+        .service-row:hover { background: rgba(225, 219, 200, 0.02); padding-left: 20px; padding-right: 20px; }
+        
+        .s-num { font-family: 'Playfair Display', serif; font-size: clamp(1rem, 1.5vw, 1.5rem); color: var(--iris-red); font-style: normal; font-weight: 400; }
+        .s-name { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 2vw, 2.2rem); font-weight: 400; letter-spacing: -0.01em; color: var(--text-cream); transition: color 0.3s; }
+        .s-arrow { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.2rem, 2vw, 2rem); opacity: 0; transform: translateX(-20px) rotate(45deg); transition: all 0.3s ease; color: var(--text-cream); }
+        
+        .service-row:hover .s-name { color: var(--iris-red); }
+        .service-row:hover .s-arrow { opacity: 1; transform: translateX(0) rotate(45deg); color: var(--iris-red); }
+
+        /* Detay Görünümü */
+        #service-detail-view {
+            display: none; opacity: 0; transform: translateY(30px);
+            transition: opacity 0.5s ease, transform 0.5s ease; padding: 40px 0;
+        }
+
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 10px; background: none; border: none;
+            font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--iris-red); cursor: pointer; margin-bottom: 40px; transition: color 0.3s, transform 0.3s;
+        }
+        .back-btn:hover { color: var(--text-cream); transform: translateX(-5px); }
+
+        .sd-title {
+            font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 900; color: var(--text-cream); line-height: 0.9; text-transform: uppercase;
+            margin-bottom: 40px; letter-spacing: -0.02em;
+        }
+
+        .sd-content { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: start; }
+        
+        /* Uzun metinler için p etiketleri arasına boşluk */
+        .sd-desc p {
+            font-family: 'Inter', sans-serif; font-size: clamp(1rem, 1.1vw, 1.2rem); font-weight: 300; line-height: 1.6;
+            color: rgba(225, 219, 200, 0.8); margin-bottom: 20px; text-align: justify;
+        }
+
+        .sd-visual { width: 100%; aspect-ratio: 4/3; background: #111; border-radius: 4px; overflow: hidden; position: relative; }
+        .sd-visual video { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; filter: grayscale(1); }
+
+        .fade-out { opacity: 0 !important; transform: translateY(-30px) !important; pointer-events: none; }
+        .fade-in { opacity: 1 !important; transform: translateY(0) !important; }
+
+        /* --- 3. MARKALAR ALANI (SAFARI FIX EKLENDİ) --- */
+        #brands { padding: 100px 5vw 150px; border-top: 1px solid var(--border-color); }
+        .brands-title-wrapper { text-align: center; margin-bottom: 60px; }
+        .bt-red { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--iris-red); font-weight: 400; line-height: 1; letter-spacing: -0.02em; }
+        .bt-white { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--text-cream); font-weight: 400; font-style: italic; line-height: 1; letter-spacing: -0.02em; }
+
+        .logo-wall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); }
+        
+        .logo-cell { 
+            background: var(--text-cream); border-radius: 4px; aspect-ratio: 4/3; 
+            display: flex; justify-content: center; align-items: center; padding: 25px; 
+            transition: background 0.3s ease; 
+            overflow: hidden; min-height: 0; min-width: 0; /* Safari Taşma Hatası Çözümü */
+        }
+        .logo-cell img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s ease; }
+        .logo-cell:hover { background: #fff; }
+        .logo-cell:hover img { transform: scale(1.1); }
+
+        /* --- FOOTER --- */
+        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
+        .footer-giant { text-align: center; position: relative; width: 100%; }
+        .footer-giant a { display: inline-flex; align-items: center; justify-content: center; position: relative; font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(4rem, 20vw, 25rem); font-weight: 900; line-height: 0.8; color: var(--text-cream); letter-spacing: -0.01em; transition: color 0.4s ease; white-space: nowrap; width: 100%; }
+        .footer-giant a:hover { color: rgba(225, 219, 200, 0.8); }
+        .wax-seal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8vw; height: 8vw; min-width: 60px; min-height: 60px; background: #b0151a; border-radius: 50%; display: flex; justify-content: center; align-items: center; pointer-events: none; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); border: 2px solid #d42027; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4); z-index: 10; }
+        .wax-seal img { width: 60%; height: 60%; object-fit: contain; filter: brightness(0); opacity: 0.7; }
+        .footer-giant a:hover .wax-seal { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); }
+        .footer-bottom { display: flex; justify-content: space-between; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; flex-wrap: wrap; gap: 30px; }
+        .footer-socials { display: flex; gap: 3vw; }
+        .footer-legal { display: flex; gap: 2.5vw; color: rgba(225, 219, 200, 0.5); }
+        .footer-legal a { transition: 0.3s; cursor: pointer; }
+        .footer-legal a:hover { color: var(--text-cream); }
+        .footer-copyright { color: rgba(225, 219, 200, 0.5); text-align: right; }
+
+        /* --- MOBİL ADAPTASYON --- */
+        @media (max-width: 1024px) {
+            .sd-content { grid-template-columns: 1fr; }
+            .sd-visual { display: none; } 
+        }
+
+        @media (max-width: 768px) {
+            #vertical-ticker { display: none; }
+            main { margin-left: 0; }
+            
+            header { left: 0; grid-template-columns: auto 1fr auto; padding: 0 5vw; gap: 10px; }
+            .header-nav { display: none !important; }
+            .mobile-header-btn { display: flex !important; }
+            .mobile-header-right { display: flex !important; }
+            .desktop-lang-dropdown { display: none !important; }
+            .header-logo { display: flex; justify-content: center; position: static; transform: none; }
+            
+            .sh-top, .sh-bottom { padding: 0; text-align: center; margin: 10px 0; align-self: center; }
+            .sh-intro-p { font-size: clamp(1rem, 4vw, 1.5rem); text-align: left; } /* Mobil okunabilirlik için left */
+
+            .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+            .footer-socials { flex-direction: column; gap: 10px; }
+            .footer-legal { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mobile-menu-overlay">
+        <button class="mobile-menu-close" id="mobile-close-btn">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="mobile-menu-links">
+            <a href="index.html" data-i18n="nav_home">ANA SAYFA</a>
+            <a href="portfolio.html" data-i18n="nav_work">PORTFOLYO</a>
+            <a href="about.html" data-i18n="nav_about">HAKKIMIZDA</a>
+            <a href="services.html" data-i18n="nav_services">HİZMETLERİMİZ</a>
+            <a href="careers.html" data-i18n="nav_careers">KARİYER</a>
+            <a href="mailto:bilgi@yazihane.com.tr" data-i18n="nav_contact">İLETİŞİM</a>
+        </div>
+    </div>
+
+    <aside id="vertical-ticker">
+        <a href="https://maps.app.goo.gl/MaQWroNEvLF7iPzj7" target="_blank" class="pulse-link" title="Bizi Haritada Bulun">
+            <div class="pulse-dot"></div>
+            <span id="local-time">12:00</span>
+        </a>
+        <div class="ticker-text-wrapper">
+            <div class="ticker-text" data-i18n="ticker_text">CREATIVE REVOLUTION — 2026 — YAZIHANE</div>
+        </div>
+    </aside>
+
+    <header id="main-header">
+        <a href="mailto:bilgi@yazihane.com.tr" class="mobile-header-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </a>
+
+        <nav class="header-nav nav-left">
+            <a href="index.html" class="roll-link"><span class="original" data-i18n="nav_home">ANA SAYFA</span><span class="glitch" data-i18n="nav_home">ANA SAYFA</span></a>
+            <a href="portfolio.html" class="roll-link"><span class="original" data-i18n="nav_work">PORTFOLYO</span><span class="glitch" data-i18n="nav_work">PORTFOLYO</span></a>
+            <a href="about.html" class="roll-link"><span class="original" data-i18n="nav_about">HAKKIMIZDA</span><span class="glitch" data-i18n="nav_about">HAKKIMIZDA</span></a>
+        </nav>
+        
+        <div class="header-logo">
+            <a href="index.html"><img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Logo"></a>
+        </div>
+
+        <nav class="header-nav nav-right">
+            <a href="services.html" class="roll-link"><span class="original" data-i18n="nav_services">HİZMETLERİMİZ</span><span class="glitch" data-i18n="nav_services">HİZMETLERİMİZ</span></a>
+            <a href="careers.html" class="roll-link"><span class="original" data-i18n="nav_careers">KARİYER</span><span class="glitch" data-i18n="nav_careers">KARİYER</span></a>
+            <a href="mailto:bilgi@yazihane.com.tr" class="roll-link"><span class="original" data-i18n="nav_contact">İLETİŞİM</span><span class="glitch" data-i18n="nav_contact">İLETİŞİM</span></a>
+            
+            <div class="desktop-lang-dropdown" id="desktop-lang-trigger">
+                <div class="desktop-lang-current" id="desktop-lang-current-text">TR <span style="font-size: 8px;">▼</span></div>
+                <div class="desktop-lang-list">
+                    <span class="lang-btn active" data-lang="tr">TR</span>
+                    <span class="lang-btn" data-lang="en">EN</span>
+                    <span class="lang-btn" data-lang="ru">RU</span>
+                    <span class="lang-btn" data-lang="ar">AR</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="mobile-header-right">
+            <div class="mobile-lang-dropdown" id="mobile-lang-trigger">
+                <div class="mobile-lang-current">TR <span style="font-size: 8px;">▼</span></div>
+                <div class="mobile-lang-list">
+                    <span class="lang-btn-mobile active" data-lang="tr">TR</span>
+                    <span class="lang-btn-mobile" data-lang="en">EN</span>
+                    <span class="lang-btn-mobile" data-lang="ru">RU</span>
+                    <span class="lang-btn-mobile" data-lang="ar">AR</span>
+                </div>
+            </div>
+            <button class="mobile-header-btn" id="mobile-hamburger-btn">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="services-hero">
+            <div class="sh-typography reveal-up">
+                <div class="sh-top" data-i18n="srv_hero_1">BİZ</div>
+                <h1 class="sh-middle" data-i18n="srv_hero_2">DİJİTAL</h1>
+                <div class="sh-bottom" data-i18n="srv_hero_3">ÇÖZÜM UZMANLARIYIZ</div>
+            </div>
+
+            <div class="sh-visual reveal-up">
+                <video autoplay loop muted playsinline>
+                    <source src="https://muratsaglam.co/video/iletisim.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <p class="sh-intro-p reveal-up" data-i18n="srv_intro_p">
+                Yazıhane olarak biz de çalıştığımız tüm markalarımıza aynı özveri ve samimiyetle yaklaşıyor, onların kendi şirketlerine duydukları bağlılık ve müşterilerine hizmet verirken hissettikleri heyecana ortak oluyoruz. Bu yüzden, ilk olarak markayı derinlemesine tecrübe ediyor, özümsüyor ve bütünleşiyoruz. Ardından, bu eşsiz hikayeyi 360° bir perspektifle anlatmaya başlıyoruz. Kimi hikayeler keşfedilmeyi, kimileri ise doğru kişiye anlatılmayı bekler. Yazıhane, markaların hikayelerini keşfeder ve en yenilikçi anlatım yöntemleriyle hedef kitleleriyle buluşturur.
+            </p>
+        </section>
+
+        <section id="services-interactive">
+            
+            <div id="services-list-view" class="reveal-up">
+                <h2 class="services-section-title" data-i18n="srv_list_title">HİZMETLERİMİZ</h2>
+                
+                <div class="services-wrapper">
+                    <div class="service-row" onclick="openService('srv_1')">
+                        <span class="s-num">01</span>
+                        <span class="s-name" data-i18n="srv_1_title">360° Hizmet</span>
+                        <span class="s-arrow">↗</span>
+                    </div>
+                    <div class="service-row" onclick="openService('srv_2')">
+                        <span class="s-num">02</span>
+                        <span class="s-name" data-i18n="srv_2_title">Video Prodüksiyon</span>
+                        <span class="s-arrow">↗</span>
+                    </div>
+                    <div class="service-row" onclick="openService('srv_3')">
+                        <span class="s-num">03</span>
+                        <span class="s-name" data-i18n="srv_3_title">Sosyal Medya Yönetimi</span>
+                        <span class="s-arrow">↗</span>
+                    </div>
+                    <div class="service-row" onclick="openService('srv_4')">
+                        <span class="s-num">04</span>
+                        <span class="s-name" data-i18n="srv_4_title">Grafik Tasarım</span>
+                        <span class="s-arrow">↗</span>
+                    </div>
+                    <div class="service-row" onclick="openService('srv_5')">
+                        <span class="s-num">05</span>
+                        <span class="s-name" data-i18n="srv_5_title">Kreatif Çözümler</span>
+                        <span class="s-arrow">↗</span>
+                    </div>
+                    <div class="service-row" onclick="openService('srv_6')">
+                        <span class="s-num">06</span>
+                        <span class="s-name" data-i18n="srv_6_title">Dijital Pazarlama ve Reklam</span>
+                        <span class="s-arrow">↗</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="service-detail-view">
+                <button class="back-btn" onclick="closeService()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    <span data-i18n="srv_back">DİĞER HİZMETLER</span>
+                </button>
+                
+                <h2 class="sd-title" id="sd-title">Video Prodüksiyon</h2>
+                
+                <div class="sd-content">
+                    <div class="sd-desc" id="sd-desc">Detay metni burada yer alacak.</div>
+                    <div class="sd-visual">
+                        <video autoplay loop muted playsinline>
+                            <source src="https://muratsaglam.co/video/iletisim.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="brands">
+            <div class="brands-title-wrapper reveal-up">
+                <span class="bt-red" data-i18n="br_title_1">Küresel markalarla</span><br>
+                <span class="bt-white" data-i18n="br_title_2">çözüm ortağıyız</span>
+            </div>
+            
+            <div class="logo-wall-grid reveal-up" id="logo-wall-grid" style="display: none;"></div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer reveal-up">
+        <div class="footer-giant">
+            <a href="mailto:bilgi@yazihane.com.tr">
+                <span data-i18n="footer_contact">BİZEULAŞIN</span>
+                <div class="wax-seal">
+                    <img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Seal">
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-socials">
+                <a href="https://www.linkedin.com/company/yazihanecreative/" target="_blank" class="roll-link"><span class="original">LINKEDIN</span><span class="glitch">LINKEDIN</span></a>
+                <a href="https://www.instagram.com/yazihanecreative" target="_blank" class="roll-link"><span class="original">INSTAGRAM</span><span class="glitch">INSTAGRAM</span></a>
+                <a href="https://www.youtube.com/@yazihanereklamajansi" target="_blank" class="roll-link"><span class="original">YOUTUBE</span><span class="glitch">YOUTUBE</span></a>
+            </div>
+            
+            <div class="footer-legal">
+                <a href="legal.html#kullanim" data-i18n="leg_1">KULLANIM KOŞULLARI</a>
+                <a href="legal.html#gizlilik" data-i18n="leg_2">GİZLİLİK POLİTİKASI</a>
+                <a href="legal.html#cerez" data-i18n="leg_3">ÇEREZ POLİTİKASI</a>
+            </div>
+            
+            <div class="footer-copyright" data-i18n="copy">
+                2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const toggleDropdown = function(e) {
+            if(e.target.classList.contains('lang-btn') || e.target.classList.contains('lang-btn-mobile')) return; 
+            this.classList.toggle('active');
+        };
+        const desktopLangTrigger = document.getElementById('desktop-lang-trigger');
+        const mobileLangTrigger = document.getElementById('mobile-lang-trigger');
+        if(desktopLangTrigger) desktopLangTrigger.addEventListener('click', toggleDropdown);
+        if(mobileLangTrigger) mobileLangTrigger.addEventListener('click', toggleDropdown);
+
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileHamburgerBtn = document.getElementById('mobile-hamburger-btn');
+        const mobileCloseBtn = document.getElementById('mobile-close-btn');
+
+        if(mobileHamburgerBtn) mobileHamburgerBtn.addEventListener('click', () => { mobileMenuOverlay.classList.add('active'); });
+        if(mobileCloseBtn) mobileCloseBtn.addEventListener('click', () => { mobileMenuOverlay.classList.remove('active'); });
+
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+
+            const scrollPerc = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+            const ticker = document.querySelector('.ticker-text');
+            if(ticker) {
+                let fillVal = 100 - (scrollPerc * 100);
+                if(fillVal < 0) fillVal = 0;
+                ticker.style.backgroundPosition = `0% ${fillVal}%`;
+            }
+        });
+
+        setInterval(() => {
+            const localTimeEl = document.getElementById('local-time');
+            if(localTimeEl) localTimeEl.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
+        }, 1000);
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 }); 
+        
+        document.querySelectorAll('.reveal-up').forEach(el => scrollObserver.observe(el));
+
+        // --- AKILLI LOGO DUVARI ---
+        const logosFolder = "/logolar/";
+        const logoExtensions = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
+        const logoWallGrid = document.getElementById('logo-wall-grid');
+        logoWallGrid.style.display = 'grid'; 
+
+        const sectorPrefixes = ['', 'turizm', 'tekstil', 'saglik', 'insaat', 'eglence', 'emlak', 'finans', 'egitim', 'lojistik', 'medya', 'mimari', 'genel'];
+
+        sectorPrefixes.forEach(prefix => { loadSectorLogo(prefix, 1, 0, 0); });
+
+        function loadSectorLogo(prefix, index, extIndex, consecutiveMisses) {
+            if (consecutiveMisses > 3 || !logoWallGrid) return; 
+            if (extIndex >= logoExtensions.length) {
+                loadSectorLogo(prefix, index + 1, 0, consecutiveMisses + 1);
+                return;
+            }
+            
+            const fileName = prefix ? `${prefix}${index}` : `${index}`;
+            const imgPath = `${logosFolder}${fileName}.${logoExtensions[extIndex]}`;
+            const img = new Image();
+            
+            img.onload = function() {
+                const cell = document.createElement('div'); cell.className = 'logo-cell';
+                const imgEl = document.createElement('img'); imgEl.src = imgPath; imgEl.alt = `${fileName} Logo`;
+                cell.appendChild(imgEl); logoWallGrid.appendChild(cell);
+                loadSectorLogo(prefix, index + 1, 0, 0);
+            };
+            
+            img.onerror = function() { loadSectorLogo(prefix, index, extIndex + 1, consecutiveMisses); };
+            img.src = imgPath;
+        }
+
+        // --- ÇOK DİLLİ YAPI (i18n) VE YENİ UZUN İÇERİKLER ---
+        const i18n = {
+            tr: { 
+                nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.",
+                srv_hero_1: "BİZ", srv_hero_2: "DİJİTAL", srv_hero_3: "ÇÖZÜM UZMANLARIYIZ",
+                srv_intro_p: "Yazıhane olarak biz de çalıştığımız tüm markalarımıza aynı özveri ve samimiyetle yaklaşıyor, onların kendi şirketlerine duydukları bağlılık ve müşterilerine hizmet verirken hissettikleri heyecana ortak oluyoruz. Bu yüzden, ilk olarak markayı derinlemesine tecrübe ediyor, özümsüyor ve bütünleşiyoruz. Ardından, bu eşsiz hikayeyi 360° bir perspektifle anlatmaya başlıyoruz. Kimi hikayeler keşfedilmeyi, kimileri ise doğru kişiye anlatılmayı bekler. Yazıhane, markaların hikayelerini keşfeder ve en yenilikçi anlatım yöntemleriyle hedef kitleleriyle buluşturur.",
+                srv_list_title: "HİZMETLERİMİZ", srv_back: "DİĞER HİZMETLER",
+                br_title_1: "Küresel markalarla", br_title_2: "çözüm ortağıyız",
+                
+                srv_1_title: "360° Hizmet", srv_2_title: "Video Prodüksiyon", srv_3_title: "Sosyal Medya Yönetimi", 
+                srv_4_title: "Grafik Tasarım", srv_5_title: "Kreatif Çözümler", srv_6_title: "Dijital Pazarlama ve Reklam",
+                
+                srv_1_desc: "<p>Markanızı sadece bir isim olmaktan çıkarıp, yaşayan ve nefes alan bir karaktere dönüştürüyoruz. Sıfırdan bir marka yaratmaktan, var olan markanızın algısını tamamen baştan şekillendirmeye kadar tüm süreci uçtan uca yönetiyoruz. Hedef kitlenizle kuracağınız bağın her detayını ilmek ilmek dokuyor, markanızın hikayesini tüm platformlarda tutarlı bir dille anlatıyoruz.</p><p>Geleneksel medyanın gücünü dijitalin dinamizmiyle harmanlayarak, markanızın her mecrada aynı güçlü sesi çıkarmasını sağlıyoruz. Kurumsal kimlik tasarımından PR stratejilerine, dijital kampanyalardan saha etkinliklerine kadar tüm iletişim süreçlerinizi tek bir merkezden, kusursuz bir uyum içinde orkestre ediyoruz.</p><p>Amacımız sadece anlık başarılar elde etmek değil, markanızı geleceğe taşıyacak sürdürülebilir ve kalıcı bir değer yaratmak. Sizinle aynı masaya oturuyor, markanızı sizin kadar benimsiyor ve hedeflerinize ulaşmanız için 360 derecelik, bütüncül bir büyüme haritası çiziyoruz.</p>",
+                srv_2_desc: "<p>İnşaattan sağlığa, turizmden tekstile kadar uzanan geniş portfolyomuz ve 10 yılı aşkın sektörel deneyimimizle, markanızın hikayesini en çarpıcı karelerle ekrana taşıyoruz. Çağın hızına ve görsel trendlerine ayak uydurmayı bilen, yeni nesil dinamik videolar üreterek izleyicinin dikkatini ilk saniyeden itibaren yakalıyoruz.</p><p>Tanıtım filmlerinden yüksek bütçeli reklam kampanyalarına, sınırları zorlayan FPV drone çekimlerinden kreatif kurgu ve post-prodüksiyon süreçlerine kadar her aşamada en son teknolojiyi kullanıyoruz. Görsel estetiği stratejik bir kurguyla birleştirerek, sadece göze değil, duygulara da hitap eden sinematik işlere imza atıyoruz.</p><p>Sıradan videolar yerine, markanızın karakterini yansıtan, izleyicide iz bırakan ve paylaşılma arzusu uyandıran görsel deneyimler tasarlıyoruz. Her bir saniyenin marka değerinize katkı sağlaması için titizlikle çalışıyor, hikayenizi en etkileyici haliyle dünyayla buluşturuyoruz.</p>",
+                srv_3_desc: "<p>Markanızın dijital dünyadaki kimliğini, sadece gönderi paylaşmanın ötesine taşıyarak hedef kitlenizle yaşayan, interaktif bir bağ kuruyoruz. Sosyal medya platformlarının sürekli değişen algoritmalarına ve trendlerine anında adapte olarak, markanızı her zaman güncel, ilgi çekici ve konuşulan bir konumda tutuyoruz.</p><p>Instagram, TikTok, LinkedIn veya YouTube; her platformun kendi doğasına ve kullanıcı davranışlarına uygun, özelleştirilmiş stratejiler geliştiriyoruz. Etkileşim odaklı Reels videolarından yaratıcı statik içeriklere, topluluk yönetiminden kriz iletişimine kadar dijital varlığınızın tüm kontrolünü profesyonel ellere teslim ediyoruz.</p><p>Sadece takipçi kazanmaya değil, markanızın sadık savunucularını (brand elçilerini) yaratmaya odaklanıyoruz. Detaylı analizler ve veri okumalarıyla stratejilerimizi sürekli optimize ediyor, dijitaldeki sesinizi günden güne daha geniş kitlelere, daha yüksek bir yankıyla duyuruyoruz.</p>",
+                srv_4_desc: "<p>Tasarımı sadece görsel bir süsleme olarak değil, markanızın stratejik iletişiminin en güçlü silahı olarak konumlandırıyoruz. Markanızın ruhunu, değerlerini ve hedeflerini anlıyor, bu karmaşık verileri herkesin ilk bakışta anlayabileceği ve etkilenebileceği estetik formlara dönüştürüyoruz.</p><p>Minimalist bir logodan kapsamlı bir kurumsal kimliğe, göz alıcı açık hava ilanlarından dikkat çekici dijital arayüzlere kadar her tasarımımızda akılda kalıcılığı hedefliriyoruz. Modern tasarım trendlerini kendi yaratıcı filtremizden geçirerek, markanıza rakiplerinden ayrışan, özgün ve zamansız bir görsel dil kazandırıyoruz.</p><p>Tipografinin gücünü, renklerin psikolojisini ve kompozisyonun dengesini ustalıkla kullanarak, markanızın mesajını en pürüzsüz haliyle iletiyoruz. Her pikselin bir amacı olduğu, estetik ve fonksiyonelliğin mükemmel birleştiği tasarımlarla markanızın imajını zirveye taşıyoruz.</p>",
+                srv_5_desc: "<p>Sıradanlığın ve birbirini tekrar eden fikirlerin gürültüsü arasında, markanızın sesini duyuracak o \"eşsiz ve kışkırtıcı\" fikri buluyoruz. Tüketicinin zihninde yer etmek için sadece mantığa değil, duygulara ve kültürel içgörülere dokunan, kural yıkıcı kreatif stratejiler inşa ediyoruz.</p><p>Geleneksel reklamcılık kalıplarının dışına çıkarak, markanız ile hedef kitleniz arasında daha önce kurulmamış yollar açıyoruz. Gerilla pazarlama fikirlerinden, ses getiren PR kampanyalarına, interaktif deneyimlerden beklenmedik işbirliklerine kadar, markanızı konuşulur kılan her türlü yenilikçi konsepti hayata geçiriyoruz.</p><p>Amacımız sadece bir kampanya yapmak değil, popüler kültürün içinde markanıza kalıcı bir yer edinmek. Veri ve içgörüyle beslenen, cesaretle yoğrulan ve kusursuz bir sanat yönetimiyle uygulanan kreatif çözümlerimizle, markanızı sektörünün trend belirleyicisi yapıyoruz.</p>",
+                srv_6_desc: "<p>Markanızın büyüme hedeflerini, ezbere dayalı değil, tamamen veriye ve analitiğe dayalı performans stratejileriyle gerçeğe dönüştürüyoruz. Sınırsız dijital evrende doğru kitleyi, doğru zamanda ve en optimum bütçeyle yakalamak için hedefleme mimarisini milimetrik olarak kurguluyoruz.</p><p>Yalnızca Google SEO ve SEM ile arama motorlarında zirveyi hedeflemekle kalmıyor; Meta (Instagram, Facebook), TikTok, LinkedIn reklamcılığı ve Programatik satın alımlarla dijitalin her köşesinde dönüşüm odaklı bir ağ örüyoruz. Her platformun dinamiklerine uygun A/B testleri yapıyor, reklam performansınızı sürekli maksimize ediyoruz.</p><p>Sizin için sadece bir ajans değil, aynı zamanda güvenilir bir büyüme partneri oluyoruz. Tıklama oranlarının (CTR), dönüşüm maliyetlerinin (CPA) ve yatırım getirisinin (ROI) anlık takibini yaparak, dijital pazarlama bütçenizin her kuruşunun markanıza reel bir kazanç olarak dönmesini sağlıyoruz.</p>"
+            },
+            en: { 
+                nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE.",
+                srv_hero_1: "WE ARE", srv_hero_2: "DIGITAL", srv_hero_3: "SOLUTION SPECIALISTS",
+                srv_intro_p: "As Yazıhane, we approach all our brands with the same dedication and sincerity, sharing their commitment to their companies and the excitement they feel while serving their customers. Therefore, first, we deeply experience, internalize, and integrate with the brand. Then, we start telling this unique story with a 360° perspective. Some stories wait to be discovered, while others wait to be told to the right person. Yazıhane discovers brands' stories and brings them to their target audiences with the most innovative storytelling methods.",
+                srv_list_title: "OUR SERVICES", srv_back: "BACK TO SERVICES",
+                br_title_1: "Global brands", br_title_2: "we partner with",
+                
+                srv_1_title: "360° Services", srv_2_title: "Video Production", srv_3_title: "Social Media Management", 
+                srv_4_title: "Graphic Design", srv_5_title: "Creative Solutions", srv_6_title: "Digital Marketing & Ads",
+                
+                srv_1_desc: "<p>We transform your brand from just a name into a living, breathing character. From creating a brand from scratch to completely reshaping the perception of your existing brand, we manage the entire process end-to-end. We weave every detail of the bond you will establish with your target audience, telling your brand's story with a consistent voice across all platforms.</p><p>By blending the power of traditional media with the dynamism of digital, we ensure your brand has the same strong voice in every channel. From corporate identity design to PR strategies, digital campaigns to field events, we orchestrate all your communication processes from a single center in perfect harmony.</p><p>Our goal is not just to achieve momentary success, but to create sustainable and lasting value that will carry your brand into the future. We sit at the same table with you, embrace your brand as much as you do, and draw a 360-degree, holistic growth map for you to achieve your goals.</p>",
+                srv_2_desc: "<p>With our extensive portfolio ranging from construction to healthcare, tourism to textiles, and over 10 years of industry experience, we bring your brand's story to the screen with the most striking frames. We know how to keep up with the speed and visual trends of the era, capturing the audience's attention from the very first second by producing new generation dynamic videos.</p><p>We use the latest technology at every stage, from promotional films to high-budget advertising campaigns, boundary-pushing FPV drone shoots to creative editing and post-production processes. By combining visual aesthetics with a strategic edit, we create cinematic works that appeal not only to the eye but also to the emotions.</p><p>Instead of ordinary videos, we design visual experiences that reflect your brand's character, leave a mark on the viewer, and arouse the desire to share. We work meticulously to ensure that every second contributes to your brand value, bringing your story to the world in its most impressive form.</p>",
+                srv_3_desc: "<p>We take your brand's identity in the digital world beyond just sharing posts, establishing a living, interactive bond with your target audience. By instantly adapting to the constantly changing algorithms and trends of social media platforms, we keep your brand current, engaging, and talked about at all times.</p><p>Whether Instagram, TikTok, LinkedIn, or YouTube; we develop customized strategies suited to the nature and user behavior of each platform. From engagement-oriented Reels videos to creative static content, community management to crisis communication, we place full control of your digital presence in professional hands.</p><p>We focus not only on gaining followers but on creating loyal brand advocates (brand ambassadors). With detailed analysis and data readings, we constantly optimize our strategies, making your digital voice heard by wider audiences with a higher resonance day by day.</p>",
+                srv_4_desc: "<p>We position design not just as visual ornamentation, but as the most powerful weapon of your brand's strategic communication. We understand your brand's spirit, values, and goals, translating this complex data into aesthetic forms that everyone can understand and be impressed by at first glance.</p><p>From a minimalist logo to a comprehensive corporate identity, eye-catching outdoor ads to striking digital interfaces, we aim for memorability in every design. Passing modern design trends through our creative filter, we give your brand a unique and timeless visual language that stands out from competitors.</p><p>By masterfully using the power of typography, the psychology of colors, and the balance of composition, we deliver your brand's message in its smoothest form. We elevate your brand's image with designs where every pixel has a purpose, and aesthetics and functionality perfectly merge.</p>",
+                srv_5_desc: "<p>Amidst the noise of mediocrity and repetitive ideas, we find that 'unique and provocative' idea that will make your brand's voice heard. We build rule-breaking creative strategies that touch not only logic but also emotions and cultural insights to stick in the consumer's mind.</p><p>Stepping outside traditional advertising molds, we pave unchartered paths between your brand and your target audience. From guerrilla marketing ideas to resounding PR campaigns, interactive experiences to unexpected collaborations, we bring to life every innovative concept that gets your brand talked about.</p><p>Our goal is not just to run a campaign, but to secure a permanent place for your brand in popular culture. With our creative solutions fed by data and insight, kneaded with courage, and executed with flawless art direction, we make your brand the trendsetter of its industry.</p>",
+                srv_6_desc: "<p>We turn your brand's growth goals into reality not with rote memorization, but with purely data and analytics-driven performance strategies. We configure the targeting architecture with millimeter precision to catch the right audience at the right time and with the most optimum budget in the limitless digital universe.</p><p>We don't just aim for the top in search engines with Google SEO and SEM; we weave a conversion-oriented network in every corner of digital with Meta (Instagram, Facebook), TikTok, LinkedIn advertising, and Programmatic buying. We conduct A/B tests suited to the dynamics of each platform, constantly maximizing your ad performance.</p><p>We become not just an agency for you, but a reliable growth partner. By instantly tracking click-through rates (CTR), cost per acquisition (CPA), and return on investment (ROI), we ensure that every penny of your digital marketing budget returns to your brand as real profit.</p>"
+            },
+            ru: { 
+                nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE.",
+                srv_hero_1: "МЫ", srv_hero_2: "ЭКСПЕРТЫ", srv_hero_3: "ЦИФРОВЫХ РЕШЕНИЙ",
+                srv_intro_p: "Как Yazıhane, мы подходим ко всем нашим брендам с одинаковой преданностью и искренностью, разделяя их приверженность своим компаниям и волнение, которое они испытывают при обслуживании своих клиентов. Поэтому сначала мы глубоко познаем, впитываем и сливаемся с брендом. Затем мы начинаем рассказывать эту уникальную историю с перспективой 360°. Некоторые истории ждут, чтобы их открыли, а другие ждут, чтобы их рассказали нужному человеку. Yazıhane открывает истории брендов и доносит их до целевой аудитории самыми инновационными методами.",
+                srv_list_title: "НАШИ УСЛУГИ", srv_back: "ВСЕ УСЛУГИ",
+                br_title_1: "Глобальные бренды,", br_title_2: "наши партнеры",
+                
+                srv_1_title: "Услуги 360°", srv_2_title: "Видеопроизводство", srv_3_title: "SMM", 
+                srv_4_title: "Графический Дизайн", srv_5_title: "Креативные Решения", srv_6_title: "Цифровой Маркетинг",
+                
+                srv_1_desc: "<p>Мы превращаем ваш бренд из просто имени в живого, дышащего персонажа. От создания бренда с нуля до полного изменения восприятия вашего существующего бренда — мы управляем всем процессом от начала до конца.</p><p>Объединяя мощь традиционных медиа с динамизмом цифровых технологий, мы гарантируем, что ваш бренд будет звучать одинаково сильно на каждом канале.</p><p>Наша цель — не просто достичь сиюминутного успеха, а создать устойчивую и долговечную ценность, которая перенесет ваш бренд в будущее. Мы сидим за одним столом с вами и составляем для вас комплексную карту роста на 360 градусов.</p>",
+                srv_2_desc: "<p>Имея более 10 лет опыта работы в различных секторах, мы переносим историю вашего бренда на экран в самых ярких кадрах. Мы знаем, как идти в ногу со временем, создавая динамичные видео нового поколения.</p><p>Мы используем новейшие технологии на каждом этапе: от рекламных роликов до сложных съемок с дронов FPV, креативного монтажа и постпродакшена.</p><p>Вместо обычных видео мы создаем визуальный опыт, который отражает характер вашего бренда, оставляет след в памяти зрителя и пробуждает желание поделиться.</p>",
+                srv_3_desc: "<p>Мы выводим идентичность вашего бренда в цифровом мире за рамки простого обмена постами, устанавливая живую интерактивную связь с вашей целевой аудиторией.</p><p>Instagram, TikTok, LinkedIn или YouTube; мы разрабатываем индивидуальные стратегии, соответствующие природе и поведению пользователей каждой платформы.</p><p>Мы фокусируемся не только на привлечении подписчиков, но и на создании лояльных защитников бренда. С помощью детального анализа мы постоянно оптимизируем наши стратегии.</p>",
+                srv_4_desc: "<p>Мы позиционируем дизайн не просто как визуальное украшение, а как самое мощное оружие стратегической коммуникации вашего бренда. Мы понимаем дух вашего бренда.</p><p>От минималистичного логотипа до комплексного фирменного стиля, мы стремимся к запоминаемости в каждом дизайне, придавая вашему бренду уникальный и неподвластный времени визуальный язык.</p><p>Мастерски используя силу типографики, психологию цвета и баланс композиции, мы передаем послание вашего бренда в самой гладкой форме.</p>",
+                srv_5_desc: "<p>Среди шума посредственности мы находим ту уникальную и провокационную идею, которая заставит голос вашего бренда быть услышанным.</p><p>Выходя за рамки традиционных рекламных шаблонов, мы прокладываем неизведанные пути между вашим брендом и целевой аудиторией. От партизанского маркетинга до ярких PR-кампаний.</p><p>Наша цель — не просто провести кампанию, а обеспечить вашему бренду постоянное место в популярной культуре.</p>",
+                srv_6_desc: "<p>Мы воплощаем в жизнь цели роста вашего бренда с помощью стратегий эффективности, основанных исключительно на данных и аналитике.</p><p>Мы не только стремимся к вершинам в поисковых системах с помощью Google SEO и SEM; мы создаем сеть, ориентированную на конверсию, в каждом уголке цифрового мира с помощью рекламы Meta, TikTok, LinkedIn.</p><p>Мы становимся для вас не просто агентством, а надежным партнером по росту. Мы гарантируем, что каждая копейка вашего маркетингового бюджета вернется к вашему бренду в виде реальной прибыли.</p>"
+            },
+            ar: { 
+                nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه.",
+                srv_hero_1: "نحن", srv_hero_2: "متخصصون", srv_hero_3: "في الحلول الرقمية",
+                srv_intro_p: "بصفتنا Yazıhane، نتعامل مع جميع علاماتنا التجارية بنفس التفاني والصدق، ونشاركهم التزامهم تجاه شركاتهم والإثارة التي يشعرون بها أثناء خدمة عملائهم. لذلك، نختبر العلامة التجارية أولاً وندمجها بعمق. ثم نبدأ في سرد هذه القصة الفريدة من منظور 360 درجة. تنتظر بعض القصص من يكتشفها، بينما ينتظر البعض الآخر من يرويها للشخص المناسب. تكتشف Yazıhane قصص العلامات التجارية وتقدمها إلى جماهيرها المستهدفة بأكثر طرق السرد ابتكارًا.",
+                srv_list_title: "خدماتنا", srv_back: "خدمات أخرى",
+                br_title_1: "العلامات التجارية العالمية", br_title_2: "التي نشاركها",
+                
+                srv_1_title: "خدمات 360 درجة", srv_2_title: "إنتاج الفيديو", srv_3_title: "إدارة وسائل التواصل", 
+                srv_4_title: "التصميم الجرافيكي", srv_5_title: "حلول إبداعية", srv_6_title: "التسويق الرقمي",
+                
+                srv_1_desc: "<p>نحول علامتك التجارية من مجرد اسم إلى شخصية حية تتنفس. من إنشاء علامة تجارية من الصفر إلى إعادة تشكيل تصور علامتك التجارية الحالية بالكامل، ندير العملية برمتها من البداية إلى النهاية.</p><p>من خلال مزج قوة الوسائط التقليدية مع ديناميكية الرقمية، نضمن أن يكون لعلامتك التجارية نفس الصوت القوي في كل قناة.</p><p>هدفنا ليس فقط تحقيق نجاح لحظي، بل خلق قيمة مستدامة ودائمة تنقل علامتك التجارية إلى المستقبل. نجلس معك على نفس الطاولة ونرسم لك خريطة نمو شاملة بزاوية 360 درجة.</p>",
+                srv_2_desc: "<p>من خلال محفظتنا الواسعة وخبرتنا الصناعية التي تزيد عن 10 سنوات، ننقل قصة علامتك التجارية إلى الشاشة بأكثر الإطارات لفتًا للانتباه. نحن ننتج مقاطع فيديو ديناميكية للجيل الجديد.</p><p>نستخدم أحدث التقنيات في كل مرحلة، من الأفلام الترويجية إلى الحملات الإعلانية ذات الميزانيات الكبيرة، ولقطات طائرات بدون طيار إلى عمليات التحرير الإبداعية.</p><p>بدلاً من مقاطع الفيديو العادية، نصمم تجارب بصرية تعكس شخصية علامتك التجارية، وتترك بصمة على المشاهد، وتثير الرغبة في المشاركة.</p>",
+                srv_3_desc: "<p>نأخذ هوية علامتك التجارية في العالم الرقمي إلى ما هو أبعد من مجرد مشاركة المنشورات، ونؤسس رابطًا تفاعليًا حيًا مع جمهورك المستهدف.</p><p>سواء كان Instagram أو TikTok أو LinkedIn أو YouTube؛ نقوم بتطوير استراتيجيات مخصصة تتناسب مع طبيعة وسلوك المستخدم لكل منصة.</p><p>نحن لا نركز فقط على اكتساب المتابعين ولكن على خلق دعاة مخلصين للعلامة التجارية. من خلال التحليل التفصيلي، نقوم باستمرار بتحسين استراتيجياتنا.</p>",
+                srv_4_desc: "<p>نحن لا نضع التصميم كمجرد زخرفة بصرية، بل كأقوى سلاح للاتصال الاستراتيجي لعلامتك التجارية. نحن نفهم روح علامتك التجارية وقيمها وأهدافها.</p><p>من شعار مبسط إلى هوية مؤسسية شاملة، نهدف إلى التذكر في كل تصميم. نمنح علامتك التجارية لغة بصرية فريدة وخالدة.</p><p>من خلال الاستخدام البارع لقوة الطباعة وعلم نفس الألوان وتوازن التكوين، نقدم رسالة علامتك التجارية في أسلس أشكالها.</p>",
+                srv_5_desc: "<p>وسط ضجيج الرداءة والأفكار المتكررة، نجد تلك الفكرة الفريدة والمستفزة التي ستجعل صوت علامتك التجارية مسموعًا.</p><p>بالخروج عن قوالب الإعلان التقليدية، نمهد مسارات مجهولة بين علامتك التجارية وجمهورك المستهدف. من أفكار التسويق إلى حملات العلاقات العامة المدوية.</p><p>هدفنا ليس مجرد تشغيل حملة، بل تأمين مكان دائم لعلامتك التجارية في الثقافة الشعبية.</p>",
+                srv_6_desc: "<p>نحول أهداف نمو علامتك التجارية إلى حقيقة من خلال استراتيجيات أداء تعتمد بحتة على البيانات والتحليلات.</p><p>نحن لا نهدف فقط إلى القمة في محركات البحث مع Google SEO و SEM؛ بل ننسج شبكة موجهة نحو التحويل في كل ركن من أركان الرقمية مع إعلانات Meta و TikTok و LinkedIn.</p><p>نحن لا نصبح مجرد وكالة بالنسبة لك، بل شريك نمو موثوق. نضمن أن كل قرش من ميزانية التسويق الرقمي الخاصة بك يعود إلى علامتك التجارية كربح حقيقي.</p>"
+            }
+        };
+
+        let activeServiceId = null;
+
+        const setLanguage = (lang) => {
+            localStorage.setItem('yazihane_lang', lang);
+            document.documentElement.lang = lang; 
+
+            document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll(`.lang-btn[data-lang="${lang}"], .lang-btn-mobile[data-lang="${lang}"]`).forEach(b => b.classList.add('active'));
+            
+            const desktopCurrent = document.getElementById('desktop-lang-current-text');
+            if(desktopCurrent) desktopCurrent.innerHTML = `${lang.toUpperCase()} <span style="font-size: 8px;">▼</span>`;
+            
+            const mobileCurrent = document.querySelector('.mobile-lang-current');
+            if(mobileCurrent) mobileCurrent.innerHTML = `${lang.toUpperCase()} <span style="font-size: 8px;">▼</span>`;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                if(i18n[lang][el.dataset.i18n]) {
+                    el.innerHTML = i18n[lang][el.dataset.i18n];
+                }
+            });
+
+            if(activeServiceId) {
+                document.getElementById('sd-title').innerHTML = i18n[lang][`${activeServiceId}_title`];
+                document.getElementById('sd-desc').innerHTML = i18n[lang][`${activeServiceId}_desc`];
+            }
+            
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.body.style.fontFamily = lang === 'ar' ? "'Space Grotesk', sans-serif" : "'Inter', sans-serif";
+            
+            if(mobileMenuOverlay) mobileMenuOverlay.classList.remove('active');
+            const desktopLangTrigger = document.getElementById('desktop-lang-trigger');
+            const mobileLangTrigger = document.getElementById('mobile-lang-trigger');
+            if(desktopLangTrigger) desktopLangTrigger.classList.remove('active');
+            if(mobileLangTrigger) mobileLangTrigger.classList.remove('active');
+        };
+
+        document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(btn => {
+            btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang));
+        });
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
+            setLanguage(savedLang);
+
+            const hash = window.location.hash.replace('#', '');
+            if (hash && hash.startsWith('srv_')) {
+                setTimeout(() => { openService(hash); }, 200);
+            }
+        });
+
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && hash.startsWith('srv_')) {
+                openService(hash);
+            } else if (!hash) {
+                closeService();
+            }
+        });
+
+        // --- DİNAMİK HİZMETLER GEÇİŞ MANTIĞI ---
+        const listView = document.getElementById('services-list-view');
+        const detailView = document.getElementById('service-detail-view');
+        const sdTitle = document.getElementById('sd-title');
+        const sdDesc = document.getElementById('sd-desc');
+
+        function openService(serviceId) {
+            activeServiceId = serviceId;
+            const currentLang = localStorage.getItem('yazihane_lang') || 'tr';
+
+            if(window.location.hash !== `#${serviceId}`) {
+                history.pushState(null, null, `#${serviceId}`);
+            }
+
+            listView.classList.add('fade-out');
+            
+            setTimeout(() => {
+                listView.style.display = 'none';
+                
+                sdTitle.innerHTML = i18n[currentLang][`${serviceId}_title`];
+                sdDesc.innerHTML = i18n[currentLang][`${serviceId}_desc`];
+                
+                detailView.style.display = 'block';
+                setTimeout(() => {
+                    detailView.classList.add('fade-in');
+                    window.scrollTo({ top: document.getElementById('services-interactive').offsetTop - 100, behavior: 'smooth' });
+                }, 50);
+
+            }, 500); 
+        }
+
+        function closeService() {
+            activeServiceId = null;
+            history.pushState(null, null, window.location.pathname); 
+
+            detailView.classList.remove('fade-in');
+            
+            setTimeout(() => {
+                detailView.style.display = 'none';
+                
+                listView.style.display = 'block';
+                setTimeout(() => {
+                    listView.classList.remove('fade-out');
+                    window.scrollTo({ top: document.getElementById('services-interactive').offsetTop - 100, behavior: 'smooth' });
+                }, 50);
+            }, 500);
+        }
+
+    </script>
+</body>
+</html>

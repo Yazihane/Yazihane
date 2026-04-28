@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="tr" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kariyer | Yazıhane Creative</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&family=Space+Grotesk:wght@600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #070707; 
+            --text-cream: #E1DBC8; 
+            --iris-red: #E61E25; 
+            --border-color: rgba(225, 219, 200, 0.15);
+            --header-h: 90px;
+            --sidebar-w: 60px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--text-cream); 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Pop-up açıkken arka plan kaymasın diye eklendi */
+        body.no-scroll, html.no-scroll { 
+            overflow: hidden !important; 
+            touch-action: none;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.06; pointer-events: none; z-index: 9999;
+        }
+
+        /* --- SCROLL ANİMASYONLARI --- */
+        .reveal-up { opacity: 0; transform: translateY(60px); transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-up.is-visible { opacity: 1; transform: none; } 
+
+        .reveal-fade { opacity: 0; transition: opacity 1.5s ease-in-out; }
+        .reveal-fade.is-visible { opacity: 1; }
+
+        /* --- DİKEY SIDEBAR --- */
+        #vertical-ticker {
+            position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+            border-right: 1px solid var(--border-color); display: flex; flex-direction: column;
+            align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg);
+        }
+        .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
+        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
+        #local-time { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--iris-red); font-weight: 700; }
+        
+        .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
+        .ticker-text {
+            font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 2vh, 20px); 
+            letter-spacing: clamp(0.15em, 0.3vh, 0.35em); white-space: nowrap; font-weight: 700;
+            background: linear-gradient(to bottom, var(--iris-red) 50%, var(--text-cream) 50%);
+            background-size: 100% 200%; background-position: 0% 100%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: background-position 0.1s ease-out;
+        }
+
+        html[dir="rtl"] #vertical-ticker { left: auto; right: 0; border-right: none; border-left: 1px solid var(--border-color); }
+        html[dir="rtl"] header, html[dir="rtl"] main { padding-left: 0; padding-right: var(--sidebar-w); }
+
+        /* --- GLOBAL HEADER --- */
+        header {
+            position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: var(--header-h);
+            background: rgba(7, 7, 7, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-color);
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 4vw; z-index: 2000;
+            transition: background 0.3s ease, border-color 0.3s ease; gap: clamp(5px, 2vw, 20px);
+        }
+        .header-nav { display: flex; gap: clamp(8px, 1.5vw, 3vw); align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+        .nav-right { justify-content: flex-end; }
+        .header-logo { display: flex; justify-content: center; }
+        .header-logo img { height: clamp(35px, 4vw, 48px); object-fit: contain; cursor: pointer; transition: transform 0.4s ease, filter 0.4s ease; }
+        
+        @keyframes logoGlitch {
+            0%, 92%, 100% { transform: scale(1.15); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%); }
+            94% { transform: scale(1.15) translate(-3px, 2px); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%) drop-shadow(-3px 0 0 rgba(0,255,255,0.7)); }
+            96% { transform: scale(1.15) translate(3px, -2px); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%) drop-shadow(3px 0 0 rgba(230,30,37,0.7)); }
+            98% { transform: scale(1.15) translate(0); filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(5432%) hue-rotate(348deg) brightness(94%) contrast(97%); }
+        }
+        header.scrolled .header-logo img { animation: logoGlitch 4s infinite linear; }
+        .header-logo img:hover { transform: scale(1.3) rotate(-5deg) !important; animation: none !important; filter: brightness(1.2) drop-shadow(0 0 10px rgba(230,30,37,0.5)) !important; }
+
+        .roll-link { position: relative; display: inline-block; font-family: 'Syne', sans-serif; font-size: clamp(8px, 0.9vw, 14px); font-weight: 700; letter-spacing: clamp(0.05em, 0.2vw, 0.3em); text-transform: uppercase; cursor: pointer; }
+        .roll-link .original, .roll-link .glitch { display: block; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s, filter 0.3s; }
+        .roll-link .original { color: var(--text-cream); }
+        .roll-link .glitch { position: absolute; top: 0; left: 0; right: 0; color: var(--iris-red); opacity: 0; transform: translateY(15px) skewX(-10deg); filter: blur(3px); }
+        .roll-link:hover .original { transform: translateY(-15px) skewX(10deg); opacity: 0; filter: blur(3px); }
+        .roll-link:hover .glitch { transform: translateY(0) skewX(0); opacity: 1; filter: blur(0px); }
+
+        .desktop-lang-dropdown, .mobile-lang-dropdown { position: relative; font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 1vw, 12px); font-weight: 700; color: var(--text-cream); cursor: pointer; z-index: 2001; }
+        .desktop-lang-dropdown { margin-left: clamp(5px, 1vw, 15px); border-left: 1px solid var(--border-color); padding-left: clamp(5px, 1vw, 15px); }
+        .desktop-lang-current, .mobile-lang-current { display: flex; align-items: center; gap: 4px; padding: 5px; color: rgba(225, 219, 200, 0.6); transition: 0.3s; }
+        .desktop-lang-dropdown:hover .desktop-lang-current, .mobile-lang-dropdown:hover .mobile-lang-current { color: var(--text-cream); }
+        .desktop-lang-list, .mobile-lang-list { position: absolute; top: 100%; right: 0; background: rgba(7,7,7,0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-color); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 5px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .desktop-lang-dropdown.active .desktop-lang-list, .mobile-lang-dropdown.active .mobile-lang-list { opacity: 1; pointer-events: auto; }
+        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; }
+        .lang-btn.active, .lang-btn:hover, .lang-btn-mobile.active, .lang-btn-mobile:hover { color: var(--text-cream); }
+
+        .mobile-header-btn { display: none; align-items: center; color: var(--text-cream); cursor: pointer; background: none; border: none; }
+        .mobile-header-right { display: none; align-items: center; gap: 15px; }
+
+        /* --- MOBİL MENÜ OVERLAY --- */
+        #mobile-menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg); z-index: 3000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        #mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu-close { position: absolute; top: 30px; right: 5vw; background: none; border: none; color: var(--text-cream); cursor: pointer; }
+        .mobile-menu-links { display: flex; flex-direction: column; gap: 15px; text-align: center; }
+        .mobile-menu-links a { font-family: 'Big Shoulders Display', sans-serif; font-size: 12vw; font-weight: 900; color: var(--text-cream); text-transform: uppercase; line-height: 0.9; }
+
+        main { margin-left: var(--sidebar-w); overflow: hidden; padding-top: var(--header-h); }
+
+        /* --- 1. CAREERS HERO BÖLÜMÜ --- */
+        #careers-hero {
+            min-height: auto; 
+            display: flex; flex-direction: column; align-items: center; 
+            padding: clamp(60px, 10vh, 120px) 5vw clamp(40px, 6vh, 80px); text-align: center;
+        }
+
+        .car-giant-title {
+            position: relative; font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(4rem, 16vw, 22rem); font-weight: 900; color: var(--text-cream);
+            line-height: 0.75; text-transform: uppercase; letter-spacing: -0.03em;
+            display: flex; flex-direction: column; align-items: center; width: 100%;
+        }
+        html:lang(ar) .car-giant-title, html:lang(ru) .car-giant-title { font-size: clamp(3rem, 12vw, 15rem); word-break: break-word; line-height: 0.9; }
+
+        .car-ampersand {
+            position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
+            font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400;
+            color: var(--iris-red); font-size: 0.8em; z-index: 2; pointer-events: none;
+            mix-blend-mode: normal;
+        }
+
+        .car-dna {
+            font-family: 'Space Grotesk', sans-serif; font-size: clamp(8px, 1vw, 12px); font-weight: 700;
+            color: var(--iris-red); letter-spacing: 0.5em; text-transform: uppercase; margin-top: clamp(30px, 5vh, 60px);
+        }
+
+        .car-statement {
+            font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 400;
+            color: var(--text-cream); line-height: 1.4; margin: clamp(40px, 8vh, 80px) auto; max-width: 1000px;
+            word-break: break-word;
+        }
+        .car-statement span.red { color: var(--iris-red); }
+
+        .car-desc {
+            font-family: 'Inter', sans-serif; font-size: clamp(12px, 1vw, 14px); font-weight: 300; line-height: 1.6;
+            color: rgba(225, 219, 200, 0.8); max-width: 600px; margin-bottom: 40px;
+        }
+        .car-link {
+            font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 1.5vw, 1.5rem); font-style: italic;
+            color: var(--text-cream); border-bottom: 1px solid var(--text-cream); padding-bottom: 5px;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .car-link:hover { color: var(--iris-red); border-color: var(--iris-red); }
+
+        /* --- 2. WE ARE GALLERY --- */
+        #we-are-gallery {
+            width: 100%; padding: clamp(20px, 4vh, 50px) 5vw clamp(40px, 8vh, 100px); overflow: hidden;
+        }
+
+        .gallery-container {
+            display: grid; grid-template-rows: repeat(3, 1fr); grid-auto-flow: column; 
+            gap: clamp(10px, 1.5vw, 20px); height: clamp(350px, 60vh, 700px); overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; 
+        }
+        .gallery-container::-webkit-scrollbar { display: none; }
+
+        .gallery-img-box {
+            width: 100%; height: 100%; background: #111; overflow: hidden; border-radius: 4px; cursor: pointer; min-width: clamp(150px, 15vw, 250px); 
+        }
+        .gallery-img-box img {
+            width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: transform 0.4s ease, filter 0.4s ease;
+        }
+        .gallery-img-box:hover img { filter: grayscale(0); transform: scale(1.05); }
+
+        .gallery-mid-text {
+            font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 400; line-height: 1.5;
+            color: rgba(225, 219, 200, 0.7); letter-spacing: -0.01em; max-width: 1000px; 
+            margin: clamp(40px, 8vh, 100px) auto; padding: 0 5vw; text-align: left;
+        }
+        
+        /* --- LIGHTBOX (GÜNCELLENMİŞ FERAH OKLAR VE MOBİL SWIPE) --- */
+        #lightbox {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            z-index: 4000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease;
+            touch-action: none;
+        }
+        #lightbox.active { display: flex; opacity: 1; }
+        
+        .lightbox-img-wrapper { position: relative; max-width: 85vw; max-height: 80vh; display: flex; align-items: center; justify-content: center; }
+        
+        .lightbox-img { 
+            max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            -webkit-user-drag: none; user-select: none;
+        }
+        
+        .lb-close { position: absolute; top: -50px; right: 0; background: none; border: none; color: #fff; font-size: 40px; cursor: pointer; z-index: 4002; transition: color 0.3s; }
+        .lb-close:hover { color: var(--iris-red); }
+        
+        .lb-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%); background: var(--iris-red); color: #000; 
+            border: none; width: 50px; height: 50px; border-radius: 50%; font-family: 'Space Grotesk'; font-size: 24px; cursor: pointer; z-index: 4001; transition: transform 0.2s, background 0.3s;
+        }
+        .lb-arrow:hover { transform: translateY(-50%) scale(1.1); background: #fff; }
+        .lb-prev { left: 4vw; }
+        .lb-next { right: 4vw; }
+
+        /* --- 3. FOLLOW US BÖLÜMÜ --- */
+        #follow-us {
+            position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; 
+            padding: clamp(60px, 10vh, 100px) 0; min-height: 80vh; 
+        }
+
+        .fu-center-content { z-index: 2; display: flex; flex-direction: column; align-items: center; }
+        
+        .fu-title {
+            font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(14px, 1.5vw, 18px); color: var(--iris-red); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        .fu-links { display: flex; flex-direction: column; align-items: center; }
+        .fu-links a {
+            display: block; position: relative; overflow: hidden;
+            font-family: 'Playfair Display', serif; font-size: clamp(3rem, 8vw, 8rem); font-weight: 400; 
+            color: var(--text-cream); line-height: 1; text-align: center;
+        }
+        .fu-links a span {
+            display: block; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .fu-links a::before {
+            content: attr(data-text); position: absolute; top: 100%; left: 0; width: 100%; height: 100%;
+            color: var(--iris-red); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            text-align: center;
+        }
+        .fu-links a:hover span { transform: translateY(-100%); }
+        .fu-links a:hover::before { transform: translateY(-100%); }
+
+        .fu-float {
+            position: absolute; z-index: 1; object-fit: cover; border-radius: 4px; filter: brightness(0.7) grayscale(0.5); transition: filter 0.4s ease, transform 0.4s ease;
+        }
+        .fu-float:hover { filter: brightness(1) grayscale(0); transform: scale(1.05); z-index: 3; }
+        
+        .f1 { top: 15%; left: 3%; width: clamp(100px, 12vw, 220px); aspect-ratio: 9/16; } 
+        .f2 { top: 20%; right: 3%; width: clamp(120px, 15vw, 250px); aspect-ratio: 16/9; } 
+        .f3 { bottom: 15%; left: 8%; width: clamp(90px, 10vw, 180px); aspect-ratio: 1/1; } 
+        .f4 { bottom: 20%; right: 8%; width: clamp(110px, 12vw, 220px); aspect-ratio: 4/5; }
+
+        /* --- FOOTER --- */
+        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
+        .footer-giant { text-align: center; position: relative; width: 100%; }
+        .footer-giant a { display: inline-flex; align-items: center; justify-content: center; position: relative; font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(4rem, 20vw, 25rem); font-weight: 900; line-height: 0.8; color: var(--text-cream); letter-spacing: -0.01em; transition: color 0.4s ease; white-space: nowrap; width: 100%; }
+        .footer-giant a:hover { color: rgba(225, 219, 200, 0.8); }
+        .wax-seal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8vw; height: 8vw; min-width: 60px; min-height: 60px; background: #b0151a; border-radius: 50%; display: flex; justify-content: center; align-items: center; pointer-events: none; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); border: 2px solid #d42027; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4); z-index: 10; }
+        .wax-seal img { width: 60%; height: 60%; object-fit: contain; filter: brightness(0); opacity: 0.7; }
+        .footer-giant a:hover .wax-seal { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); }
+        .footer-bottom { display: flex; justify-content: space-between; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; flex-wrap: wrap; gap: 30px; }
+        .footer-socials { display: flex; gap: 3vw; }
+        .footer-legal { display: flex; gap: 2.5vw; color: rgba(225, 219, 200, 0.5); }
+        .footer-legal a { transition: 0.3s; cursor: pointer; }
+        .footer-legal a:hover { color: var(--text-cream); }
+        .footer-copyright { color: rgba(225, 219, 200, 0.5); text-align: right; }
+
+        /* --- MOBİL ADAPTASYON --- */
+        @media (max-width: 1024px) {
+            .lb-prev { left: 10px; }
+            .lb-next { right: 10px; }
+            .fu-float { display: none !important; } 
+        }
+
+        @media (max-width: 768px) {
+            #vertical-ticker { display: none; }
+            main, .site-footer { margin-left: 0; }
+            
+            header { left: 0; grid-template-columns: auto 1fr auto; padding: 0 5vw; gap: 10px; }
+            .header-nav { display: none !important; }
+            .mobile-header-btn { display: flex !important; }
+            .mobile-header-right { display: flex !important; }
+            .desktop-lang-dropdown { display: none !important; }
+            .header-logo { display: flex; justify-content: center; position: static; transform: none; }
+            
+            #careers-hero { padding: 12vh 5vw 5vh; }
+            .car-statement { margin: 40px auto 30px; text-align: center; }
+            .car-desc { margin-bottom: 20px; }
+            
+            .gallery-container { height: 45vh; grid-template-rows: repeat(2, 1fr); }
+            .gallery-mid-text { margin: 40px auto 20px; text-align: center; font-size: clamp(1rem, 4vw, 1.5rem); }
+
+            .lb-arrow { display: none !important; }
+            .lb-close { top: -50px; right: 10px; }
+
+            #follow-us { padding: 60px 0; min-height: auto; }
+            
+            .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+            .footer-socials { flex-direction: column; gap: 10px; }
+            .footer-legal { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mobile-menu-overlay">
+        <button class="mobile-menu-close" id="mobile-close-btn">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="mobile-menu-links">
+            <a href="index.html" data-i18n="nav_home">ANA SAYFA</a>
+            <a href="portfolio.html" data-i18n="nav_work">PORTFOLYO</a>
+            <a href="about.html" data-i18n="nav_about">HAKKIMIZDA</a>
+            <a href="services.html" data-i18n="nav_services">HİZMETLERİMİZ</a>
+            <a href="careers.html" data-i18n="nav_careers">KARİYER</a>
+            <a href="mailto:bilgi@yazihane.com.tr" data-i18n="nav_contact">İLETİŞİM</a>
+        </div>
+    </div>
+
+    <div id="lightbox">
+        <button class="lb-arrow lb-prev" id="lb-prev">←</button>
+        <div class="lightbox-img-wrapper">
+            <button class="lb-close" id="lb-close">×</button>
+            <img src="" alt="Yazıhane Team" class="lightbox-img" id="lb-img">
+        </div>
+        <button class="lb-arrow lb-next" id="lb-next">→</button>
+    </div>
+
+    <aside id="vertical-ticker">
+        <a href="https://maps.app.goo.gl/MaQWroNEvLF7iPzj7" target="_blank" class="pulse-link" title="Bizi Haritada Bulun">
+            <div class="pulse-dot"></div>
+            <span id="local-time">12:00</span>
+        </a>
+        <div class="ticker-text-wrapper">
+            <div class="ticker-text" data-i18n="ticker_text">CREATIVE REVOLUTION — 2026 — YAZIHANE</div>
+        </div>
+    </aside>
+
+    <header id="main-header">
+        <a href="mailto:bilgi@yazihane.com.tr" class="mobile-header-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </a>
+
+        <nav class="header-nav nav-left">
+            <a href="index.html" class="roll-link"><span class="original" data-i18n="nav_home">ANA SAYFA</span><span class="glitch" data-i18n="nav_home">ANA SAYFA</span></a>
+            <a href="portfolio.html" class="roll-link"><span class="original" data-i18n="nav_work">PORTFOLYO</span><span class="glitch" data-i18n="nav_work">PORTFOLYO</span></a>
+            <a href="about.html" class="roll-link"><span class="original" data-i18n="nav_about">HAKKIMIZDA</span><span class="glitch" data-i18n="nav_about">HAKKIMIZDA</span></a>
+        </nav>
+        
+        <div class="header-logo">
+            <a href="index.html"><img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Logo"></a>
+        </div>
+
+        <nav class="header-nav nav-right">
+            <a href="services.html" class="roll-link"><span class="original" data-i18n="nav_services">HİZMETLERİMİZ</span><span class="glitch" data-i18n="nav_services">HİZMETLERİMİZ</span></a>
+            <a href="careers.html" class="roll-link"><span class="original" data-i18n="nav_careers">KARİYER</span><span class="glitch" data-i18n="nav_careers">KARİYER</span></a>
+            <a href="mailto:bilgi@yazihane.com.tr" class="roll-link"><span class="original" data-i18n="nav_contact">İLETİŞİM</span><span class="glitch" data-i18n="nav_contact">İLETİŞİM</span></a>
+            
+            <div class="desktop-lang-dropdown" id="desktop-lang-trigger">
+                <div class="desktop-lang-current" id="desktop-lang-current-text">TR <span style="font-size: 8px;">▼</span></div>
+                <div class="desktop-lang-list">
+                    <span class="lang-btn active" data-lang="tr">TR</span>
+                    <span class="lang-btn" data-lang="en">EN</span>
+                    <span class="lang-btn" data-lang="ru">RU</span>
+                    <span class="lang-btn" data-lang="ar">AR</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="mobile-header-right">
+            <div class="mobile-lang-dropdown" id="mobile-lang-trigger">
+                <div class="mobile-lang-current">TR <span style="font-size: 8px;">▼</span></div>
+                <div class="mobile-lang-list">
+                    <span class="lang-btn-mobile active" data-lang="tr">TR</span>
+                    <span class="lang-btn-mobile" data-lang="en">EN</span>
+                    <span class="lang-btn-mobile" data-lang="ru">RU</span>
+                    <span class="lang-btn-mobile" data-lang="ar">AR</span>
+                </div>
+            </div>
+            <button class="mobile-header-btn" id="mobile-hamburger-btn">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="careers-hero">
+            <div class="car-giant-title reveal-up">
+                <span data-i18n="car_title_1">COURAGEOUS</span>
+                <span class="car-ampersand">&</span>
+                <span data-i18n="car_title_2">PROVOCATIVE</span>
+            </div>
+            
+            <div class="car-dna reveal-up" data-i18n="car_dna">THAT'S OUR DNA</div>
+
+            <div class="car-statement reveal-up" data-i18n="car_statement">
+                <span class="red">Yazıhane</span> kendisini alışılagelmiş konseptlerle sınırlamadan, hikayesi olan özgün projeler üreten ve bu projeler amaçlanan hedefe ulaşana dek tek elden tüm süreci üstlenen bir <span class="red">360° reklam ajansıdır.</span>
+            </div>
+
+            <p class="car-desc reveal-up" data-i18n="car_desc">
+                Şekillenmesine yardımcı olabileceğin, kendi izini bırakabileceğin bir ajansa katılmaya hazırsan bizimle iletişime geç.<br><br>
+                Bu yolculukta olan ekibimize katıl.
+            </p>
+
+            <div class="reveal-up">
+                <a href="mailto:bilgi@yazihane.com.tr" class="car-link" data-i18n="car_link">Hemen CV'ni gönder! ↗</a>
+            </div>
+        </section>
+
+        <section id="we-are-gallery">
+            <div class="gallery-container reveal-up" id="gallery-container">
+            </div>
+
+            <p class="gallery-mid-text reveal-up" data-i18n="car_mid_text">
+                Her departmanda ve her seviyede, Yazıhane ruhunu taşıyan karakteristik izler ararız. Cesur, meraklı ve kendi olmaktan asla çekinmeyen insanlarla bir arada büyürüz. Gelenekseli kırıp geçen özgün fikirler için omuz omuza savaşmak, bizim tek ilerleme yöntemimizdir. Herkesin bir hikayesi vardır. Ya senin?
+            </p>
+        </section>
+
+        <section id="follow-us">
+            <img src="https://yazihane.com.tr/images/logo/default.png" class="fu-float f1 reveal-fade" alt="">
+            <img src="https://yazihane.com.tr/images/logo/default.png" class="fu-float f2 reveal-fade" alt="">
+            <img src="https://yazihane.com.tr/images/logo/default.png" class="fu-float f3 reveal-fade" alt="">
+            <img src="https://yazihane.com.tr/images/logo/default.png" class="fu-float f4 reveal-fade" alt="">
+
+            <div class="fu-center-content reveal-up">
+                <div class="fu-title" data-i18n="fu_title">BİZİ TAKİP EDİN</div>
+                <div class="fu-links">
+                    <a href="https://www.instagram.com/yazihanecreative" target="_blank" data-text="INSTAGRAM">
+                        <span>INSTAGRAM</span>
+                    </a>
+                    <a href="https://www.linkedin.com/company/yazihanecreative/" target="_blank" data-text="LINKEDIN">
+                        <span>LINKEDIN</span>
+                    </a>
+                    <a href="https://www.youtube.com/@yazihanereklamajansi" target="_blank" data-text="YOUTUBE">
+                        <span>YOUTUBE</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer reveal-up">
+        <div class="footer-giant">
+            <a href="mailto:bilgi@yazihane.com.tr">
+                <span data-i18n="footer_contact">BİZEULAŞIN</span>
+                <div class="wax-seal">
+                    <img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Seal">
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-socials">
+                <a href="https://www.linkedin.com/company/yazihanecreative/" target="_blank" class="roll-link"><span class="original">LINKEDIN</span><span class="glitch">LINKEDIN</span></a>
+                <a href="https://www.instagram.com/yazihanecreative" target="_blank" class="roll-link"><span class="original">INSTAGRAM</span><span class="glitch">INSTAGRAM</span></a>
+                <a href="https://www.youtube.com/@yazihanereklamajansi" target="_blank" class="roll-link"><span class="original">YOUTUBE</span><span class="glitch">YOUTUBE</span></a>
+            </div>
+            
+            <div class="footer-legal">
+                <a href="legal.html#kullanim" data-i18n="leg_1">KULLANIM KOŞULLARI</a>
+                <a href="legal.html#gizlilik" data-i18n="leg_2">GİZLİLİK POLİTİKASI</a>
+                <a href="legal.html#cerez" data-i18n="leg_3">ÇEREZ POLİTİKASI</a>
+            </div>
+            
+            <div class="footer-copyright" data-i18n="copy">
+                2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const toggleDropdown = function(e) {
+            if(e.target.classList.contains('lang-btn') || e.target.classList.contains('lang-btn-mobile')) return; 
+            this.classList.toggle('active');
+        };
+        const desktopLangTrigger = document.getElementById('desktop-lang-trigger');
+        const mobileLangTrigger = document.getElementById('mobile-lang-trigger');
+        if(desktopLangTrigger) desktopLangTrigger.addEventListener('click', toggleDropdown);
+        if(mobileLangTrigger) mobileLangTrigger.addEventListener('click', toggleDropdown);
+
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileHamburgerBtn = document.getElementById('mobile-hamburger-btn');
+        const mobileCloseBtn = document.getElementById('mobile-close-btn');
+
+        if(mobileHamburgerBtn) mobileHamburgerBtn.addEventListener('click', () => { mobileMenuOverlay.classList.add('active'); });
+        if(mobileCloseBtn) mobileCloseBtn.addEventListener('click', () => { mobileMenuOverlay.classList.remove('active'); });
+
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+
+            const scrollPerc = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+            const ticker = document.querySelector('.ticker-text');
+            if(ticker) {
+                let fillVal = 100 - (scrollPerc * 100);
+                if(fillVal < 0) fillVal = 0;
+                ticker.style.backgroundPosition = `0% ${fillVal}%`;
+            }
+        });
+
+        setInterval(() => {
+            const localTimeEl = document.getElementById('local-time');
+            if(localTimeEl) localTimeEl.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
+        }, 1000);
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 }); 
+        
+        document.querySelectorAll('.reveal-up, .reveal-fade').forEach(el => scrollObserver.observe(el));
+
+        // --- GALLERY & LIGHTBOX SİSTEMİ (GÜNCELLENDİ) ---
+        const weAreImages = []; 
+        // Otomatik yükleme için resim listesi (Picsum kullanılarak görsel simülasyonu yapılıyor)
+        for(let i=1; i<=15; i++) { 
+            weAreImages.push(`https://picsum.photos/800/1000?random=${i}`); 
+        } 
+
+        const galleryContainer = document.getElementById('gallery-container');
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lb-img');
+        const body = document.body;
+        const html = document.documentElement;
+        let currentIndex = 0;
+
+        weAreImages.forEach((src, index) => {
+            const box = document.createElement('div');
+            box.className = 'gallery-img-box';
+            // Ekrana basılan placeholder (Gerçek URL yazıldı ki logolar çıkmasın)
+            box.innerHTML = `<img src="https://picsum.photos/400/500?random=${index + 1}" alt="Ekip ${index + 1}">`; 
+            box.addEventListener('click', () => openLightbox(index));
+            galleryContainer.appendChild(box);
+        });
+
+        function openLightbox(index) {
+            currentIndex = index;
+            lbImg.src = weAreImages[currentIndex]; 
+            lightbox.classList.add('active');
+            body.classList.add('no-scroll');
+            html.classList.add('no-scroll');
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            body.classList.remove('no-scroll');
+            html.classList.remove('no-scroll');
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex + 1) % weAreImages.length;
+            lbImg.src = weAreImages[currentIndex];
+        }
+
+        function showPrev() {
+            currentIndex = (currentIndex - 1 + weAreImages.length) % weAreImages.length;
+            lbImg.src = weAreImages[currentIndex];
+        }
+
+        document.getElementById('lb-close').addEventListener('click', closeLightbox);
+        document.getElementById('lb-next').addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+        document.getElementById('lb-prev').addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+
+        // Tıklama ile kapatma (Eğer swipe yapılmadıysa)
+        lightbox.addEventListener('click', (e) => {
+            if (Math.abs(touchstartX - touchendX) > 40) return; // Sadece swipe yapıldıysa kapatmayı engeller
+            if (e.target === lightbox || e.target.classList.contains('lightbox-img-wrapper')) closeLightbox();
+        });
+
+        // --- GELİŞMİŞ MOBİL SWIPE (KAYDIRMA) KONTROLÜ ---
+        let touchstartX = 0;
+        let touchendX = 0;
+
+        lightbox.addEventListener('touchstart', (e) => {
+            touchstartX = e.changedTouches[0].screenX;
+            touchendX = touchstartX; // Tıklama kontrolü için reset
+        }, { passive: true });
+
+        lightbox.addEventListener('touchmove', (e) => {
+            if(lightbox.classList.contains('active')) {
+                e.preventDefault(); // Ekranın kaymasını kesin engeller (iOS Scroll Bug Fix)
+            }
+        }, { passive: false });
+
+        lightbox.addEventListener('touchend', (e) => {
+            touchendX = e.changedTouches[0].screenX;
+            let diff = touchstartX - touchendX;
+            
+            if (Math.abs(diff) > 40) { // 40px kaydırma algılama eşiği
+                if (diff > 0) showNext();
+                else showPrev();
+            }
+        }, { passive: true });
+
+
+        // --- ÇOK DİLLİ YAPI (i18n) ---
+        const i18n = {
+            tr: { 
+                nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.",
+                car_title_1: "CESUR", car_title_2: "KIŞKIRTICI", car_dna: "BU BİZİM DNA'MIZ",
+                car_statement: "<span class='red'>Yazıhane</span> kendisini alışılagelmiş konseptlerle sınırlamadan, hikayesi olan özgün projeler üreten ve bu projeler amaçlanan hedefe ulaşana dek tek elden tüm süreci üstlenen bir <span class='red'>360° reklam ajansıdır.</span>",
+                car_desc: "Şekillenmesine yardımcı olabileceğin, kendi izini bırakabileceğin bir ajansa katılmaya hazırsan bizimle iletişime geç.<br><br>Bu yolculukta olan ekibimize katıl.",
+                car_link: "Hemen CV'ni gönder! ↗",
+                car_mid_text: "Her departmanda ve her seviyede, Yazıhane ruhunu taşıyan karakteristik izler ararız. Cesur, meraklı ve kendi olmaktan asla çekinmeyen insanlarla bir arada büyürüz. Gelenekseli kırıp geçen özgün fikirler için omuz omuza savaşmak, bizim tek ilerleme yöntemimizdir. Herkesin bir hikayesi vardır. Ya senin?",
+                fu_title: "BİZİ TAKİP EDİN"
+            },
+            en: { 
+                nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE.",
+                car_title_1: "COURAGEOUS", car_title_2: "PROVOCATIVE", car_dna: "THAT'S OUR DNA",
+                car_statement: "<span class='red'>Yazıhane</span> is a <span class='red'>360° advertising agency</span> that doesn't limit itself to conventional concepts, produces original projects with a story, and handles the entire process single-handedly until these projects reach their intended goals.",
+                car_desc: "If you're ready to join an agency that you can help shape and where you can really make your mark, get in touch.<br><br>Join our team already on the journey.",
+                car_link: "Send your CV now! ↗",
+                car_mid_text: "In every department and at every level, we look for characteristic traits that carry the Yazıhane spirit. We grow together with people who are courageous, curious, and never hesitate to be themselves. Fighting shoulder to shoulder for original ideas that break traditions is our only way forward. Everyone has a story. What is yours?",
+                fu_title: "FOLLOW US ON"
+            },
+            ru: { 
+                nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE.",
+                car_title_1: "СМЕЛЫЕ", car_title_2: "ДЕРЗКИЕ", car_dna: "ЭТО НАША ДНК",
+                car_statement: "<span class='red'>Yazıhane</span> — это <span class='red'>рекламное агентство 360°</span>, которое не ограничивается традиционными концепциями, создает оригинальные проекты с историей и берет на себя весь процесс до достижения поставленных целей.",
+                car_desc: "Если вы готовы присоединиться к агентству, которое вы можете формировать и где вы можете оставить свой след, свяжитесь с нами.<br><br>Присоединяйтесь к нашей команде в этом путешествии.",
+                car_link: "Отправьте свое резюме! ↗",
+                car_mid_text: "В каждом отделе и на каждом уровне мы ищем характерные черты, несущие дух Yazıhane. Мы растем вместе со смелыми, любознательными и не стесняющимися быть собой людьми. Бороться плечом к плечу за оригинальные идеи, ломающие традиции, — наш единственный путь вперед. У каждого есть история. А у вас?",
+                fu_title: "СЛЕДИТЕ ЗА НАМИ"
+            },
+            ar: { 
+                nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه.",
+                car_title_1: "شجاع", car_title_2: "ومستفز", car_dna: "هذا هو حمضنا النووي",
+                car_statement: "<span class='red'>Yazıhane</span> هي <span class='red'>وكالة إعلانية بزاوية 360 درجة</span> لا تقيد نفسها بالمفاهيم التقليدية، وتنتج مشاريع أصلية ذات قصة، وتتولى العملية بأكملها بمفردها حتى تصل هذه المشاريع إلى أهدافها.",
+                car_desc: "إذا كنت مستعدًا للانضمام إلى وكالة يمكنك المساعدة في تشكيلها، وحيث يمكنك ترك بصمتك، تواصل معنا.<br><br>انضم إلى فريقنا في هذه الرحلة.",
+                car_link: "أرسل سيرتك الذاتية الآن! ↗",
+                car_mid_text: "في كل قسم وعلى كل مستوى، نبحث عن السمات المميزة التي تحمل روح Yazıhane. ننمو معًا مع أشخاص شجعان وفضوليين ولا يترددون أبدًا في أن يكونوا على طبيعتهم. القتال جنبًا إلى جنب من أجل الأفكار الأصلية التي تكسر التقاليد هو طريقنا الوحيد للمضي قدمًا. كل شخص لديه قصة. ما هي قصتك؟",
+                fu_title: "تابعنا على"
+            }
+        };
+
+        const setLanguage = (lang) => {
+            localStorage.setItem('yazihane_lang', lang);
+            document.documentElement.lang = lang; 
+
+            document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll(`.lang-btn[data-lang="${lang}"], .lang-btn-mobile[data-lang="${lang}"]`).forEach(b => b.classList.add('active'));
+            
+            const desktopCurrent = document.getElementById('desktop-lang-current-text');
+            if(desktopCurrent) desktopCurrent.innerHTML = `${lang.toUpperCase()} <span style="font-size: 8px;">▼</span>`;
+            
+            const mobileCurrent = document.querySelector('.mobile-lang-current');
+            if(mobileCurrent) mobileCurrent.innerHTML = `${lang.toUpperCase()} <span style="font-size: 8px;">▼</span>`;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                if(i18n[lang][el.dataset.i18n]) {
+                    el.innerHTML = i18n[lang][el.dataset.i18n];
+                }
+            });
+            
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.body.style.fontFamily = lang === 'ar' ? "'Space Grotesk', sans-serif" : "'Inter', sans-serif";
+            
+            if(mobileMenuOverlay) mobileMenuOverlay.classList.remove('active');
+            
+            const desktopLangTrigger = document.getElementById('desktop-lang-trigger');
+            const mobileLangTrigger = document.getElementById('mobile-lang-trigger');
+            if(desktopLangTrigger) desktopLangTrigger.classList.remove('active');
+            if(mobileLangTrigger) mobileLangTrigger.classList.remove('active');
+        };
+
+        document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(btn => {
+            btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang));
+        });
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
+            setLanguage(savedLang);
+        });
+
+    </script>
+</body>
+</html>
