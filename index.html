@@ -3,82 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Yazıhane Creative | Creative Revolution</title>
     
-    <title>Yazıhane Creative | 360° Hikaye Anlatıcısı</title>
-    <meta name="description" content="Yazıhane, markaların hikayelerini keşfeden ve inovatif dinamiklerle hedef kitleye ulaştıran küresel çapta bir kreatif ajanstır.">
-    <meta property="og:title" content="Yazıhane Creative | Creative Revolution">
-    <meta property="og:description" content="Stratejiyi sanatla buluşturan, 360° yeni nesil reklam ajansı.">
-    <meta property="og:image" content="https://yazihane.com.tr/images/logo/default.png">
-    <meta property="og:url" content="https://yazihane.com.tr">
-    <meta name="twitter:card" content="summary_large_image">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&family=Space+Grotesk:wght@600;700&family=Syne:wght@600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&family=Space+Grotesk:wght@600;700&family=Syne:wght@600;700;800&family=Rajdhani:wght@500;600;700&family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css"> <style>
-        /* KABUK CSS AYARLARI */
-        :root {
-            --bg: #070707; --text-cream: #E1DBC8; --iris-red: #E61E25; 
-            --neon-green: #00FF41; --border-color: rgba(225, 219, 200, 0.15);
-            --header-h: 90px; --sidebar-w: 60px;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg); color: var(--text-cream); font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        a { text-decoration: none; color: inherit; cursor: pointer; }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.06; pointer-events: none; z-index: 9999; }
-
-        /* AKILLI SAAT VE SOL BAR */
-        #vertical-ticker { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg); }
-        .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; transition: background 0.5s, box-shadow 0.5s; }
-        .status-dot.open { background: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); animation: pulse-green 1.5s infinite; }
-        .status-dot.closed { background: var(--iris-red); box-shadow: 0 0 10px rgba(230, 30, 37, 0.5); animation: pulse-red 1.5s infinite; }
-        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(0, 255, 65, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); } }
-        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
-        .digital-clock { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; transition: color 0.5s; }
-        .clock-open { color: var(--neon-green); } .clock-closed { color: var(--iris-red); }
-        .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
-        .ticker-text { font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 2vh, 20px); letter-spacing: clamp(0.15em, 0.3vh, 0.35em); white-space: nowrap; font-weight: 700; background: linear-gradient(to bottom, var(--iris-red) 50%, var(--text-cream) 50%); background-size: 100% 200%; background-position: 0% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: background-position 0.1s ease-out; }
-
-        /* HEADER */
-        header { position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: var(--header-h); background: rgba(7, 7, 7, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-color); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 4vw; z-index: 2000; transition: background 0.3s ease, border-color 0.3s ease; gap: clamp(5px, 2vw, 20px); }
-        .header-nav { display: flex; gap: clamp(8px, 1.5vw, 3vw); align-items: center; flex-wrap: nowrap; white-space: nowrap; }
-        .nav-right { justify-content: flex-end; }
-        .header-logo { display: flex; justify-content: center; }
-        .header-logo img { height: clamp(35px, 4vw, 48px); object-fit: contain; cursor: pointer; transition: transform 0.4s ease, filter 0.4s ease; }
-        .roll-link { position: relative; display: inline-block; font-family: 'Syne', sans-serif; font-size: clamp(8px, 0.9vw, 14px); font-weight: 700; letter-spacing: clamp(0.05em, 0.2vw, 0.3em); text-transform: uppercase; cursor: pointer; }
-        .roll-link .original, .roll-link .glitch { display: block; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s, filter 0.3s; }
-        .roll-link .original { color: var(--text-cream); }
-        .roll-link .glitch { position: absolute; top: 0; left: 0; right: 0; color: var(--iris-red); opacity: 0; transform: translateY(15px) skewX(-10deg); filter: blur(3px); }
-        .roll-link:hover .original { transform: translateY(-15px) skewX(10deg); opacity: 0; filter: blur(3px); }
-        .roll-link:hover .glitch { transform: translateY(0) skewX(0); opacity: 1; filter: blur(0px); }
-
-        /* UYGULAMA İÇERİK ALANI (SPA CONTAINER) */
-        #app-root { margin-left: var(--sidebar-w); min-height: 100vh; overflow: hidden; transition: opacity 0.4s ease, filter 0.4s ease; }
-        .page-loading { opacity: 0; filter: blur(10px); }
-        
-        /* FOOTER */
-        .site-footer { margin-left: var(--sidebar-w); border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
-        .footer-giant { text-align: center; position: relative; width: 100%; }
-        .footer-giant a { display: inline-flex; align-items: center; justify-content: center; position: relative; font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(4rem, 20vw, 25rem); font-weight: 900; line-height: 0.8; color: var(--text-cream); letter-spacing: -0.01em; transition: color 0.4s ease; white-space: nowrap; width: 100%; }
-        .footer-giant a:hover { color: rgba(225, 219, 200, 0.8); }
-        .footer-bottom { display: flex; justify-content: space-between; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; flex-wrap: wrap; gap: 30px; }
-        .footer-socials { display: flex; gap: 3vw; }
-        .footer-legal { display: flex; gap: 2.5vw; color: rgba(225, 219, 200, 0.5); }
-        
-        @media (max-width: 768px) {
-            #vertical-ticker { display: none; }
-            #app-root, .site-footer { margin-left: 0; }
-            header { left: 0; grid-template-columns: auto 1fr auto; padding: 0 5vw; gap: 10px; }
-            .header-nav { display: none !important; }
-            .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
-            .footer-socials { flex-direction: column; gap: 10px; }
-            .footer-legal { flex-direction: column; gap: 10px; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div id="popup-overlay"></div>
 
     <aside id="vertical-ticker">
         <div class="pulse-link">
@@ -94,22 +29,28 @@
         <a href="mailto:bilgi@yazihane.com.tr" class="mobile-header-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         </a>
-
         <nav class="header-nav nav-left">
             <a data-link="/home" class="roll-link"><span class="original">ANA SAYFA</span><span class="glitch">ANA SAYFA</span></a>
             <a data-link="/portfolio" class="roll-link"><span class="original">PORTFOLYO</span><span class="glitch">PORTFOLYO</span></a>
             <a data-link="/about" class="roll-link"><span class="original">HAKKIMIZDA</span><span class="glitch">HAKKIMIZDA</span></a>
         </nav>
-        
         <div class="header-logo">
             <a data-link="/home"><img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Logo"></a>
         </div>
-
         <nav class="header-nav nav-right">
             <a data-link="/services" class="roll-link"><span class="original">HİZMETLERİMİZ</span><span class="glitch">HİZMETLERİMİZ</span></a>
             <a data-link="/careers" class="roll-link"><span class="original">KARİYER</span><span class="glitch">KARİYER</span></a>
-            <a href="mailto:bilgi@yazihane.com.tr" class="roll-link"><span class="original">İLETİŞİM</span><span class="glitch">İLETİŞİM</span></a>
+            <div class="desktop-lang-dropdown" id="desktop-lang-trigger">
+                <div class="desktop-lang-current" id="desktop-lang-current-text">TR <span style="font-size: 8px;">▼</span></div>
+                <div class="desktop-lang-list">
+                    <span class="lang-btn" data-lang="tr">TR</span>
+                    <span class="lang-btn" data-lang="en">EN</span>
+                </div>
+            </div>
         </nav>
+        <button class="mobile-header-btn" id="mobile-hamburger-btn">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
     </header>
 
     <main id="app-root" class="page-loading">
@@ -118,17 +59,16 @@
     <footer class="site-footer">
         <div class="footer-giant">
             <a href="mailto:bilgi@yazihane.com.tr">
-                <span>BİZEULAŞIN</span>
+                <span data-i18n="footer_contact">BİZEULAŞIN</span>
+                <div class="wax-seal">
+                    <img src="https://yazihane.com.tr/images/logo/default.png" alt="Yazıhane Seal">
+                </div>
             </a>
         </div>
         <div class="footer-bottom">
             <div class="footer-socials">
                 <a href="https://www.instagram.com/yazihanecreative" target="_blank" class="roll-link"><span class="original">INSTAGRAM</span><span class="glitch">INSTAGRAM</span></a>
                 <a href="https://www.linkedin.com/company/yazihanecreative/" target="_blank" class="roll-link"><span class="original">LINKEDIN</span><span class="glitch">LINKEDIN</span></a>
-            </div>
-            <div class="footer-legal">
-                <a>KULLANIM KOŞULLARI</a>
-                <a>GİZLİLİK POLİTİKASI</a>
             </div>
             <div class="footer-copyright">2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.</div>
         </div>
