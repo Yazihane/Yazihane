@@ -111,7 +111,7 @@
         .desktop-lang-dropdown:hover .desktop-lang-current, .mobile-lang-dropdown:hover .mobile-lang-current { color: var(--text-cream); }
         .desktop-lang-list, .mobile-lang-list { position: absolute; top: 100%; right: 0; background: rgba(7,7,7,0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-color); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 5px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .desktop-lang-dropdown.active .desktop-lang-list, .mobile-lang-dropdown.active .mobile-lang-list { opacity: 1; pointer-events: auto; }
-        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; }
+        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; transition: color 0.2s; }
         .lang-btn.active, .lang-btn:hover, .lang-btn-mobile.active, .lang-btn-mobile:hover { color: var(--text-cream); }
 
         .mobile-header-btn { display: none; align-items: center; color: var(--text-cream); cursor: pointer; background: none; border: none; }
@@ -231,23 +231,49 @@
         .fade-out { opacity: 0 !important; transform: translateY(-30px) !important; pointer-events: none; }
         .fade-in { opacity: 1 !important; transform: translateY(0) !important; }
 
-        /* --- 3. MARKALAR ALANI (SAFARI FIX EKLENDİ) --- */
-        #brands { padding: 100px 5vw 150px; border-top: 1px solid var(--border-color); }
+        /* --- 3. ORGANİK MARKALAR ALANI --- */
+        #brands { padding: 80px 5vw 120px; border-top: 1px solid var(--border-color); }
         .brands-title-wrapper { text-align: center; margin-bottom: 60px; }
         .bt-red { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--iris-red); font-weight: 400; line-height: 1; letter-spacing: -0.02em; }
         .bt-white { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--text-cream); font-weight: 400; font-style: italic; line-height: 1; letter-spacing: -0.02em; }
 
-        .logo-wall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); }
+        .logo-wall-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: center; 
+            gap: clamp(10px, 1.5vw, 20px); 
+            width: 100%; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
         
         .logo-cell { 
-            background: var(--text-cream); border-radius: 4px; aspect-ratio: 4/3; 
-            display: flex; justify-content: center; align-items: center; padding: 25px; 
-            transition: background 0.3s ease; 
-            overflow: hidden; min-height: 0; min-width: 0; /* Safari Taşma Hatası Çözümü */
+            background: var(--text-cream); 
+            border-radius: 8px; 
+            flex: 0 0 auto;
+            width: clamp(120px, 12vw, 160px); 
+            aspect-ratio: 4/3; 
+            display: flex; justify-content: center; align-items: center; padding: clamp(15px, 2vw, 25px); 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; 
+            overflow: hidden; 
         }
-        .logo-cell img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s ease; }
-        .logo-cell:hover { background: #fff; }
-        .logo-cell:hover img { transform: scale(1.1); }
+        
+        .logo-cell img { 
+            max-width: 100%; max-height: 100%; object-fit: contain; 
+            filter: brightness(0.8) contrast(1.1); transition: all 0.4s ease; 
+        }
+        
+        .logo-cell:hover { 
+            background: #fff; 
+            transform: translateY(-5px) scale(1.05); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
+        }
+        
+        .logo-cell:hover img { 
+            filter: brightness(1) contrast(1.2); 
+            transform: scale(1.1); 
+        }
 
         /* --- FOOTER --- */
         .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
@@ -543,96 +569,71 @@
         const scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
+                    entry.target.classList.add('is-visible'); 
+                    if (entry.target.classList.contains('turn-red')) setTimeout(() => entry.target.classList.add('active'), 1000);
+                    if (entry.target.classList.contains('red-marker')) entry.target.classList.add('active');
                 }
             });
         }, { threshold: 0.1 }); 
         
-        document.querySelectorAll('.reveal-up, .reveal-fade').forEach(el => scrollObserver.observe(el));
+        document.querySelectorAll('.reveal-up, .reveal-fade, .turn-red, .red-marker').forEach(el => scrollObserver.observe(el));
 
-        // --- ZEKİ LOGO YÜKLEYİCİ (NETLIFY KOTA KORUYUCU + Orijinal Çözüm) ---
+        // --- ZEKİ LOGO YÜKLEYİCİ (NETLIFY FUNCTION) ---
         async function loadAndShuffleLogos() {
-            const CACHE_KEY = 'yazihane_logos_v2';
-            const CACHE_TIME_KEY = 'yazihane_logos_time_v2';
-            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 Saatlik Önbellek
+            const CACHE_KEY = 'yazihane_logos_v3';
+            const CACHE_TIME_KEY = 'yazihane_logos_time_v3';
+            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+            const logoWallGrid = document.getElementById('logo-wall-grid');
             
+            if(!logoWallGrid) return;
+
             let cachedLogos = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
             let cacheTime = localStorage.getItem(CACHE_TIME_KEY);
-            
-            const logoWallGrid = document.getElementById('logo-wall-grid');
-            if(!logoWallGrid) return;
-            
+
             if (cachedLogos.length > 0 && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
                 displayLogos(cachedLogos);
                 return;
             }
-            
-            // Eğer LocalStorage boşsa taramayı başlat (FETCH KULLANMADAN, IMAGE OLUŞTURARAK)
-            const logosFolder = "https://www.yazihane.com.tr/images/logolar/";
-            const logoExtensions = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
-            let validLogos = [];
-            let missCount = 0;
-            
-            logoWallGrid.style.display = 'grid';
-            
-            function checkLogo(index, extIndex) {
-                if (extIndex >= logoExtensions.length) {
-                    missCount++;
-                    // 5 kez üst üste görsel bulamazsa veya 150'yi geçerse taramayı kes!
-                    if(missCount >= 5 || index > 150) {
-                        localStorage.setItem(CACHE_KEY, JSON.stringify(validLogos));
+
+            try {
+                // Fetch from Netlify Function
+                const response = await fetch('/.netlify/functions/getLogos');
+                if (response.ok) {
+                    const logolar = await response.json();
+                    if (logolar && logolar.length > 0) {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(logolar));
                         localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-                        displayLogos(validLogos);
-                        return;
+                        displayLogos(logolar);
                     }
-                    checkLogo(index + 1, 0);
-                    return;
                 }
-                
-                const imgPath = `${logosFolder}${index}.${logoExtensions[extIndex]}`;
-                const img = new Image();
-                
-                img.onload = function() {
-                    validLogos.push(imgPath);
-                    missCount = 0; // Sıfırla
-                    checkLogo(index + 1, 0); // Bir sonrakine geç
-                };
-                
-                img.onerror = function() {
-                    checkLogo(index, extIndex + 1); // Aynı sayının diğer formatını (png, svg) dene
-                };
-                
-                img.src = imgPath;
+            } catch (error) {
+                console.error("Logo fetch hatası:", error);
             }
-            
-            checkLogo(1, 0); // Aramayı başlat
         }
 
-        function displayLogos(logoUrls) {
+        function displayLogos(logoArray) {
             const grid = document.getElementById('logo-wall-grid');
             if(!grid) return;
-            grid.style.display = 'grid';
+            grid.style.display = 'flex';
             grid.innerHTML = '';
             
-            // Logoları Karıştır (Shuffle)
-            const shuffled = [...logoUrls].sort(() => 0.5 - Math.random());
+            // Shuffle
+            const shuffled = [...logoArray].sort(() => 0.5 - Math.random());
             
-            shuffled.forEach((url, index) => {
+            shuffled.forEach((logoName) => {
                 const cell = document.createElement('div'); 
                 cell.className = 'logo-cell';
                 
                 const img = document.createElement('img'); 
-                img.src = url;
+                img.src = `/images/logolar/${logoName}`;
                 img.alt = `Çözüm Ortağı`;
+                img.loading = "lazy";
                 
                 cell.appendChild(img); 
                 grid.appendChild(cell);
             });
         }
-        
-        loadAndShuffleLogos();
 
-        // --- ÇOK DİLLİ YAPI (i18n) VE YENİ UZUN İÇERİKLER ---
         const i18n = {
             tr: { 
                 nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.",
@@ -747,6 +748,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);
+            
+            loadAndShuffleLogos(); // Netlify backend sistemi ile logoları yükle
 
             const hash = window.location.hash.replace('#', '');
             if (hash && hash.startsWith('srv_')) {

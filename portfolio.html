@@ -249,20 +249,35 @@
         /* --- DİNAMİK LOGO ALANI --- */
         #logo-area { border-top: 1px solid var(--border-color); padding: 40px 5vw; margin-top: 20px; opacity: 0; transition: opacity 0.5s ease; }
         .logo-area-title { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 1.2rem; color: rgba(225, 219, 200, 0.5); margin-bottom: 30px; text-align: center; }
-        .logo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px; align-items: center; justify-content: center; }
+        
+        .logo-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 20px; 
+            width: 100%; 
+        }
         
         .logo-box { 
-            background: rgba(225, 219, 200, 0.05); aspect-ratio: 1/1; border-radius: 4px; 
+            background: rgba(225, 219, 200, 0.05); border-radius: 8px; 
+            flex: 0 0 auto; width: clamp(100px, 12vw, 140px); aspect-ratio: 1/1; 
             display: flex; justify-content: center; align-items: center; padding: 15px; 
-            transition: background 0.3s ease; 
-            overflow: hidden; min-height: 0; min-width: 0; 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; 
+            overflow: hidden; 
         }
-        .logo-box:hover { background: rgba(225, 219, 200, 0.1); }
+        
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: brightness(0.8) contrast(1.1); transition: filter 0.3s ease; }
-        .logo-box:hover img { filter: brightness(1) contrast(1.2); }
+        
+        .logo-box:hover { 
+            background: rgba(225, 219, 200, 0.1); 
+            transform: translateY(-5px) scale(1.05); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+        }
+        .logo-box:hover img { filter: brightness(1) contrast(1.2); transform: scale(1.1); }
 
         /* --- FOOTER --- */
-        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; }
+        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
         .footer-giant { text-align: center; position: relative; width: 100%; }
         
         .footer-giant a { 
@@ -351,7 +366,7 @@
 
     <aside id="vertical-ticker">
         <a href="https://maps.app.goo.gl/MaQWroNEvLF7iPzj7" target="_blank" class="pulse-link" title="Bizi Haritada Bulun">
-            <div class="pulse-dot"></div>
+            <div id="status-dot" class="pulse-dot"></div>
             <span id="local-time">12:00</span>
         </a>
         <div class="ticker-text-wrapper">
@@ -663,9 +678,8 @@
             } catch(e) { console.error("YouTube veri çekme hatası:", e); }
         }
 
-        // --- GÖRSEL DEDEKTİFİ ---
+        // --- GÖRSEL DEDEKTİFİ (SADECE PORTFOLYO İÇERİKLERİ İÇİN) ---
         const EXT_PRIORITY = ['jpg','png','webp','jpeg'];
-        const LOGO_EXT_PRIORITY = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
         const PRELOADED_CACHE = {}; 
 
         async function exists(url) {
@@ -691,18 +705,12 @@
         }
 
         function startPreloading() {
-            const logoPromises = [];
             Object.keys(SECTORS).forEach(sec => {
                 if(sec !== 'genel') {
-                    PRELOADED_CACHE[`${sec}_Fotoğraf`] = scanFolder(`images/${sec}/foto/`, EXT_PRIORITY);
-                    PRELOADED_CACHE[`${sec}_Tasarım`] = scanFolder(`images/${sec}/tsrm/`, EXT_PRIORITY);
-                    
-                    const p = scanFolder(`/images/logolar/`, LOGO_EXT_PRIORITY, sec, 4);
-                    PRELOADED_CACHE[`${sec}_Logolar`] = p;
-                    logoPromises.push(p);
+                    PRELOADED_CACHE[`${sec}_Fotoğraf`] = scanFolder(`/images/${sec}/foto/`, EXT_PRIORITY);
+                    PRELOADED_CACHE[`${sec}_Tasarım`] = scanFolder(`/images/${sec}/tsrm/`, EXT_PRIORITY);
                 }
             });
-            PRELOADED_CACHE[`genel_Logolar`] = Promise.all(logoPromises).then(results => results.flat());
         }
 
         async function loadImagesForService(sector, serviceType) {
@@ -740,20 +748,58 @@
             grid.innerHTML = htmlBuffer;
         }
 
-        // --- YENİ SEKTÖRE GÖRE LOGO ÇEKEN VE KARIŞTIRAN FONKSİYON ---
+        // --- YENİ ZEKİ LOGO YÜKLEYİCİ (NETLIFY FUNCTION) ---
+        async function loadAllLogosCache() {
+            const CACHE_KEY = 'yazihane_logos_v3';
+            const CACHE_TIME_KEY = 'yazihane_logos_time_v3';
+            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 saat
+            
+            let cachedLogos = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
+            let cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+            
+            if (cachedLogos.length > 0 && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
+                return cachedLogos;
+            }
+            
+            try {
+                const response = await fetch('/.netlify/functions/getLogos');
+                if (response.ok) {
+                    const logolar = await response.json();
+                    if (logolar && logolar.length > 0) {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(logolar));
+                        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+                        return logolar;
+                    }
+                }
+            } catch (error) {
+                console.error("Logo fetch hatası:", error);
+            }
+            return [];
+        }
+
         async function renderLogoWall(sectorKey) {
             const grid = document.getElementById('logo-grid');
             if(!grid) return;
             grid.innerHTML = '';
             
-            let logos = await PRELOADED_CACHE[`${sectorKey}_Logolar`];
+            // Tüm logoları hızlıca cache'den (veya sunucudan) çek
+            const allLogos = await loadAllLogosCache();
             
-            if(logos && logos.length > 0) {
-                // Sektöre ait logoları karıştır (shuffle)
-                logos = [...logos].sort(() => 0.5 - Math.random());
+            // Sektöre göre filtrele
+            let filteredLogos = [];
+            if(sectorKey === 'genel') {
+                filteredLogos = [...allLogos]; // Genel ise hepsini al
+            } else {
+                // İsmi sektör adıyla başlayanları al (örn: turizm1.png, insaat_logo.jpg)
+                filteredLogos = allLogos.filter(logo => logo.toLowerCase().startsWith(sectorKey.toLowerCase()));
+            }
+            
+            if(filteredLogos.length > 0) {
+                // Logoları karıştır (shuffle)
+                filteredLogos = filteredLogos.sort(() => 0.5 - Math.random());
 
-                logos.forEach(url => {
-                    grid.innerHTML += `<div class="logo-box"><img src="${url}" alt="Partner Logo"></div>`;
+                filteredLogos.forEach(logoName => {
+                    grid.innerHTML += `<div class="logo-box"><img src="/images/logolar/${logoName}" alt="Partner Logo" loading="lazy"></div>`;
                 });
             } else {
                 // Logo yoksa boş durmaması için geçici bir mesaj
