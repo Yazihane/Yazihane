@@ -45,16 +45,20 @@
         .reveal-fade { opacity: 0; transition: opacity 1.5s ease-in-out; }
         .reveal-fade.is-visible { opacity: 1; }
 
-        /* --- DİKEY SIDEBAR --- */
+        /* --- DİKEY SIDEBAR & SAAT --- */
         #vertical-ticker {
             position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
             border-right: 1px solid var(--border-color); display: flex; flex-direction: column;
             align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg);
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
-        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
-        .pulse-dot.open { background: var(--status-green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
-        .pulse-dot.closed { background: var(--iris-red); box-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
+        
+        .pulse-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.5s ease; }
+        .pulse-dot.open { background: var(--status-green); animation: pulse-green 1.5s infinite; }
+        .pulse-dot.closed { background: var(--iris-red); animation: pulse-red 1.5s infinite; }
+
+        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(0, 255, 65, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
         
         #local-time { 
             font-family: 'Oswald', sans-serif !important; 
@@ -215,7 +219,10 @@
 
         /* --- ORGANİK MARKALAR --- */
         #brands { padding: 80px 5vw 120px; border-top: 1px solid var(--border-color); }
-        
+        .brands-title-wrapper { text-align: center; margin-bottom: 60px; }
+        .bt-red { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--iris-red); font-weight: 400; line-height: 1; letter-spacing: -0.02em; }
+        .bt-white { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--text-cream); font-weight: 400; font-style: italic; line-height: 1; letter-spacing: -0.02em; }
+
         .logo-wall-grid { 
             display: flex; flex-wrap: wrap; justify-content: center; align-items: center; 
             gap: clamp(10px, 1.5vw, 20px); width: 100%; max-width: 1400px; margin: 0 auto; 
@@ -732,64 +739,36 @@
 
         // --- ZEKİ LOGO YÜKLEYİCİ (NETLIFY FUNCTION) ---
         async function loadAndShuffleLogos() {
-            const CACHE_KEY = 'yazihane_logos_v3';
-            const CACHE_TIME_KEY = 'yazihane_logos_time_v3';
-            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
             const logoWallGrid = document.getElementById('logo-wall-grid');
-            
             if(!logoWallGrid) return;
 
-            let cachedLogos = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
-            let cacheTime = localStorage.getItem(CACHE_TIME_KEY);
-
-            if (cachedLogos.length > 0 && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
-                displayLogos(cachedLogos);
-                return;
-            }
-
             try {
-                // Fetch from Netlify Function
                 const response = await fetch('/.netlify/functions/getLogos');
                 if (response.ok) {
                     const logolar = await response.json();
                     if (logolar && logolar.length > 0) {
-                        localStorage.setItem(CACHE_KEY, JSON.stringify(logolar));
-                        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-                        displayLogos(logolar);
+                        logoWallGrid.style.display = 'flex';
+                        logoWallGrid.innerHTML = '';
+                        
+                        const shuffled = [...logolar].sort(() => 0.5 - Math.random());
+                        
+                        shuffled.forEach((logoName) => {
+                            const cell = document.createElement('div'); 
+                            cell.className = 'logo-cell';
+                            
+                            const img = document.createElement('img'); 
+                            img.src = `/images/logolar/${logoName}`;
+                            img.alt = `Çözüm Ortağı`;
+                            img.loading = "lazy";
+                            
+                            cell.appendChild(img); 
+                            logoWallGrid.appendChild(cell);
+                        });
                     }
                 }
             } catch (error) {
                 console.error("Logo fetch hatası:", error);
             }
-        }
-
-        function displayLogos(logoArray) {
-            const grid = document.getElementById('logo-wall-grid');
-            if(!grid) return;
-            grid.style.display = 'flex';
-            grid.style.flexWrap = 'wrap';
-            grid.style.justifyContent = 'center';
-            grid.style.alignItems = 'center';
-            grid.style.gap = 'clamp(10px, 1.5vw, 20px)';
-            grid.style.width = '100%';
-            grid.style.maxWidth = '1400px';
-            grid.style.margin = '0 auto';
-            grid.innerHTML = '';
-            
-            const shuffled = [...logoArray].sort(() => 0.5 - Math.random());
-            
-            shuffled.forEach((logoName) => {
-                const cell = document.createElement('div'); 
-                cell.className = 'logo-cell';
-                
-                const img = document.createElement('img'); 
-                img.src = `/images/logolar/${logoName}`;
-                img.alt = `Çözüm Ortağı`;
-                img.loading = "lazy";
-                
-                cell.appendChild(img); 
-                grid.appendChild(cell);
-            });
         }
 
         const i18n = {
@@ -834,8 +813,11 @@
             btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang));
         });
         
-        const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
-        setLanguage(savedLang);
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
+            setLanguage(savedLang);
+            loadAndShuffleLogos();
+        });
     </script>
 </body>
 </html>
