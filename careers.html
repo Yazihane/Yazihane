@@ -17,6 +17,7 @@
             --border-color: rgba(225, 219, 200, 0.15);
             --header-h: 90px;
             --sidebar-w: 60px;
+            --status-green: #00FF41;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -57,9 +58,21 @@
             align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg);
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
-        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
-        #local-time { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--iris-red); font-weight: 700; }
+        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
+        .pulse-dot.open { background: var(--status-green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
+        .pulse-dot.closed { background: var(--iris-red); box-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
+        
+        #local-time { 
+            font-family: 'Oswald', sans-serif !important; 
+            font-size: 28px !important; 
+            font-weight: 300 !important; 
+            color: var(--status-green); 
+            letter-spacing: 1px !important; 
+            writing-mode: vertical-rl; 
+            text-orientation: mixed; 
+            transform: rotate(180deg); 
+            transition: color 0.5s ease; 
+        }
         
         .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
         .ticker-text {
@@ -306,8 +319,8 @@
 
             #follow-us { padding: 60px 0; min-height: auto; }
             
-            .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
-            .footer-socials { flex-direction: column; gap: 10px; }
+            .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 30px; }
+            .footer-socials { flex-direction: column; gap: 15px; }
             .footer-legal { flex-direction: column; gap: 10px; }
         }
     </style>
@@ -339,7 +352,7 @@
 
     <aside id="vertical-ticker">
         <a href="https://maps.app.goo.gl/MaQWroNEvLF7iPzj7" target="_blank" class="pulse-link" title="Bizi Haritada Bulun">
-            <div class="pulse-dot"></div>
+            <div id="status-dot" class="pulse-dot"></div>
             <span id="local-time">12:00</span>
         </a>
         <div class="ticker-text-wrapper">
@@ -511,10 +524,33 @@
             }
         });
 
-        setInterval(() => {
-            const localTimeEl = document.getElementById('local-time');
-            if(localTimeEl) localTimeEl.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
-        }, 1000);
+        // --- YENİ SİBER SAAT MANTIĞI ---
+        function updateClock() {
+            try {
+                const now = new Date();
+                const localTimeStr = now.toLocaleTimeString(navigator.language || 'tr-TR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                const localTimeEl = document.getElementById('local-time');
+                if(localTimeEl) localTimeEl.innerText = localTimeStr;
+
+                const istanbulStr = now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"});
+                const istanbulDate = new Date(istanbulStr);
+                const day = istanbulDate.getDay(); 
+                const hour = istanbulDate.getHours();
+
+                const dot = document.getElementById('status-dot');
+                if(dot && localTimeEl) {
+                    if (day >= 1 && day <= 5 && hour >= 10 && hour < 19) {
+                        dot.className = 'pulse-dot open';
+                        localTimeEl.style.color = '#00FF41';
+                    } else {
+                        dot.className = 'pulse-dot closed';
+                        localTimeEl.style.color = '#E61E25';
+                    }
+                }
+            } catch(e) { console.error("Saat hatası:", e); }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
         const scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -526,11 +562,10 @@
         
         document.querySelectorAll('.reveal-up, .reveal-fade').forEach(el => scrollObserver.observe(el));
 
-        // --- GALLERY & LIGHTBOX SİSTEMİ (GÜNCELLENDİ) ---
+        // --- GALLERY & LIGHTBOX SİSTEMİ (GÖRSELLER WEARE KLASÖRÜNDEN) ---
         const weAreImages = []; 
-        // Otomatik yükleme için resim listesi (Picsum kullanılarak görsel simülasyonu yapılıyor)
         for(let i=1; i<=15; i++) { 
-            weAreImages.push(`https://picsum.photos/800/1000?random=${i}`); 
+            weAreImages.push(`https://www.yazihane.com.tr/images/career/${i}.jpg`); 
         } 
 
         const galleryContainer = document.getElementById('gallery-container');
@@ -543,8 +578,8 @@
         weAreImages.forEach((src, index) => {
             const box = document.createElement('div');
             box.className = 'gallery-img-box';
-            // Ekrana basılan placeholder (Gerçek URL yazıldı ki logolar çıkmasın)
-            box.innerHTML = `<img src="https://picsum.photos/400/500?random=${index + 1}" alt="Ekip ${index + 1}">`; 
+            // Görsel yoksa onerror ile Yazıhane logosunu basar
+            box.innerHTML = `<img src="${src}" alt="Yazıhane Ekip ${index + 1}" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';">`; 
             box.addEventListener('click', () => openLightbox(index));
             galleryContainer.appendChild(box);
         });
@@ -552,6 +587,24 @@
         function openLightbox(index) {
             currentIndex = index;
             lbImg.src = weAreImages[currentIndex]; 
+            
+            // Lightbox içindeki görsel yoksa logoyu bas
+            lbImg.onerror = function() {
+                this.onerror=null; 
+                this.src='https://yazihane.com.tr/images/logo/default.png'; 
+                this.style.objectFit='contain'; 
+                this.style.padding='40px'; 
+                this.style.filter='grayscale(100%) opacity(0.3)';
+            };
+            
+            // Sonraki geçişlerde stil resetlemesi (logo atandıktan sonra normal resme geçerse düzelmesi için)
+            lbImg.onload = function() {
+                if (this.src.includes('default.png')) return;
+                this.style.objectFit='contain';
+                this.style.padding='0';
+                this.style.filter='none';
+            };
+
             lightbox.classList.add('active');
             body.classList.add('no-scroll');
             html.classList.add('no-scroll');
@@ -672,7 +725,6 @@
             document.body.style.fontFamily = lang === 'ar' ? "'Space Grotesk', sans-serif" : "'Inter', sans-serif";
             
             if(mobileMenuOverlay) mobileMenuOverlay.classList.remove('active');
-            
             const desktopLangTrigger = document.getElementById('desktop-lang-trigger');
             const mobileLangTrigger = document.getElementById('mobile-lang-trigger');
             if(desktopLangTrigger) desktopLangTrigger.classList.remove('active');
@@ -683,6 +735,7 @@
             btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang));
         });
         
+        // Site açılışında hafızadaki dili çek ve uygula
         window.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);

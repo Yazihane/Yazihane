@@ -17,6 +17,7 @@
             --border-color: rgba(225, 219, 200, 0.15);
             --header-h: 90px;
             --sidebar-w: 60px;
+            --status-green: #00FF41;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,7 +45,9 @@
         }
         .reveal-up.is-visible { opacity: 1; transform: none; } 
 
-        .reveal-fade { opacity: 0; transition: opacity 1.5s ease-in-out; }
+        .reveal-fade {
+            opacity: 0; transition: opacity 1.5s ease-in-out;
+        }
         .reveal-fade.is-visible { opacity: 1; }
 
         /* --- DİKEY SIDEBAR --- */
@@ -54,9 +57,19 @@
             align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg);
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
-        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
-        #local-time { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--iris-red); font-weight: 700; }
+        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
+        
+        #local-time { 
+            font-family: 'Oswald', sans-serif !important; 
+            font-size: 28px !important; 
+            font-weight: 300 !important; 
+            color: var(--status-green); 
+            letter-spacing: 1px !important; 
+            writing-mode: vertical-rl; 
+            text-orientation: mixed; 
+            transform: rotate(180deg); 
+            transition: color 0.5s ease; 
+        }
         
         .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
         .ticker-text {
@@ -250,7 +263,7 @@
         .s-arrow { font-family: 'Space Grotesk'; font-size: 2.8rem; opacity: 0; transform: translateX(-20px); transition: all 0.3s ease; color: var(--text-cream); }
         .service-row:hover .s-arrow { opacity: 1; transform: translateX(0); }
 
-        /* --- FOOTER (GÖRÜNÜRLÜK SORUNU ÇÖZÜLDÜ) --- */
+        /* --- FOOTER --- */
         .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
         .footer-giant { text-align: center; position: relative; width: 100%; }
         
@@ -413,20 +426,20 @@
                 <button class="carousel-arrow prev" onclick="document.getElementById('team-carousel').scrollBy({left: -320, behavior: 'smooth'})"><div class="carousel-arrow-inner">←</div></button>
                 
                 <div class="team-carousel" id="team-carousel">
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">01</div><div class="card-name">Ali Adnan Özgür</div><div class="card-role" data-i18n="role_founder">Kurucu</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">02</div><div class="card-name">Hakan Cigaoğlu</div><div class="card-role" data-i18n="role_founder">Kurucu</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">03</div><div class="card-name">Volkan Çelebi</div><div class="card-role" data-i18n="role_gm">Genel Müdür</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">04</div><div class="card-name">Murat Sağlam</div><div class="card-role" data-i18n="role_cd">Kreatif Müdür</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">05</div><div class="card-name">İrem Gürleyik</div><div class="card-role" data-i18n="role_marketing">Marketing & Business Dev.</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">06</div><div class="card-name">Tarık Can Özkan</div><div class="card-role" data-i18n="role_ad">Art Director</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">07</div><div class="card-name">Özgür Sabukazan</div><div class="card-role" data-i18n="role_hgd">Head of Graphic Design</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">08</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_video">Videographer</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">09</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_video">Videographer</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">10</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_gd">Graphic Designer</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">11</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_gd">Graphic Designer</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">12</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_gd">Graphic Designer</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">13</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_social">Social Media</div></div></div>
-                    <div class="team-card"><div class="card-img-wrapper"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-family:'Anton';background:#111;">PHOTO</div></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">14</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_social">Social Media</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/1.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">01</div><div class="card-name">Ali Adnan Özgür</div><div class="card-role" data-i18n="role_founder">Kurucu</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/2.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">02</div><div class="card-name">Hakan Cigaoğlu</div><div class="card-role" data-i18n="role_founder">Kurucu</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/3.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">03</div><div class="card-name">Volkan Çelebi</div><div class="card-role" data-i18n="role_gm">Genel Müdür</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/4.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">04</div><div class="card-name">Murat Sağlam</div><div class="card-role" data-i18n="role_cd">Kreatif Müdür</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/5.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">05</div><div class="card-name">İrem Gürleyik</div><div class="card-role" data-i18n="role_marketing">Marketing & Business Dev.</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/6.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">06</div><div class="card-name">Tarık Can Özkan</div><div class="card-role" data-i18n="role_ad">Art Director</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/7.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">07</div><div class="card-name">Özgür Sabukazan</div><div class="card-role" data-i18n="role_hgd">Head of Graphic Design</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/8.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">08</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_video">Videographer</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/9.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">09</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_video">Videographer</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/10.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">10</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_gd">Graphic Designer</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/11.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">11</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_gd">Graphic Designer</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/12.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">12</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_gd">Graphic Designer</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/13.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">13</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_social">Social Media</div></div></div>
+                    <div class="team-card"><div class="card-img-wrapper"><img src="https://www.yazihane.com.tr/images/weare/14.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="card-overlay"></div><div class="card-info"><div class="card-number">14</div><div class="card-name">İsim Soyisim</div><div class="card-role" data-i18n="role_social">Social Media</div></div></div>
                 </div>
                 
                 <button class="carousel-arrow next" onclick="document.getElementById('team-carousel').scrollBy({left: 320, behavior: 'smooth'})"><div class="carousel-arrow-inner">→</div></button>
@@ -497,7 +510,7 @@
         </section>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer reveal-up">
         <div class="footer-giant">
             <a href="mailto:bilgi@yazihane.com.tr">
                 <span data-i18n="footer_contact">BİZEULAŞIN</span>
@@ -543,41 +556,89 @@
         if(mobileHamburgerBtn) mobileHamburgerBtn.addEventListener('click', () => { mobileMenuOverlay.classList.add('active'); });
         if(mobileCloseBtn) mobileCloseBtn.addEventListener('click', () => { mobileMenuOverlay.classList.remove('active'); });
 
-        const logosFolder = "/logolar/";
-        const logoExtensions = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
-        const logoWallGrid = document.getElementById('logo-wall-grid');
-        logoWallGrid.style.display = 'grid'; 
-
-        for (let i = 1; i <= 150; i++) {
-            loadLogoForIndex(i, 0);
+        // --- ZEKİ LOGO YÜKLEYİCİ (NETLIFY KOTA KORUYUCU + Orijinal Çözüm) ---
+        async function loadAndShuffleLogos() {
+            const CACHE_KEY = 'yazihane_logos_v2';
+            const CACHE_TIME_KEY = 'yazihane_logos_time_v2';
+            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 Saatlik Önbellek
+            
+            let cachedLogos = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
+            let cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+            
+            const logoWallGrid = document.getElementById('logo-wall-grid');
+            if(!logoWallGrid) return;
+            
+            if (cachedLogos.length > 0 && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
+                displayLogos(cachedLogos);
+                return;
+            }
+            
+            // Eğer LocalStorage boşsa taramayı başlat (FETCH KULLANMADAN, IMAGE OLUŞTURARAK)
+            const logosFolder = "https://www.yazihane.com.tr/images/logolar/";
+            const logoExtensions = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
+            let validLogos = [];
+            let missCount = 0;
+            
+            logoWallGrid.style.display = 'grid';
+            
+            function checkLogo(index, extIndex) {
+                if (extIndex >= logoExtensions.length) {
+                    missCount++;
+                    // 5 kez üst üste görsel bulamazsa veya 150'yi geçerse taramayı kes!
+                    if(missCount >= 5 || index > 150) {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(validLogos));
+                        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+                        displayLogos(validLogos);
+                        return;
+                    }
+                    checkLogo(index + 1, 0);
+                    return;
+                }
+                
+                const imgPath = `${logosFolder}${index}.${logoExtensions[extIndex]}`;
+                const img = new Image();
+                
+                img.onload = function() {
+                    validLogos.push(imgPath);
+                    missCount = 0; // Sıfırla
+                    checkLogo(index + 1, 0); // Bir sonrakine geç
+                };
+                
+                img.onerror = function() {
+                    checkLogo(index, extIndex + 1); // Aynı sayının diğer formatını (png, svg) dene
+                };
+                
+                img.src = imgPath;
+            }
+            
+            checkLogo(1, 0); // Aramayı başlat
         }
 
-        function loadLogoForIndex(index, extIndex) {
-            if (extIndex >= logoExtensions.length || !logoWallGrid) return;
+        function displayLogos(logoUrls) {
+            const grid = document.getElementById('logo-wall-grid');
+            if(!grid) return;
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
             
-            const imgPath = `${logosFolder}${index}.${logoExtensions[extIndex]}`;
-            const img = new Image();
+            // Logoları Karıştır (Shuffle)
+            const shuffled = [...logoUrls].sort(() => 0.5 - Math.random());
             
-            img.onload = function() {
+            shuffled.forEach((url, index) => {
                 const cell = document.createElement('div'); 
                 cell.className = 'logo-cell';
-                cell.style.order = index; 
                 
-                const imgEl = document.createElement('img'); 
-                imgEl.src = imgPath;
-                imgEl.alt = `Partner ${index}`;
+                const img = document.createElement('img'); 
+                img.src = url;
+                img.alt = `Çözüm Ortağı`;
                 
-                cell.appendChild(imgEl); 
-                logoWallGrid.appendChild(cell);
-            };
-            
-            img.onerror = function() { 
-                loadLogoForIndex(index, extIndex + 1); 
-            };
-            
-            img.src = imgPath;
+                cell.appendChild(img); 
+                grid.appendChild(cell);
+            });
         }
+        
+        loadAndShuffleLogos();
 
+        // --- HEADER SCROLL ---
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 50) header.classList.add('scrolled');
@@ -702,27 +763,52 @@
         window.addEventListener('scroll', updateVideoMask);
         window.addEventListener('resize', updateVideoMask);
 
+        // --- FOOTER VE ANİMASYON DÜZELTMESİ (is-visible eklendi) ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible'); 
                     if (entry.target.classList.contains('turn-red')) setTimeout(() => entry.target.classList.add('active'), 1000);
                     if (entry.target.classList.contains('red-marker')) entry.target.classList.add('active');
                 }
             });
-        }, { threshold: 0.6 }); 
+        }, { threshold: 0.1 }); 
         
-        document.querySelectorAll('.turn-red, .red-marker').forEach(el => observer.observe(el));
+        document.querySelectorAll('.reveal-up, .reveal-fade, .turn-red, .red-marker').forEach(el => observer.observe(el));
 
-        setInterval(() => {
-            const localTimeEl = document.getElementById('local-time');
-            if(localTimeEl) localTimeEl.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
-        }, 1000);
+        // --- YENİ SİBER SAAT MANTIĞI ---
+        function updateClock() {
+            try {
+                const now = new Date();
+                const localTimeStr = now.toLocaleTimeString(navigator.language || 'tr-TR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                const localTimeEl = document.getElementById('local-time');
+                if(localTimeEl) localTimeEl.innerText = localTimeStr;
+
+                const istanbulStr = now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"});
+                const istanbulDate = new Date(istanbulStr);
+                const day = istanbulDate.getDay(); 
+                const hour = istanbulDate.getHours();
+
+                const dot = document.querySelector('.pulse-dot');
+                if(dot && localTimeEl) {
+                    if (day >= 1 && day <= 5 && hour >= 10 && hour < 19) {
+                        dot.className = 'pulse-dot open';
+                        localTimeEl.style.color = 'var(--status-green)';
+                    } else {
+                        dot.className = 'pulse-dot closed';
+                        localTimeEl.style.color = 'var(--iris-red)';
+                    }
+                }
+            } catch(e) { console.error("Saat hatası:", e); }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
         const i18n = {
-            tr: { hero_title: "BİZ YAZIHANEYİZ", nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", man_1: "Biz Yazıhaneyiz.", man_2: "Sadece reklam endüstrisi için doğmadık;", man_3: "gerçek dünyada, sahada büyüdük.", man_4: "Bu yüzden ürettiğimiz her şey; markalara derinlik katan, el yapımı hikayelerden oluşur.", man_link: "HAKKIMIZDA DAHA FAZLASI ↗", team_title: "BİZ KİMİZ", role_founder: "Kurucu", role_gm: "Genel Müdür", role_cd: "Kreatif Müdür", role_marketing: "Marketing & Business Dev.", role_ad: "Art Director", role_hgd: "Head of Graphic Design", brands_title: "ÇÖZÜM ORTAKLARIMIZ", slo_meta_new: "EST. 2016", slo_1: "SÖYLEYECEK", slo_2: "SÖZÜ OLANLAR", slo_3: "İÇİN BURADAYIZ.", slo_red: "HERKESİN BİR HİKAYESİ VARDIR.", lbl_services: "HİZMETLERİMİZ", srv_1: "360° Hizmet", srv_2: "Video Prodüksiyon", srv_3: "Sosyal Medya Yönetimi", srv_4: "Grafik Tasarım", srv_5: "Kreatif Çözümler", srv_6: "Dijital Pazarlama ve Reklam", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR." },
-            en: { hero_title: "WE ARE YAZIHANE", nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", man_1: "We are Yazıhane.", man_2: "We weren't born in the ad industry;", man_3: "we grew up in the real world.", man_4: "That's why everything we create consists of hand-crafted stories that add depth to brands.", man_link: "MORE ABOUT US ↗", team_title: "WHO WE ARE", role_founder: "Founder", role_gm: "General Manager", role_cd: "Creative Manager", role_marketing: "Marketing & Business Dev.", role_ad: "Art Director", role_hgd: "Head of Graphic Design", brands_title: "OUR PARTNERS", slo_meta_new: "EST. 2016", slo_1: "WE ARE HERE", slo_2: "FOR THOSE WHO", slo_3: "HAVE SOMETHING TO SAY.", slo_red: "EVERYONE HAS A STORY.", lbl_services: "OUR SERVICES", srv_1: "360° Services", srv_2: "Video Production", srv_3: "Social Media Management", srv_4: "Graphic Design", srv_5: "Creative Solutions", srv_6: "Digital Marketing & Ads", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE." },
-            ru: { hero_title: "МЫ ЯЗЫХАНЕ", nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", man_1: "Мы — Yazıhane.", man_2: "Мы родились не в рекламной индустрии;", man_3: "мы выросли в реальном мире.", man_4: "Поэтому мы создаем hand-crafted истории, углубляющие бренды.", man_link: "БОЛЬШЕ О НАС ↗", team_title: "КТО МЫ", role_founder: "Учредитель", role_gm: "Генеральный Менеджер", role_cd: "Креативный Менеджер", role_marketing: "Маркетинг и Развитие", role_ad: "Арт-директор", role_hgd: "Руководитель Графического Дизайна", brands_title: "НАШИ ПАРТНЕРЫ", slo_meta_new: "EST. 2016", slo_1: "МЫ ЗДЕСЬ", slo_2: "ДЛЯ ТЕХ КОМУ", slo_3: "ЕСТЬ ЧТО СКАЗАТЬ.", slo_red: "У КАЖДОГО ЕСТЬ ИСТОРИЯ.", lbl_services: "НАШИ УСЛУГИ", srv_1: "360° Услуги", srv_2: "Видео Производство", srv_3: "Управление Соцсетями", srv_4: "Графический Дизайн", srv_5: "Творческие Решения", srv_6: "Цифровой Маркетинг", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE." },
-            ar: { hero_title: "نحن يازيهانه", nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", man_1: "نحن يازيهانه.", man_2: "لم نولد في صناعة الإعلان؛", man_3: "لقد نشأنا في العالم الحقيقي.", man_4: "ولهذا السبب، كل ما نصنعه يتكون من قصص مصنوعة يدويًا تضيف عمقًا للعلامات التجارية.", man_link: "المزيد عنا ↗", team_title: "من نحن", role_founder: "مؤسس", role_gm: "مدير عام", role_cd: "مدير إبداعي", role_marketing: "التسويق وتطوير الأعمال", role_ad: "مخرج فني", role_hgd: "رئيس قسم التصميم الجرافيكي", brands_title: "شركاؤنا", slo_meta_new: "EST. 2016", slo_1: "نحن هنا", slo_2: "من أجل أولئك الذين", slo_3: "لديهم شيء ليقولوه.", slo_red: "كل شخص لديه قصة.", lbl_services: "خدماتنا", srv_1: "خدمات 360 درجة", srv_2: "إنتاج الفيديو", srv_3: "إدارة وسائل التواصل الاجتماعي", srv_4: "التصميم الجرافيكي", srv_5: "حلول إبداعية", srv_6: "التسويق الرقمي والإعلانات", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه." }
+            tr: { hero_title: "BİZ YAZIHANEYİZ", nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", man_1: "Biz Yazıhaneyiz.", man_2: "Sadece reklam endüstrisi için doğmadık;", man_3: "gerçek dünyada, sahada büyüdük.", man_4: "Bu yüzden ürettiğimiz her şey; markalara derinlik katan, el yapımı hikayelerden oluşur.", man_link: "HAKKIMIZDA DAHA FAZLASI ↗", team_title: "BİZ KİMİZ", role_founder: "Kurucu", role_gm: "Genel Müdür", role_cd: "Kreatif Müdür", role_marketing: "Marketing & Business Dev.", role_ad: "Art Director", role_hgd: "Head of Graphic Design", role_video: "Videographer", role_gd: "Graphic Designer", role_social: "Social Media", brands_title: "ÇÖZÜM ORTAKLARIMIZ", slo_meta_new: "EST. 2016", slo_1: "SÖYLEYECEK", slo_2: "SÖZÜ OLANLAR", slo_3: "İÇİN BURADAYIZ.", slo_red: "HERKESİN BİR HİKAYESİ VARDIR.", lbl_services: "HİZMETLERİMİZ", srv_1: "360° Hizmet", srv_2: "Video Prodüksiyon", srv_3: "Sosyal Medya Yönetimi", srv_4: "Grafik Tasarım", srv_5: "Kreatif Çözümler", srv_6: "Dijital Pazarlama ve Reklam", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR." },
+            en: { hero_title: "WE ARE YAZIHANE", nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", man_1: "We are Yazıhane.", man_2: "We weren't born in the ad industry;", man_3: "we grew up in the real world.", man_4: "That's why everything we create consists of hand-crafted stories that add depth to brands.", man_link: "MORE ABOUT US ↗", team_title: "WHO WE ARE", role_founder: "Founder", role_gm: "General Manager", role_cd: "Creative Manager", role_marketing: "Marketing & Business Dev.", role_ad: "Art Director", role_hgd: "Head of Graphic Design", role_video: "Videographer", role_gd: "Graphic Designer", role_social: "Social Media", brands_title: "OUR PARTNERS", slo_meta_new: "EST. 2016", slo_1: "WE ARE HERE", slo_2: "FOR THOSE WHO", slo_3: "HAVE SOMETHING TO SAY.", slo_red: "EVERYONE HAS A STORY.", lbl_services: "OUR SERVICES", srv_1: "360° Services", srv_2: "Video Production", srv_3: "Social Media Management", srv_4: "Graphic Design", srv_5: "Creative Solutions", srv_6: "Digital Marketing & Ads", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE." },
+            ru: { hero_title: "МЫ ЯЗЫХАНЕ", nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", man_1: "Мы — Yazıhane.", man_2: "Мы родились не в рекламной индустрии;", man_3: "мы выросли в реальном мире.", man_4: "Поэтому мы создаем hand-crafted истории, углубляющие бренды.", man_link: "БОЛЬШЕ О НАС ↗", team_title: "КТО МЫ", role_founder: "Учредитель", role_gm: "Генеральный Менеджер", role_cd: "Креативный Менеджер", role_marketing: "Маркетинг и Развитие", role_ad: "Арт-директор", role_hgd: "Руководитель Графического Дизайна", role_video: "Видеооператор", role_gd: "Графический Дизайнер", role_social: "Социальные Медиа", brands_title: "НАШИ ПАРТНЕРЫ", slo_meta_new: "EST. 2016", slo_1: "МЫ ЗДЕСЬ", slo_2: "ДЛЯ ТЕХ КОМУ", slo_3: "ЕСТЬ ЧТО СКАЗАТЬ.", slo_red: "У КАЖДОГО ЕСТЬ ИСТОРИЯ.", lbl_services: "НАШИ УСЛУГИ", srv_1: "360° Услуги", srv_2: "Видео Производство", srv_3: "Управление Соцсетями", srv_4: "Графический Дизайн", srv_5: "Творческие Решения", srv_6: "Цифровой Маркетинг", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE." },
+            ar: { hero_title: "نحن يازيهانه", nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", man_1: "نحن يازيهانه.", man_2: "لم نولد في صناعة الإعلان؛", man_3: "لقد نشأنا في العالم الحقيقي.", man_4: "ولهذا السبب، كل ما نصنعه يتكون من قصص مصنوعة يدويًا تضيف عمقًا للعلامات التجارية.", man_link: "المزيد عنا ↗", team_title: "من نحن", role_founder: "مؤسس", role_gm: "مدير عام", role_cd: "مدير إبداعي", role_marketing: "التسويق وتطوير الأعمال", role_ad: "مخرج فني", role_hgd: "رئيس قسم التصميم الجرافيكي", role_video: "مصور فيديو", role_gd: "مصمم جرافيك", role_social: "وسائل التواصل الاجتماعي", brands_title: "شركاؤنا", slo_meta_new: "EST. 2016", slo_1: "نحن هنا", slo_2: "من أجل أولئك الذين", slo_3: "لديهم شيء ليقولوه.", slo_red: "كل شخص لديه قصة.", lbl_services: "خدماتنا", srv_1: "خدمات 360 درجة", srv_2: "إنتاج الفيديو", srv_3: "إدارة وسائل التواصل الاجتماعي", srv_4: "التصميم الجرافيكي", srv_5: "حلول إبداعية", srv_6: "التسويق الرقمي والإعلانات", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه." }
         };
 
         const setLanguage = (lang) => {

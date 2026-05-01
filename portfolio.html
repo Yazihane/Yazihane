@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Syne:wght@600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Syne:wght@600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&family=Oswald:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -17,6 +17,7 @@
             --border-color: rgba(225, 219, 200, 0.12);
             --header-h: 90px;
             --sidebar-w: 60px;
+            --status-green: #00FF41;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -54,9 +55,20 @@
             align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg);
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
-        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
-        #local-time { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--iris-red); font-weight: 700; }
+        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
+        
+        #local-time { 
+            font-family: 'Oswald', sans-serif !important; 
+            font-size: 28px !important; 
+            font-weight: 300 !important; 
+            color: var(--status-green); 
+            letter-spacing: 1px !important; 
+            writing-mode: vertical-rl; 
+            text-orientation: mixed; 
+            transform: rotate(180deg); 
+            transition: color 0.5s ease; 
+        }
+
         .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
         .ticker-text {
             font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 2vh, 20px); letter-spacing: clamp(0.15em, 0.3vh, 0.35em); 
@@ -513,10 +525,35 @@
             }
         });
 
-        setInterval(() => {
-            const lt = document.getElementById('local-time');
-            if(lt) lt.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
-        }, 1000);
+        // --- YENİ SİBER SAAT MANTIĞI ---
+        function updateClock() {
+            try {
+                const now = new Date();
+                const localTimeStr = now.toLocaleTimeString(navigator.language || 'tr-TR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                const localTimeEl = document.getElementById('local-time');
+                if(localTimeEl) localTimeEl.innerText = localTimeStr;
+
+                const istanbulStr = now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"});
+                const istanbulDate = new Date(istanbulStr);
+                const day = istanbulDate.getDay(); 
+                const hour = istanbulDate.getHours();
+
+                const dot = document.querySelector('.pulse-dot');
+                if(dot && localTimeEl) {
+                    if (day >= 1 && day <= 5 && hour >= 10 && hour < 19) {
+                        dot.style.backgroundColor = '#00FF41';
+                        dot.style.boxShadow = '0 0 10px #00FF41';
+                        localTimeEl.style.color = '#00FF41';
+                    } else {
+                        dot.style.backgroundColor = '#E61E25';
+                        dot.style.boxShadow = '0 0 10px #E61E25';
+                        localTimeEl.style.color = '#E61E25';
+                    }
+                }
+            } catch(e) { console.error("Saat hatası:", e); }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
         // --- I18N (ÇOK DİLLİ YAPI) ---
         const i18n = {
@@ -548,7 +585,6 @@
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             document.body.style.fontFamily = lang === 'ar' ? "'Space Grotesk', sans-serif" : "'Inter', sans-serif";
             
-            // Dil seçildiğinde menüleri hemen kapat
             document.getElementById('desktop-lang-trigger')?.classList.remove('active');
             document.getElementById('mobile-lang-trigger')?.classList.remove('active');
             
@@ -582,41 +618,23 @@
             genel: { name: "TÜM İŞLER", services: ALL_SERVICES } 
         };
 
-        // KESİN, NET VE TAVİZSİZ HASHTAG KURALLARI (SADECE BUNLAR)
         const SECTOR_TAGS = {
-            'turizm': ['turizm'],
-            'tekstil': ['tekstil'],
-            'saglik': ['saglik'],
-            'insaat': ['insaat'],
-            'eglence': ['eglence'],
-            'emlak': ['emlak'],
-            'finans': ['finans'],
-            'egitim': ['egitim'],
-            'lojistik': ['lojistik'],
-            'medya': ['medya'],
-            'mimari': ['mimari']
+            'turizm': ['turizm'], 'tekstil': ['tekstil'], 'saglik': ['saglik'], 'insaat': ['insaat'],
+            'eglence': ['eglence'], 'emlak': ['emlak'], 'finans': ['finans'], 'egitim': ['egitim'],
+            'lojistik': ['lojistik'], 'medya': ['medya'], 'mimari': ['mimari']
         };
 
         const SERVICE_TAGS = {
-            'Tanıtım Filmleri': ['tanitim', 'tanitimfilmi', 'promo'],
-            'TV': ['tv', 'reklam', 'tvc'],
-            'Video Prodüksiyon': ['video', 'produksiyon'],
-            'Drone': ['drone'],
-            'Sosyal Medya': ['sosyal', 'social', 'sosyalmedya']
+            'Tanıtım Filmleri': ['tanitim', 'tanitimfilmi', 'promo'], 'TV': ['tv', 'reklam', 'tvc'],
+            'Video Prodüksiyon': ['video', 'produksiyon'], 'Drone': ['drone'], 'Sosyal Medya': ['sosyal', 'social', 'sosyalmedya']
         };
 
-        // Hashtag okuyucu (SADECE '#' İŞARETİ OLANLARI YAKALAR)
         const HASH_RE = /(^|\s)#([\p{L}\p{M}\.\-_0-9]+)/giu;
-        
-        // Türkçe/İngilizce İ ve Ş gibi harfleri tek bir evrensel baza dönüştüren akıllı kod.
         const normTR = s => (s||'').toLowerCase().replace(/ı/g,'i').replace(/ş/g,'s').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ö/g,'o').replace(/ü/g,'u');
 
         function extractHashtags(text) {
             const out = new Set(); let m;
-            // Metindeki SADECE # ile başlayan kelimeleri yakalar. "drone" yazsa almaz, "#drone" yazması ZORUNLUDUR.
-            while((m = HASH_RE.exec(String(text||''))) !== null) {
-                out.add(normTR(m[2]));
-            }
+            while((m = HASH_RE.exec(String(text||''))) !== null) { out.add(normTR(m[2])); }
             return out;
         }
 
@@ -625,24 +643,18 @@
         let currentService = '';
         const SESSION_ID = Date.now(); 
 
-        // --- 1. YOUTUBE VERİLERİNİ ÇEK VE ACIMASIZCA FİLTRELE ---
+        // --- YOUTUBE VERİ ÇEKME ---
         async function fetchYouTubeData() {
             try {
                 const res = await fetch(`/.netlify/functions/youtube?ts=${SESSION_ID}`);
                 if(res.ok) {
                     const data = await res.json();
-                    allVideos = []; // Sıfırdan başlıyoruz
-                    
+                    allVideos = []; 
                     data.forEach(v => {
                         const tags = new Set([...extractHashtags(v.title), ...extractHashtags(v.description)]);
-                        
-                        // Sektör Etiketlerini Ara
                         let vSectors = Object.keys(SECTOR_TAGS).filter(sec => SECTOR_TAGS[sec].some(t => tags.has(t)));
-                        // Hizmet Etiketlerini Ara
                         let vServices = Object.keys(SERVICE_TAGS).filter(srv => SERVICE_TAGS[srv].some(t => tags.has(t)));
                         
-                        // ACIMASIZ KURAL: Videoda bizim listemizdeki Sektör VE Hizmet hashtag'lerinden YOKSA, 
-                        // o videoyu çöpe at, portfolyoda ASLA GÖSTERME.
                         if (vSectors.length > 0 && vServices.length > 0) {
                             allVideos.push({ ...v, sectors: vSectors, services: vServices });
                         }
@@ -651,7 +663,7 @@
             } catch(e) { console.error("YouTube veri çekme hatası:", e); }
         }
 
-        // --- 2. GÖRSEL DEDEKTİFİ (GAP TOLERANCE & PRELOAD) ---
+        // --- GÖRSEL DEDEKTİFİ ---
         const EXT_PRIORITY = ['jpg','png','webp','jpeg'];
         const LOGO_EXT_PRIORITY = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
         const PRELOADED_CACHE = {}; 
@@ -685,7 +697,7 @@
                     PRELOADED_CACHE[`${sec}_Fotoğraf`] = scanFolder(`images/${sec}/foto/`, EXT_PRIORITY);
                     PRELOADED_CACHE[`${sec}_Tasarım`] = scanFolder(`images/${sec}/tsrm/`, EXT_PRIORITY);
                     
-                    const p = scanFolder(`/logolar/`, LOGO_EXT_PRIORITY, sec, 4);
+                    const p = scanFolder(`/images/logolar/`, LOGO_EXT_PRIORITY, sec, 4);
                     PRELOADED_CACHE[`${sec}_Logolar`] = p;
                     logoPromises.push(p);
                 }
@@ -728,7 +740,28 @@
             grid.innerHTML = htmlBuffer;
         }
 
-        // --- 3. ARAYÜZ VE GEÇİŞLER ---
+        // --- YENİ SEKTÖRE GÖRE LOGO ÇEKEN VE KARIŞTIRAN FONKSİYON ---
+        async function renderLogoWall(sectorKey) {
+            const grid = document.getElementById('logo-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            
+            let logos = await PRELOADED_CACHE[`${sectorKey}_Logolar`];
+            
+            if(logos && logos.length > 0) {
+                // Sektöre ait logoları karıştır (shuffle)
+                logos = [...logos].sort(() => 0.5 - Math.random());
+
+                logos.forEach(url => {
+                    grid.innerHTML += `<div class="logo-box"><img src="${url}" alt="Partner Logo"></div>`;
+                });
+            } else {
+                // Logo yoksa boş durmaması için geçici bir mesaj
+                grid.innerHTML = `<div style="color: rgba(225,219,200,0.5); width: 100%; text-align: center; padding: 20px; grid-column: 1 / -1;">Bu kategori için henüz çözüm ortağı logosu yüklenmedi.</div>`;
+            }
+        }
+
+        // --- ARAYÜZ VE GEÇİŞLER ---
         const viewEntry = document.getElementById('view-entry');
         const viewPortfolio = document.getElementById('view-portfolio');
         const headerContainer = document.getElementById('portfolio-header');
@@ -752,7 +785,6 @@
             }
         }
 
-        // --- DİNAMİK MENÜ YARATICI ---
         async function renderSectorUI(sectorKey) {
             const sector = SECTORS[sectorKey];
             viewEntry.style.display = 'none';
@@ -766,13 +798,11 @@
 
             sectorDisplayName.textContent = i18n[activeLang][`sec_${sectorKey === 'genel' ? 'all' : sectorKey}`] || sector.name;
 
-            // Hangi hizmetlerin o sektörde içerik barındırdığını kontrol et
             const availableServices = [];
             for (let srv of sector.services) {
                 let hasContent = false;
                 
                 if (srv === 'Fotoğraf' || srv === 'Tasarım') {
-                    // Cache'e bakıp o klasörde görsel var mı kontrol ediyoruz
                     let targetUrls = [];
                     if (sectorKey === 'genel') {
                         const promises = Object.keys(SECTORS).filter(s => s !== 'genel').map(s => PRELOADED_CACHE[`${s}_${srv}`]);
@@ -783,7 +813,6 @@
                     }
                     if (targetUrls && targetUrls.length > 0) hasContent = true;
                 } else {
-                    // YouTube videolarına bakıp içerik var mı kontrol ediyoruz
                     const hasVideo = allVideos.some(v => {
                         const matchSec = sectorKey === 'genel' || v.sectors.includes(sectorKey) || v.sectors.includes('genel');
                         return matchSec && v.services.includes(srv);
@@ -791,27 +820,24 @@
                     if (hasVideo) hasContent = true;
                 }
                 
-                // Eğer içerik varsa menüye ekle
                 if (hasContent) {
                     availableServices.push(srv);
                 }
             }
 
-            // Sadece içi dolu olan kategorileri ekrana bas
             dynamicFilters.innerHTML = availableServices.map((service, index) => {
                 const trKey = SERVICE_KEYS[service];
                 const translatedName = i18n[activeLang][trKey] || service;
                 return `<a onclick="applySubFilter(event, '${service}')" class="${index === 0 ? 'active' : ''}" data-service-key="${trKey}">${translatedName}</a>`;
             }).join('');
 
-            // Eğer içerik varsa ilk kategoriye otomatik tıkla, yoksa boş uyarısı ver
             if (availableServices.length > 0) {
                 applySubFilter(null, availableServices[0]);
             } else {
                 portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
             }
 
-            renderLogoWall(sectorKey);
+            renderLogoWall(sectorKey); // Yeni Logo Çektirme Fonksiyonunu Çalıştır
         }
 
         function applySubFilter(event, serviceName) {
@@ -837,8 +863,21 @@
             let htmlBuffer = '';
             filtered.forEach((v, i) => {
                 const isFull = ((i + 1) % 3 === 0);
-                const safeTitle = v.title.replace(/'/g, "\\'").replace(/"/g, '"');
-                const safeDesc = v.description.replace(/'/g, "\\'").replace(/"/g, '"');
+                
+                // BURASI ÇOK KRİTİK: Tırnak ve Enter (Yeni Satır) hatalarını temizleyen zırhlı filtre!
+                const safeTitle = (v.title || '')
+                    .replace(/\\/g, "\\\\")
+                    .replace(/'/g, "\\'")
+                    .replace(/"/g, "&quot;")
+                    .replace(/[\n\r]/g, " ");
+                    
+                const safeDesc = (v.description || '')
+                    .replace(/\\/g, "\\\\")
+                    .replace(/'/g, "\\'")
+                    .replace(/"/g, "&quot;")
+                    .replace(/\n/g, "\\n")
+                    .replace(/\r/g, "");
+
                 htmlBuffer += `
                     <div class="grid-item video-item ${isFull ? 'full-width' : ''}" onclick="openYTModal('${v.videoId}', '${safeTitle}', '${safeDesc}')">
                         <img src="${v.thumbnailUrl}" alt="${safeTitle}">
@@ -929,31 +968,12 @@
         document.getElementById('lb-prev').addEventListener('click', (e) => { e.stopPropagation(); lbPrev(); });
         imgLightbox.addEventListener('click', (e) => { if(e.target === imgLightbox || e.target.classList.contains('lightbox-img-wrapper')) closeImgLightbox(); });
 
-        // Swipe
         let touchstartX = 0;
         imgLightbox.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive:true});
         imgLightbox.addEventListener('touchend', e => {
             let diff = touchstartX - e.changedTouches[0].screenX;
             if (Math.abs(diff) > 40) { if (diff > 0) lbNext(); else lbPrev(); }
         }, {passive:true});
-
-        // --- LOGO WALL ---
-        async function renderLogoWall(sectorKey) {
-            const grid = document.getElementById('logo-grid');
-            grid.innerHTML = '';
-            
-            let logos = await PRELOADED_CACHE[`${sectorKey}_Logolar`];
-            
-            if(logos && logos.length > 0) {
-                if(sectorKey === 'genel') {
-                    logos = [...logos].sort(() => Math.random() - 0.5);
-                }
-
-                logos.forEach(url => {
-                    grid.innerHTML += `<div class="logo-box"><img src="${url}" alt="Partner"></div>`;
-                });
-            }
-        }
 
         // --- İNİTİALİZASYON ---
         document.querySelectorAll('.sector-item').forEach(item => {

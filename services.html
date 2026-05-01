@@ -17,6 +17,7 @@
             --border-color: rgba(225, 219, 200, 0.15);
             --header-h: 90px;
             --sidebar-w: 60px;
+            --status-green: #00FF41;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,9 +49,21 @@
             align-items: center; justify-content: space-between; padding: 30px 0; z-index: 1000; background: var(--bg);
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
-        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(230, 30, 37, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 30, 37, 0); } }
-        #local-time { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--iris-red); font-weight: 700; }
+        .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
+        .pulse-dot.open { background: var(--status-green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
+        .pulse-dot.closed { background: var(--iris-red); box-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
+        
+        #local-time { 
+            font-family: 'Oswald', sans-serif !important; 
+            font-size: 28px !important; 
+            font-weight: 300 !important; 
+            color: var(--status-green); 
+            letter-spacing: 1px !important; 
+            writing-mode: vertical-rl; 
+            text-orientation: mixed; 
+            transform: rotate(180deg); 
+            transition: color 0.5s ease; 
+        }
         
         .ticker-text-wrapper { writing-mode: vertical-rl; transform: rotate(180deg); height: 100%; display: flex; align-items: center; overflow: hidden; }
         .ticker-text {
@@ -269,7 +282,7 @@
             .header-logo { display: flex; justify-content: center; position: static; transform: none; }
             
             .sh-top, .sh-bottom { padding: 0; text-align: center; margin: 10px 0; align-self: center; }
-            .sh-intro-p { font-size: clamp(1rem, 4vw, 1.5rem); text-align: left; } /* Mobil okunabilirlik için left */
+            .sh-intro-p { font-size: clamp(1rem, 4vw, 1.5rem); text-align: left; } 
 
             .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
             .footer-socials { flex-direction: column; gap: 10px; }
@@ -295,7 +308,7 @@
 
     <aside id="vertical-ticker">
         <a href="https://maps.app.goo.gl/MaQWroNEvLF7iPzj7" target="_blank" class="pulse-link" title="Bizi Haritada Bulun">
-            <div class="pulse-dot"></div>
+            <div id="status-dot" class="pulse-dot"></div>
             <span id="local-time">12:00</span>
         </a>
         <div class="ticker-text-wrapper">
@@ -499,10 +512,33 @@
             }
         });
 
-        setInterval(() => {
-            const localTimeEl = document.getElementById('local-time');
-            if(localTimeEl) localTimeEl.innerText = new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
-        }, 1000);
+        // --- YENİ SİBER SAAT MANTIĞI ---
+        function updateClock() {
+            try {
+                const now = new Date();
+                const localTimeStr = now.toLocaleTimeString(navigator.language || 'tr-TR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                const localTimeEl = document.getElementById('local-time');
+                if(localTimeEl) localTimeEl.innerText = localTimeStr;
+
+                const istanbulStr = now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"});
+                const istanbulDate = new Date(istanbulStr);
+                const day = istanbulDate.getDay(); 
+                const hour = istanbulDate.getHours();
+
+                const dot = document.getElementById('status-dot');
+                if(dot && localTimeEl) {
+                    if (day >= 1 && day <= 5 && hour >= 10 && hour < 19) {
+                        dot.className = 'pulse-dot open';
+                        localTimeEl.style.color = 'var(--status-green)';
+                    } else {
+                        dot.className = 'pulse-dot closed';
+                        localTimeEl.style.color = 'var(--iris-red)';
+                    }
+                }
+            } catch(e) { console.error("Saat hatası:", e); }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
         const scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -512,39 +548,89 @@
             });
         }, { threshold: 0.1 }); 
         
-        document.querySelectorAll('.reveal-up').forEach(el => scrollObserver.observe(el));
+        document.querySelectorAll('.reveal-up, .reveal-fade').forEach(el => scrollObserver.observe(el));
 
-        // --- AKILLI LOGO DUVARI ---
-        const logosFolder = "/logolar/";
-        const logoExtensions = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
-        const logoWallGrid = document.getElementById('logo-wall-grid');
-        logoWallGrid.style.display = 'grid'; 
-
-        const sectorPrefixes = ['', 'turizm', 'tekstil', 'saglik', 'insaat', 'eglence', 'emlak', 'finans', 'egitim', 'lojistik', 'medya', 'mimari', 'genel'];
-
-        sectorPrefixes.forEach(prefix => { loadSectorLogo(prefix, 1, 0, 0); });
-
-        function loadSectorLogo(prefix, index, extIndex, consecutiveMisses) {
-            if (consecutiveMisses > 3 || !logoWallGrid) return; 
-            if (extIndex >= logoExtensions.length) {
-                loadSectorLogo(prefix, index + 1, 0, consecutiveMisses + 1);
+        // --- ZEKİ LOGO YÜKLEYİCİ (NETLIFY KOTA KORUYUCU + Orijinal Çözüm) ---
+        async function loadAndShuffleLogos() {
+            const CACHE_KEY = 'yazihane_logos_v2';
+            const CACHE_TIME_KEY = 'yazihane_logos_time_v2';
+            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 Saatlik Önbellek
+            
+            let cachedLogos = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
+            let cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+            
+            const logoWallGrid = document.getElementById('logo-wall-grid');
+            if(!logoWallGrid) return;
+            
+            if (cachedLogos.length > 0 && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
+                displayLogos(cachedLogos);
                 return;
             }
             
-            const fileName = prefix ? `${prefix}${index}` : `${index}`;
-            const imgPath = `${logosFolder}${fileName}.${logoExtensions[extIndex]}`;
-            const img = new Image();
+            // Eğer LocalStorage boşsa taramayı başlat (FETCH KULLANMADAN, IMAGE OLUŞTURARAK)
+            const logosFolder = "https://www.yazihane.com.tr/images/logolar/";
+            const logoExtensions = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
+            let validLogos = [];
+            let missCount = 0;
             
-            img.onload = function() {
-                const cell = document.createElement('div'); cell.className = 'logo-cell';
-                const imgEl = document.createElement('img'); imgEl.src = imgPath; imgEl.alt = `${fileName} Logo`;
-                cell.appendChild(imgEl); logoWallGrid.appendChild(cell);
-                loadSectorLogo(prefix, index + 1, 0, 0);
-            };
+            logoWallGrid.style.display = 'grid';
             
-            img.onerror = function() { loadSectorLogo(prefix, index, extIndex + 1, consecutiveMisses); };
-            img.src = imgPath;
+            function checkLogo(index, extIndex) {
+                if (extIndex >= logoExtensions.length) {
+                    missCount++;
+                    // 5 kez üst üste görsel bulamazsa veya 150'yi geçerse taramayı kes!
+                    if(missCount >= 5 || index > 150) {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(validLogos));
+                        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+                        displayLogos(validLogos);
+                        return;
+                    }
+                    checkLogo(index + 1, 0);
+                    return;
+                }
+                
+                const imgPath = `${logosFolder}${index}.${logoExtensions[extIndex]}`;
+                const img = new Image();
+                
+                img.onload = function() {
+                    validLogos.push(imgPath);
+                    missCount = 0; // Sıfırla
+                    checkLogo(index + 1, 0); // Bir sonrakine geç
+                };
+                
+                img.onerror = function() {
+                    checkLogo(index, extIndex + 1); // Aynı sayının diğer formatını (png, svg) dene
+                };
+                
+                img.src = imgPath;
+            }
+            
+            checkLogo(1, 0); // Aramayı başlat
         }
+
+        function displayLogos(logoUrls) {
+            const grid = document.getElementById('logo-wall-grid');
+            if(!grid) return;
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+            
+            // Logoları Karıştır (Shuffle)
+            const shuffled = [...logoUrls].sort(() => 0.5 - Math.random());
+            
+            shuffled.forEach((url, index) => {
+                const cell = document.createElement('div'); 
+                cell.className = 'logo-cell';
+                
+                const img = document.createElement('img'); 
+                img.src = url;
+                img.alt = `Çözüm Ortağı`;
+                
+                cell.appendChild(img); 
+                grid.appendChild(cell);
+            });
+        }
+        
+        loadAndShuffleLogos();
 
         // --- ÇOK DİLLİ YAPI (i18n) VE YENİ UZUN İÇERİKLER ---
         const i18n = {
