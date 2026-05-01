@@ -1,3 +1,60 @@
 [functions]
   directory = "netlify/functions"
   included_files = ["images/logolar/**"]
+
+# --- KESTİRME LİNKLER (YÖNLENDİRMELER) ---
+
+[[redirects]]
+  from = "/turizm"
+  to = "/portfolio.html#turizm"
+  status = 301
+
+[[redirects]]
+  from = "/tekstil"
+  to = "/portfolio.html#tekstil"
+  status = 301
+
+[[redirects]]
+  from = "/saglik"
+  to = "/portfolio.html#saglik"
+  status = 301
+
+[[redirects]]
+  from = "/insaat"
+  to = "/portfolio.html#insaat"
+  status = 301
+
+[[redirects]]
+  from = "/eglence"
+  to = "/portfolio.html#eglence"
+  status = 301
+
+[[redirects]]
+  from = "/emlak"
+  to = "/portfolio.html#emlak"
+  status = 301
+
+[[redirects]]
+  from = "/finans"
+  to = "/portfolio.html#finans"
+  status = 301
+
+[[redirects]]
+  from = "/egitim"
+  to = "/portfolio.html#egitim"
+  status = 301
+
+[[redirects]]
+  from = "/lojistik"
+  to = "/portfolio.html#lojistik"
+  status = 301
+
+[[redirects]]
+  from = "/medya"
+  to = "/portfolio.html#medya"
+  status = 301
+
+[[redirects]]
+  from = "/mimari"
+  to = "/portfolio.html#mimari"
+  status = 301
