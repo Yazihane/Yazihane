@@ -56,6 +56,8 @@
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
         .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
+        .pulse-dot.open { background: var(--status-green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
+        .pulse-dot.closed { background: var(--iris-red); box-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
         
         #local-time { 
             font-family: 'Oswald', sans-serif !important; 
@@ -246,24 +248,25 @@
         .lb-prev { left: 4vw; }
         .lb-next { right: 4vw; }
 
-        /* --- DİNAMİK LOGO ALANI --- */
-        #logo-area { border-top: 1px solid var(--border-color); padding: 40px 5vw; margin-top: 20px; opacity: 0; transition: opacity 0.5s ease; }
-        .logo-area-title { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 1.2rem; color: rgba(225, 219, 200, 0.5); margin-bottom: 30px; text-align: center; }
+        /* --- DİNAMİK ORGANİK LOGO ALANI (YENİ) --- */
+        #logo-area { border-top: 1px solid var(--border-color); padding: 80px 5vw; margin-top: 40px; opacity: 0; transition: opacity 0.5s ease; }
+        .logo-area-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(2rem, 4vw, 3rem); color: var(--text-cream); margin-bottom: 50px; text-align: center; }
         
         .logo-grid { 
-            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; width: 100%; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: clamp(10px, 1.5vw, 20px); width: 100%; max-width: 1400px; margin: 0 auto;
         }
         
         .logo-box { 
-            background: rgba(225, 219, 200, 0.05); border-radius: 8px; flex: 0 0 auto; width: clamp(100px, 12vw, 140px); aspect-ratio: 1/1; 
-            display: flex; justify-content: center; align-items: center; padding: 15px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; overflow: hidden; 
+            background: var(--text-cream); border-radius: 8px; flex: 0 0 auto; width: clamp(120px, 12vw, 160px); aspect-ratio: 4/3; 
+            display: flex; justify-content: center; align-items: center; padding: clamp(15px, 2vw, 25px); 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; overflow: hidden; 
         }
-        .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: brightness(0.8) contrast(1.1); transition: filter 0.3s ease; }
-        .logo-box:hover { background: rgba(225, 219, 200, 0.1); transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: brightness(0.8) contrast(1.1); transition: all 0.4s ease; }
+        .logo-box:hover { background: #fff; transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
         .logo-box:hover img { filter: brightness(1) contrast(1.2); transform: scale(1.1); }
 
         /* --- FOOTER --- */
-        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
+        .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; }
         .footer-giant { text-align: center; position: relative; width: 100%; }
         
         .footer-giant a { 
@@ -277,9 +280,12 @@
         .wax-seal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 8vw; height: 8vw; min-width: 60px; min-height: 60px; 
-            background: #b0151a; border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+            background: #b0151a; 
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
             pointer-events: none; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            border: 2px solid #d42027; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4); z-index: 10;
+            border: 2px solid #d42027; 
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4);
+            z-index: 10;
         }
         .wax-seal img { width: 60%; height: 60%; object-fit: contain; filter: brightness(0); opacity: 0.7; }
         .footer-giant a:hover .wax-seal { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); }
@@ -504,6 +510,30 @@
         // --- 0 Saniye Gecikme: Arka Plan Taramaları Hemen Başlatılıyor! ---
         const SESSION_ID = Date.now(); 
 
+        let allVideos = [];
+        let activeSector = '';
+        let currentService = '';
+
+        const HASH_RE = /(^|\s)#([\p{L}\p{M}\.\-_0-9]+)/giu;
+        const normTR = s => (s||'').toLowerCase().replace(/ı/g,'i').replace(/ş/g,'s').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ö/g,'o').replace(/ü/g,'u');
+
+        function extractHashtags(text) {
+            const out = new Set(); let m;
+            while((m = HASH_RE.exec(String(text||''))) !== null) { out.add(normTR(m[2])); }
+            return out;
+        }
+
+        const SECTOR_TAGS = {
+            'turizm': ['turizm'], 'tekstil': ['tekstil'], 'saglik': ['saglik'], 'insaat': ['insaat'],
+            'eglence': ['eglence'], 'emlak': ['emlak'], 'finans': ['finans'], 'egitim': ['egitim'],
+            'lojistik': ['lojistik'], 'medya': ['medya'], 'mimari': ['mimari']
+        };
+
+        const SERVICE_TAGS = {
+            'Tanıtım Filmleri': ['tanitim', 'tanitimfilmi', 'promo'], 'TV': ['tv', 'reklam', 'tvc'],
+            'Video Prodüksiyon': ['video', 'produksiyon'], 'Drone': ['drone'], 'Sosyal Medya': ['sosyal', 'social', 'sosyalmedya']
+        };
+
         // Youtube verilerini sayfa yüklenmesini beklemeden hemen arkada çekmeye başla
         const ytDataPromise = fetch(`/.netlify/functions/youtube?ts=${SESSION_ID}`)
             .then(res => res.ok ? res.json() : [])
@@ -519,6 +549,12 @@
                     }
                 });
                 allVideos = parsed;
+                
+                // HIZLANDIRICI: Eğer kullanıcı bir kategoride bekliyorsa ve video sekmesindeyse anında renderla!
+                if (currentService && currentService !== 'Fotoğraf' && currentService !== 'Tasarım') {
+                    renderVideosForService(activeSector, currentService);
+                }
+                
                 return parsed;
             }).catch(e => { console.error("YouTube veri çekme hatası:", e); return []; });
 
@@ -566,13 +602,11 @@
                 const dot = document.querySelector('.pulse-dot');
                 if(dot && localTimeEl) {
                     if (day >= 1 && day <= 5 && hour >= 10 && hour < 19) {
-                        dot.style.backgroundColor = '#00FF41';
-                        dot.style.boxShadow = '0 0 10px #00FF41';
-                        localTimeEl.style.color = '#00FF41';
+                        dot.className = 'pulse-dot open';
+                        localTimeEl.style.color = 'var(--status-green)';
                     } else {
-                        dot.style.backgroundColor = '#E61E25';
-                        dot.style.boxShadow = '0 0 10px #E61E25';
-                        localTimeEl.style.color = '#E61E25';
+                        dot.className = 'pulse-dot closed';
+                        localTimeEl.style.color = 'var(--iris-red)';
                     }
                 }
             } catch(e) { console.error("Saat hatası:", e); }
@@ -643,31 +677,7 @@
             genel: { name: "TÜM İŞLER", services: ALL_SERVICES } 
         };
 
-        const SECTOR_TAGS = {
-            'turizm': ['turizm'], 'tekstil': ['tekstil'], 'saglik': ['saglik'], 'insaat': ['insaat'],
-            'eglence': ['eglence'], 'emlak': ['emlak'], 'finans': ['finans'], 'egitim': ['egitim'],
-            'lojistik': ['lojistik'], 'medya': ['medya'], 'mimari': ['mimari']
-        };
-
-        const SERVICE_TAGS = {
-            'Tanıtım Filmleri': ['tanitim', 'tanitimfilmi', 'promo'], 'TV': ['tv', 'reklam', 'tvc'],
-            'Video Prodüksiyon': ['video', 'produksiyon'], 'Drone': ['drone'], 'Sosyal Medya': ['sosyal', 'social', 'sosyalmedya']
-        };
-
-        const HASH_RE = /(^|\s)#([\p{L}\p{M}\.\-_0-9]+)/giu;
-        const normTR = s => (s||'').toLowerCase().replace(/ı/g,'i').replace(/ş/g,'s').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ö/g,'o').replace(/ü/g,'u');
-
-        function extractHashtags(text) {
-            const out = new Set(); let m;
-            while((m = HASH_RE.exec(String(text||''))) !== null) { out.add(normTR(m[2])); }
-            return out;
-        }
-
-        let allVideos = [];
-        let activeSector = '';
-        let currentService = '';
-
-        // --- GÖRSEL DEDEKTİFİ (SADECE PORTFOLYO İÇERİKLERİ İÇİN) ---
+        // --- GÖRSEL DEDEKTİFİ (Daha Hızlı Eşzamanlı Taramalar) ---
         const EXT_PRIORITY = ['jpg','png','webp','jpeg'];
         const PRELOADED_CACHE = {}; 
 
@@ -681,13 +691,21 @@
             let consecutiveMisses = 0;
             let i = 1;
             while(consecutiveMisses < tolerance && i <= 200) {
-                let foundUrl = null;
-                for(let ext of extList) {
-                    let url = `${baseDir}${prefix}${i}.${ext}?v=${SESSION_ID}`;
-                    if(await exists(url)) { foundUrl = url; break; }
+                // Her uzantı için aynı anda (paralel) istek at, süreyi 4'e böl
+                const checks = extList.map(ext => {
+                    const url = `${baseDir}${prefix}${i}.${ext}?v=${SESSION_ID}`;
+                    return exists(url).then(ok => ok ? url : null);
+                });
+                
+                const results = await Promise.all(checks);
+                const foundUrl = results.find(url => url !== null);
+                
+                if(foundUrl) { 
+                    validUrls.push(foundUrl); 
+                    consecutiveMisses = 0; 
+                } else { 
+                    consecutiveMisses++; 
                 }
-                if(foundUrl) { validUrls.push(foundUrl); consecutiveMisses = 0; } 
-                else { consecutiveMisses++; }
                 i++;
             }
             return validUrls;
@@ -730,7 +748,7 @@
                 const isFull = ((i + 1) % 3 === 0);
                 htmlBuffer += `
                     <div class="grid-item ${isFull ? 'full-width' : ''}" onclick="openImgLightbox(${i})">
-                        <img src="${url}" alt="${sector} ${serviceType} ${i+1}">
+                        <img src="${url}" alt="${sector} ${serviceType} ${i+1}" loading="lazy">
                         <div class="item-info">
                             <span class="item-client">${SECTORS[sector === 'genel' ? 'genel' : sector].name}</span>
                             <span class="item-project">${serviceType}</span>
@@ -740,6 +758,7 @@
             grid.innerHTML = htmlBuffer;
         }
 
+        // --- YENİ ORGANİK LOGO DİZİLİMİ ---
         async function renderLogoWall(sectorKey) {
             const grid = document.getElementById('logo-grid');
             if(!grid) return;
@@ -766,7 +785,7 @@
                 });
             } else {
                 // Logo yoksa boş durmaması için geçici bir mesaj
-                grid.innerHTML = `<div style="color: rgba(225,219,200,0.5); width: 100%; text-align: center; padding: 20px; grid-column: 1 / -1;">Bu kategori için henüz çözüm ortağı logosu yüklenmedi.</div>`;
+                grid.innerHTML = `<div style="color: rgba(225,219,200,0.5); width: 100%; text-align: center; padding: 20px;">Bu kategori için henüz çözüm ortağı logosu yüklenmedi.</div>`;
             }
         }
 
@@ -880,8 +899,11 @@
             filtered.forEach((v, i) => {
                 const isFull = ((i + 1) % 3 === 0);
                 
-                // Tırnak ve Enter (Yeni Satır) hatalarını temizleyen zırhlı filtre!
-                const safeTitle = (v.title || '')
+                // BURASI ÇOK KRİTİK: Marka adını YouTube başlığından çeker ("-" veya "|" işaretine kadar olanı alır)
+                const rawTitle = v.title || '';
+                const brandName = rawTitle.split(/[-|]/)[0].trim();
+                
+                const safeTitle = brandName
                     .replace(/\\/g, "\\\\")
                     .replace(/'/g, "\\'")
                     .replace(/"/g, "&quot;")
@@ -896,10 +918,10 @@
 
                 htmlBuffer += `
                     <div class="grid-item video-item ${isFull ? 'full-width' : ''}" onclick="openYTModal('${v.videoId}', '${safeTitle}', '${safeDesc}')">
-                        <img src="${v.thumbnailUrl}" alt="${safeTitle}">
+                        <img src="${v.thumbnailUrl}" alt="${safeTitle}" loading="lazy">
                         <div class="play-icon"></div>
                         <div class="item-info">
-                            <span class="item-client">${v.channelTitle}</span>
+                            <span class="item-client">${safeTitle}</span>
                             <span class="item-project">${service}</span>
                         </div>
                     </div>`;
@@ -999,7 +1021,7 @@
         window.addEventListener('DOMContentLoaded', async () => {
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);
-            
+
             const hash = window.location.hash.replace('#', '');
             if (hash && SECTORS[hash]) navigateTo(hash, false);
         });

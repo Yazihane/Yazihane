@@ -748,6 +748,7 @@
             }
 
             try {
+                // Fetch from Netlify Function
                 const response = await fetch('/.netlify/functions/getLogos');
                 if (response.ok) {
                     const logolar = await response.json();
@@ -833,11 +834,8 @@
             btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang));
         });
         
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
-            setLanguage(savedLang);
-            loadAndShuffleLogos();
-        });
+        const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
+        setLanguage(savedLang);
     </script>
 </body>
 </html>
