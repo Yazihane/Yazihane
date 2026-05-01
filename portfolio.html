@@ -56,8 +56,6 @@
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
         .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
-        .pulse-dot.open { background: var(--status-green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
-        .pulse-dot.closed { background: var(--iris-red); box-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
         
         #local-time { 
             font-family: 'Oswald', sans-serif !important; 
@@ -248,7 +246,7 @@
         .lb-prev { left: 4vw; }
         .lb-next { right: 4vw; }
 
-        /* --- DİNAMİK ORGANİK LOGO ALANI (YENİ) --- */
+        /* --- ORGANİK LOGO DİZİLİMİ --- */
         #logo-area { border-top: 1px solid var(--border-color); padding: 80px 5vw; margin-top: 40px; opacity: 0; transition: opacity 0.5s ease; }
         .logo-area-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(2rem, 4vw, 3rem); color: var(--text-cream); margin-bottom: 50px; text-align: center; }
         
@@ -602,11 +600,13 @@
                 const dot = document.querySelector('.pulse-dot');
                 if(dot && localTimeEl) {
                     if (day >= 1 && day <= 5 && hour >= 10 && hour < 19) {
-                        dot.className = 'pulse-dot open';
-                        localTimeEl.style.color = 'var(--status-green)';
+                        dot.style.backgroundColor = '#00FF41';
+                        dot.style.boxShadow = '0 0 10px #00FF41';
+                        localTimeEl.style.color = '#00FF41';
                     } else {
-                        dot.className = 'pulse-dot closed';
-                        localTimeEl.style.color = 'var(--iris-red)';
+                        dot.style.backgroundColor = '#E61E25';
+                        dot.style.boxShadow = '0 0 10px #E61E25';
+                        localTimeEl.style.color = '#E61E25';
                     }
                 }
             } catch(e) { console.error("Saat hatası:", e); }
@@ -677,7 +677,7 @@
             genel: { name: "TÜM İŞLER", services: ALL_SERVICES } 
         };
 
-        // --- GÖRSEL DEDEKTİFİ (Daha Hızlı Eşzamanlı Taramalar) ---
+        // --- GÖRSEL DEDEKTİFİ ---
         const EXT_PRIORITY = ['jpg','png','webp','jpeg'];
         const PRELOADED_CACHE = {}; 
 
@@ -691,7 +691,6 @@
             let consecutiveMisses = 0;
             let i = 1;
             while(consecutiveMisses < tolerance && i <= 200) {
-                // Her uzantı için aynı anda (paralel) istek at, süreyi 4'e böl
                 const checks = extList.map(ext => {
                     const url = `${baseDir}${prefix}${i}.${ext}?v=${SESSION_ID}`;
                     return exists(url).then(ok => ok ? url : null);
@@ -720,7 +719,6 @@
             });
         }
 
-        // Arama işlemi backgroundda hemen başlasın!
         startPreloading();
 
         async function loadImagesForService(sector, serviceType) {
@@ -764,27 +762,22 @@
             if(!grid) return;
             grid.innerHTML = '';
             
-            // Tüm logoları hızlıca sunucu promise'inden çek
             const allLogos = await logosDataPromise;
             
-            // Sektöre göre filtrele
             let filteredLogos = [];
             if(sectorKey === 'genel') {
-                filteredLogos = [...allLogos]; // Genel ise hepsini al
+                filteredLogos = [...allLogos];
             } else {
-                // İsmi sektör adıyla başlayanları al (örn: turizm1.png, insaat_logo.jpg)
                 filteredLogos = allLogos.filter(logo => logo.toLowerCase().startsWith(sectorKey.toLowerCase()));
             }
             
             if(filteredLogos.length > 0) {
-                // Logoları karıştır (shuffle)
                 filteredLogos = filteredLogos.sort(() => 0.5 - Math.random());
 
                 filteredLogos.forEach(logoName => {
                     grid.innerHTML += `<div class="logo-box"><img src="/images/logolar/${logoName}" alt="Partner Logo" loading="lazy"></div>`;
                 });
             } else {
-                // Logo yoksa boş durmaması için geçici bir mesaj
                 grid.innerHTML = `<div style="color: rgba(225,219,200,0.5); width: 100%; text-align: center; padding: 20px;">Bu kategori için henüz çözüm ortağı logosu yüklenmedi.</div>`;
             }
         }
@@ -826,6 +819,11 @@
 
             sectorDisplayName.textContent = i18n[activeLang][`sec_${sectorKey === 'genel' ? 'all' : sectorKey}`] || sector.name;
 
+            // HIZ VE HATA DÜZELTMESİ (RACE CONDITION)
+            if (allVideos.length === 0) {
+                await ytDataPromise;
+            }
+
             const availableServices = [];
             for (let srv of sector.services) {
                 let hasContent = false;
@@ -865,7 +863,7 @@
                 portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
             }
 
-            renderLogoWall(sectorKey); // Yeni Logo Çektirme Fonksiyonunu Çalıştır
+            renderLogoWall(sectorKey);
         }
 
         function applySubFilter(event, serviceName) {
@@ -881,7 +879,6 @@
         async function renderVideosForService(sector, service) {
             portfolioGrid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
             
-            // Eğer veriler hala gelmediyse Promise'in bitmesini bekle
             if(allVideos.length === 0) {
                 await ytDataPromise;
             }
@@ -899,20 +896,20 @@
             filtered.forEach((v, i) => {
                 const isFull = ((i + 1) % 3 === 0);
                 
-                // BURASI ÇOK KRİTİK: Marka adını YouTube başlığından çeker ("-" veya "|" işaretine kadar olanı alır)
+                // YouTube İsmi Temizleyici (Yazıhane Reklam Ajansı vs. Siler)
                 const rawTitle = v.title || '';
                 const brandName = rawTitle.split(/[-|]/)[0].trim();
                 
                 const safeTitle = brandName
                     .replace(/\\/g, "\\\\")
                     .replace(/'/g, "\\'")
-                    .replace(/"/g, "&quot;")
+                    .replace(/"/g, """)
                     .replace(/[\n\r]/g, " ");
                     
                 const safeDesc = (v.description || '')
                     .replace(/\\/g, "\\\\")
                     .replace(/'/g, "\\'")
-                    .replace(/"/g, "&quot;")
+                    .replace(/"/g, """)
                     .replace(/\n/g, "\\n")
                     .replace(/\r/g, "");
 
