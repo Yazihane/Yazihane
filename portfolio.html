@@ -248,21 +248,19 @@
         .lb-prev { left: 4vw; }
         .lb-next { right: 4vw; }
 
-        /* --- DİNAMİK LOGO ALANI --- */
-        #logo-area { border-top: 1px solid var(--border-color); padding: 40px 5vw; margin-top: 20px; opacity: 0; transition: opacity 0.5s ease; }
-        .logo-area-title { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 1.2rem; color: rgba(225, 219, 200, 0.5); margin-bottom: 30px; text-align: center; }
+        /* --- DİNAMİK ORGANİK LOGO ALANI --- */
+        #logo-area { border-top: 1px solid var(--border-color); padding: 80px 5vw; margin-top: 40px; opacity: 0; transition: opacity 0.5s ease; }
+        .logo-area-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(2rem, 4vw, 3rem); color: var(--text-cream); margin-bottom: 50px; text-align: center; }
         
         .logo-grid { 
-            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: clamp(10px, 1.5vw, 20px); width: 100%; max-width: 1400px; margin: 0 auto; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: clamp(10px, 1.5vw, 20px); width: 100%; max-width: 1400px; margin: 0 auto;
         }
         
         .logo-box { 
-            background: var(--text-cream); border-radius: 8px; flex: 0 0 auto;
-            width: clamp(120px, 12vw, 160px); aspect-ratio: 4/3; 
+            background: var(--text-cream); border-radius: 8px; flex: 0 0 auto; width: clamp(120px, 12vw, 160px); aspect-ratio: 4/3; 
             display: flex; justify-content: center; align-items: center; padding: clamp(15px, 2vw, 25px); 
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; overflow: hidden; 
         }
-        
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: brightness(0.8) contrast(1.1); transition: all 0.4s ease; }
         .logo-box:hover { background: #fff; transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
         .logo-box:hover img { filter: brightness(1) contrast(1.2); transform: scale(1.1); }
@@ -337,6 +335,13 @@
     </style>
 </head>
 <body>
+
+    <meta name="description" content="Söyleyecek sözü olanlar için buradayız. Markalara derinlik katan, el yapımı hikayeler üreten 360° kreatif reklam ajansı.">
+    <meta property="og:title" content="Yazıhane Creative | Portfolyo">
+    <meta property="og:description" content="Söyleyecek sözü olanlar için buradayız. Markalara derinlik katan, el yapımı hikayeler üreten 360° kreatif reklam ajansı.">
+    <meta property="og:image" content="https://www.yazihane.com.tr/images/wp-kapak.jpg">
+    <meta property="og:url" content="https://www.yazihane.com.tr/portfolio.html">
+    <meta property="og:type" content="website">
 
     <div id="mobile-menu-overlay">
         <button class="mobile-menu-close" id="mobile-close-btn">
@@ -548,6 +553,12 @@
                     }
                 });
                 allVideos = parsed;
+                
+                // HIZLANDIRICI: Eğer kullanıcı bir kategoride bekliyorsa ve video sekmesindeyse anında renderla!
+                if (currentService && currentService !== 'Fotoğraf' && currentService !== 'Tasarım') {
+                    renderVideosForService(activeSector, currentService);
+                }
+                
                 return parsed;
             }).catch(e => { console.error("YouTube veri çekme hatası:", e); return []; });
 
@@ -897,13 +908,13 @@
                 const safeTitle = brandName
                     .replace(/\\/g, "\\\\")
                     .replace(/'/g, "\\'")
-                    .replace(/"/g, """)
+                    .replace(/"/g, "&quot;")
                     .replace(/[\n\r]/g, " ");
                     
                 const safeDesc = (v.description || '')
                     .replace(/\\/g, "\\\\")
                     .replace(/'/g, "\\'")
-                    .replace(/"/g, """)
+                    .replace(/"/g, "&quot;")
                     .replace(/\n/g, "\\n")
                     .replace(/\r/g, "");
 
@@ -1013,6 +1024,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', async () => {
+            // SEO Görünümleri vs için HTML'e eklediğimiz <meta> etiketleri aynen korundu
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);
 
