@@ -111,7 +111,7 @@
         .desktop-lang-dropdown:hover .desktop-lang-current, .mobile-lang-dropdown:hover .mobile-lang-current { color: var(--text-cream); }
         .desktop-lang-list, .mobile-lang-list { position: absolute; top: 100%; right: 0; background: rgba(7,7,7,0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-color); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 5px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .desktop-lang-dropdown.active .desktop-lang-list, .mobile-lang-dropdown.active .mobile-lang-list { opacity: 1; pointer-events: auto; }
-        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; transition: color 0.2s; }
+        .lang-btn, .lang-btn-mobile { padding: 8px 15px; color: rgba(225,219,200,0.5); text-align: center; display: block; }
         .lang-btn.active, .lang-btn:hover, .lang-btn-mobile.active, .lang-btn-mobile:hover { color: var(--text-cream); }
 
         .mobile-header-btn { display: none; align-items: center; color: var(--text-cream); cursor: pointer; background: none; border: none; }
@@ -130,29 +130,29 @@
 
         main { margin-left: var(--sidebar-w); overflow: hidden; padding-top: var(--header-h); }
 
-        /* --- 1. SERVICES HERO BÖLÜMÜ --- */
+        /* --- 1. SERVICES HERO BÖLÜMÜ (YENİ HİZALAMA) --- */
         #services-hero {
             padding: clamp(60px, 10vh, 120px) 5vw; display: flex; flex-direction: column; align-items: center; text-align: center;
         }
 
         .sh-typography {
-            display: flex; flex-direction: column; width: 100%; max-width: 1600px; margin: 0 auto; text-align: left;
+            display: flex; flex-direction: column; width: fit-content; margin: 0 auto; text-align: center;
         }
 
         .sh-top {
-            font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 3rem); font-style: italic;
-            color: var(--iris-red); margin-bottom: 0; z-index: 2; padding-left: 2vw; align-self: flex-start;
+            font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4rem); font-style: italic;
+            color: var(--iris-red); margin-bottom: -10px; z-index: 2; align-self: flex-start; padding-left: 5px;
         }
 
         .sh-middle {
-            font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(4rem, 18vw, 22rem);
-            font-weight: 900; color: var(--text-cream); line-height: 0.9; text-transform: uppercase;
-            letter-spacing: -0.02em; margin: 0; padding: 0; text-align: center; z-index: 1; width: 100%;
+            font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(5rem, 18vw, 25rem);
+            font-weight: 900; color: var(--text-cream); line-height: 0.8; text-transform: uppercase;
+            letter-spacing: -0.02em; margin: 0; padding: 0; text-align: center; z-index: 1;
         }
 
         .sh-bottom {
-            font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 3rem); font-style: italic;
-            color: var(--iris-red); margin-top: 0; z-index: 2; padding-right: 2vw; align-self: flex-end;
+            font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4rem); font-style: italic;
+            color: var(--iris-red); margin-top: -10px; z-index: 2; align-self: flex-end; padding-right: 5px;
         }
 
         html:lang(en) .sh-middle { font-size: clamp(3rem, 13vw, 18rem); letter-spacing: -0.01em; }
@@ -232,48 +232,25 @@
         .fade-in { opacity: 1 !important; transform: translateY(0) !important; }
 
         /* --- 3. ORGANİK MARKALAR ALANI --- */
-        #brands { padding: 80px 5vw 120px; border-top: 1px solid var(--border-color); }
+        #brands { padding: 100px 5vw 150px; border-top: 1px solid var(--border-color); }
         .brands-title-wrapper { text-align: center; margin-bottom: 60px; }
         .bt-red { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--iris-red); font-weight: 400; line-height: 1; letter-spacing: -0.02em; }
         .bt-white { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 6rem); color: var(--text-cream); font-weight: 400; font-style: italic; line-height: 1; letter-spacing: -0.02em; }
 
         .logo-wall-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            align-items: center; 
-            gap: clamp(10px, 1.5vw, 20px); 
-            width: 100%; 
-            max-width: 1400px; 
-            margin: 0 auto; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; 
+            gap: clamp(10px, 1.5vw, 20px); width: 100%; max-width: 1400px; margin: 0 auto; 
         }
         
         .logo-cell { 
-            background: var(--text-cream); 
-            border-radius: 8px; 
-            flex: 0 0 auto;
-            width: clamp(120px, 12vw, 160px); 
-            aspect-ratio: 4/3; 
+            background: var(--text-cream); border-radius: 8px; flex: 0 0 auto;
+            width: clamp(120px, 12vw, 160px); aspect-ratio: 4/3; 
             display: flex; justify-content: center; align-items: center; padding: clamp(15px, 2vw, 25px); 
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; 
-            overflow: hidden; 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; overflow: hidden; 
         }
-        
-        .logo-cell img { 
-            max-width: 100%; max-height: 100%; object-fit: contain; 
-            filter: brightness(0.8) contrast(1.1); transition: all 0.4s ease; 
-        }
-        
-        .logo-cell:hover { 
-            background: #fff; 
-            transform: translateY(-5px) scale(1.05); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
-        }
-        
-        .logo-cell:hover img { 
-            filter: brightness(1) contrast(1.2); 
-            transform: scale(1.1); 
-        }
+        .logo-cell img { max-width: 100%; max-height: 100%; object-fit: contain; filter: brightness(0.8) contrast(1.1); transition: all 0.4s ease; }
+        .logo-cell:hover { background: #fff; transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .logo-cell:hover img { filter: brightness(1) contrast(1.2); transform: scale(1.1); }
 
         /* --- FOOTER --- */
         .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
@@ -570,30 +547,16 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible'); 
-                    if (entry.target.classList.contains('turn-red')) setTimeout(() => entry.target.classList.add('active'), 1000);
-                    if (entry.target.classList.contains('red-marker')) entry.target.classList.add('active');
                 }
             });
         }, { threshold: 0.1 }); 
         
-        document.querySelectorAll('.reveal-up, .reveal-fade, .turn-red, .red-marker').forEach(el => scrollObserver.observe(el));
+        document.querySelectorAll('.reveal-up, .reveal-fade').forEach(el => scrollObserver.observe(el));
 
         // --- ZEKİ LOGO YÜKLEYİCİ (NETLIFY FUNCTION) ---
         async function loadAndShuffleLogos() {
-            const CACHE_KEY = 'yazihane_logos_v3';
-            const CACHE_TIME_KEY = 'yazihane_logos_time_v3';
-            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
             const logoWallGrid = document.getElementById('logo-wall-grid');
-            
             if(!logoWallGrid) return;
-
-            let cachedLogos = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
-            let cacheTime = localStorage.getItem(CACHE_TIME_KEY);
-
-            if (cachedLogos.length > 0 && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
-                displayLogos(cachedLogos);
-                return;
-            }
 
             try {
                 // Fetch from Netlify Function
@@ -601,37 +564,25 @@
                 if (response.ok) {
                     const logolar = await response.json();
                     if (logolar && logolar.length > 0) {
-                        localStorage.setItem(CACHE_KEY, JSON.stringify(logolar));
-                        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-                        displayLogos(logolar);
+                        logoWallGrid.style.display = 'flex';
+                        logoWallGrid.innerHTML = '';
+                        
+                        const shuffled = [...logolar].sort(() => 0.5 - Math.random());
+                        shuffled.forEach((logoName) => {
+                            const cell = document.createElement('div'); 
+                            cell.className = 'logo-cell';
+                            const img = document.createElement('img'); 
+                            img.src = `/images/logolar/${logoName}`;
+                            img.alt = `Çözüm Ortağı`;
+                            img.loading = "lazy";
+                            cell.appendChild(img); 
+                            logoWallGrid.appendChild(cell);
+                        });
                     }
                 }
             } catch (error) {
                 console.error("Logo fetch hatası:", error);
             }
-        }
-
-        function displayLogos(logoArray) {
-            const grid = document.getElementById('logo-wall-grid');
-            if(!grid) return;
-            grid.style.display = 'flex';
-            grid.innerHTML = '';
-            
-            // Shuffle
-            const shuffled = [...logoArray].sort(() => 0.5 - Math.random());
-            
-            shuffled.forEach((logoName) => {
-                const cell = document.createElement('div'); 
-                cell.className = 'logo-cell';
-                
-                const img = document.createElement('img'); 
-                img.src = `/images/logolar/${logoName}`;
-                img.alt = `Çözüm Ortağı`;
-                img.loading = "lazy";
-                
-                cell.appendChild(img); 
-                grid.appendChild(cell);
-            });
         }
 
         const i18n = {
@@ -749,7 +700,7 @@
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);
             
-            loadAndShuffleLogos(); // Netlify backend sistemi ile logoları yükle
+            loadAndShuffleLogos(); 
 
             const hash = window.location.hash.replace('#', '');
             if (hash && hash.startsWith('srv_')) {

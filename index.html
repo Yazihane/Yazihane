@@ -217,41 +217,27 @@
         #brands { padding: 80px 5vw 120px; border-top: 1px solid var(--border-color); }
         
         .logo-wall-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            align-items: center; 
-            gap: clamp(10px, 1.5vw, 20px); 
-            width: 100%; 
-            max-width: 1400px; 
-            margin: 0 auto; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; 
+            gap: clamp(10px, 1.5vw, 20px); width: 100%; max-width: 1400px; margin: 0 auto; 
         }
         
         .logo-cell { 
-            background: var(--text-cream); 
-            border-radius: 8px; 
-            flex: 0 0 auto;
-            width: clamp(120px, 12vw, 160px); 
-            aspect-ratio: 4/3; 
+            background: var(--text-cream); border-radius: 8px; flex: 0 0 auto;
+            width: clamp(120px, 12vw, 160px); aspect-ratio: 4/3; 
             display: flex; justify-content: center; align-items: center; padding: clamp(15px, 2vw, 25px); 
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; 
-            overflow: hidden; 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; overflow: hidden; 
         }
         
         .logo-cell img { 
-            max-width: 100%; max-height: 100%; object-fit: contain; 
-            filter: brightness(0.8) contrast(1.1); transition: all 0.4s ease; 
+            max-width: 100%; max-height: 100%; object-fit: contain; filter: brightness(0.8) contrast(1.1); transition: all 0.4s ease; 
         }
         
         .logo-cell:hover { 
-            background: #fff; 
-            transform: translateY(-5px) scale(1.05); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
+            background: #fff; transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
         }
         
         .logo-cell:hover img { 
-            filter: brightness(1) contrast(1.2); 
-            transform: scale(1.1); 
+            filter: brightness(1) contrast(1.2); transform: scale(1.1); 
         }
 
         /* --- DEV SLOGAN VE HİZMETLER --- */
@@ -705,7 +691,6 @@
         window.addEventListener('scroll', updateVideoMask);
         window.addEventListener('resize', updateVideoMask);
 
-        // --- FOOTER VE ANİMASYON DÜZELTMESİ (is-visible eklendi) ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -718,7 +703,6 @@
         
         document.querySelectorAll('.reveal-up, .reveal-fade, .turn-red, .red-marker').forEach(el => observer.observe(el));
 
-        // --- YENİ SİBER SAAT MANTIĞI ---
         function updateClock() {
             try {
                 const now = new Date();
@@ -764,7 +748,6 @@
             }
 
             try {
-                // Fetch from Netlify Function
                 const response = await fetch('/.netlify/functions/getLogos');
                 if (response.ok) {
                     const logolar = await response.json();
@@ -782,10 +765,16 @@
         function displayLogos(logoArray) {
             const grid = document.getElementById('logo-wall-grid');
             if(!grid) return;
-            grid.style.display = 'grid';
+            grid.style.display = 'flex';
+            grid.style.flexWrap = 'wrap';
+            grid.style.justifyContent = 'center';
+            grid.style.alignItems = 'center';
+            grid.style.gap = 'clamp(10px, 1.5vw, 20px)';
+            grid.style.width = '100%';
+            grid.style.maxWidth = '1400px';
+            grid.style.margin = '0 auto';
             grid.innerHTML = '';
             
-            // Shuffle
             const shuffled = [...logoArray].sort(() => 0.5 - Math.random());
             
             shuffled.forEach((logoName) => {
@@ -844,8 +833,11 @@
             btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang));
         });
         
-        const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
-        setLanguage(savedLang);
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
+            setLanguage(savedLang);
+            loadAndShuffleLogos();
+        });
     </script>
 </body>
 </html>

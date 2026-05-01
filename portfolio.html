@@ -251,29 +251,15 @@
         .logo-area-title { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 1.2rem; color: rgba(225, 219, 200, 0.5); margin-bottom: 30px; text-align: center; }
         
         .logo-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 20px; 
-            width: 100%; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; width: 100%; 
         }
         
         .logo-box { 
-            background: rgba(225, 219, 200, 0.05); border-radius: 8px; 
-            flex: 0 0 auto; width: clamp(100px, 12vw, 140px); aspect-ratio: 1/1; 
-            display: flex; justify-content: center; align-items: center; padding: 15px; 
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; 
-            overflow: hidden; 
+            background: rgba(225, 219, 200, 0.05); border-radius: 8px; flex: 0 0 auto; width: clamp(100px, 12vw, 140px); aspect-ratio: 1/1; 
+            display: flex; justify-content: center; align-items: center; padding: 15px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.3s ease; overflow: hidden; 
         }
-        
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: brightness(0.8) contrast(1.1); transition: filter 0.3s ease; }
-        
-        .logo-box:hover { 
-            background: rgba(225, 219, 200, 0.1); 
-            transform: translateY(-5px) scale(1.05); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
-        }
+        .logo-box:hover { background: rgba(225, 219, 200, 0.1); transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .logo-box:hover img { filter: brightness(1) contrast(1.2); transform: scale(1.1); }
 
         /* --- FOOTER --- */
@@ -291,12 +277,9 @@
         .wax-seal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 8vw; height: 8vw; min-width: 60px; min-height: 60px; 
-            background: #b0151a; 
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+            background: #b0151a; border-radius: 50%; display: flex; justify-content: center; align-items: center; 
             pointer-events: none; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            border: 2px solid #d42027; 
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4);
-            z-index: 10;
+            border: 2px solid #d42027; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4); z-index: 10;
         }
         .wax-seal img { width: 60%; height: 60%; object-fit: contain; filter: brightness(0); opacity: 0.7; }
         .footer-giant a:hover .wax-seal { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); }
@@ -518,6 +501,33 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        // --- 0 Saniye Gecikme: Arka Plan Taramaları Hemen Başlatılıyor! ---
+        const SESSION_ID = Date.now(); 
+
+        // Youtube verilerini sayfa yüklenmesini beklemeden hemen arkada çekmeye başla
+        const ytDataPromise = fetch(`/.netlify/functions/youtube?ts=${SESSION_ID}`)
+            .then(res => res.ok ? res.json() : [])
+            .then(data => {
+                const parsed = []; 
+                data.forEach(v => {
+                    const tags = new Set([...extractHashtags(v.title), ...extractHashtags(v.description)]);
+                    let vSectors = Object.keys(SECTOR_TAGS).filter(sec => SECTOR_TAGS[sec].some(t => tags.has(t)));
+                    let vServices = Object.keys(SERVICE_TAGS).filter(srv => SERVICE_TAGS[srv].some(t => tags.has(t)));
+                    
+                    if (vSectors.length > 0 && vServices.length > 0) {
+                        parsed.push({ ...v, sectors: vSectors, services: vServices });
+                    }
+                });
+                allVideos = parsed;
+                return parsed;
+            }).catch(e => { console.error("YouTube veri çekme hatası:", e); return []; });
+
+        // Logoları anında çek (24 Saat Cache İptal Edildi - Anlık yenileniyor)
+        const logosDataPromise = fetch('/.netlify/functions/getLogos')
+            .then(res => res.ok ? res.json() : [])
+            .catch(error => { console.error("Logo fetch hatası:", error); return []; });
+
+
         // --- DİL VE MENÜ MANTIĞI ---
         const toggleDropdown = function(e) { if(e.target.classList.contains('lang-btn')) return; this.classList.toggle('active'); };
         document.getElementById('desktop-lang-trigger')?.addEventListener('click', toggleDropdown);
@@ -656,27 +666,6 @@
         let allVideos = [];
         let activeSector = '';
         let currentService = '';
-        const SESSION_ID = Date.now(); 
-
-        // --- YOUTUBE VERİ ÇEKME ---
-        async function fetchYouTubeData() {
-            try {
-                const res = await fetch(`/.netlify/functions/youtube?ts=${SESSION_ID}`);
-                if(res.ok) {
-                    const data = await res.json();
-                    allVideos = []; 
-                    data.forEach(v => {
-                        const tags = new Set([...extractHashtags(v.title), ...extractHashtags(v.description)]);
-                        let vSectors = Object.keys(SECTOR_TAGS).filter(sec => SECTOR_TAGS[sec].some(t => tags.has(t)));
-                        let vServices = Object.keys(SERVICE_TAGS).filter(srv => SERVICE_TAGS[srv].some(t => tags.has(t)));
-                        
-                        if (vSectors.length > 0 && vServices.length > 0) {
-                            allVideos.push({ ...v, sectors: vSectors, services: vServices });
-                        }
-                    });
-                }
-            } catch(e) { console.error("YouTube veri çekme hatası:", e); }
-        }
 
         // --- GÖRSEL DEDEKTİFİ (SADECE PORTFOLYO İÇERİKLERİ İÇİN) ---
         const EXT_PRIORITY = ['jpg','png','webp','jpeg'];
@@ -713,6 +702,9 @@
             });
         }
 
+        // Arama işlemi backgroundda hemen başlasın!
+        startPreloading();
+
         async function loadImagesForService(sector, serviceType) {
             const grid = document.getElementById('portfolio-grid');
             grid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
@@ -748,42 +740,13 @@
             grid.innerHTML = htmlBuffer;
         }
 
-        // --- YENİ ZEKİ LOGO YÜKLEYİCİ (NETLIFY FUNCTION) ---
-        async function loadAllLogosCache() {
-            const CACHE_KEY = 'yazihane_logos_v3';
-            const CACHE_TIME_KEY = 'yazihane_logos_time_v3';
-            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 saat
-            
-            let cachedLogos = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
-            let cacheTime = localStorage.getItem(CACHE_TIME_KEY);
-            
-            if (cachedLogos.length > 0 && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
-                return cachedLogos;
-            }
-            
-            try {
-                const response = await fetch('/.netlify/functions/getLogos');
-                if (response.ok) {
-                    const logolar = await response.json();
-                    if (logolar && logolar.length > 0) {
-                        localStorage.setItem(CACHE_KEY, JSON.stringify(logolar));
-                        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-                        return logolar;
-                    }
-                }
-            } catch (error) {
-                console.error("Logo fetch hatası:", error);
-            }
-            return [];
-        }
-
         async function renderLogoWall(sectorKey) {
             const grid = document.getElementById('logo-grid');
             if(!grid) return;
             grid.innerHTML = '';
             
-            // Tüm logoları hızlıca cache'den (veya sunucudan) çek
-            const allLogos = await loadAllLogosCache();
+            // Tüm logoları hızlıca sunucu promise'inden çek
+            const allLogos = await logosDataPromise;
             
             // Sektöre göre filtrele
             let filteredLogos = [];
@@ -896,7 +859,14 @@
             else renderVideosForService(activeSector, serviceName);
         }
 
-        function renderVideosForService(sector, service) {
+        async function renderVideosForService(sector, service) {
+            portfolioGrid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
+            
+            // Eğer veriler hala gelmediyse Promise'in bitmesini bekle
+            if(allVideos.length === 0) {
+                await ytDataPromise;
+            }
+
             portfolioGrid.innerHTML = '';
             const filtered = allVideos.filter(v => {
                 const matchSector = sector === 'genel' || v.sectors.includes(sector) || v.sectors.includes('genel');
@@ -910,7 +880,7 @@
             filtered.forEach((v, i) => {
                 const isFull = ((i + 1) % 3 === 0);
                 
-                // BURASI ÇOK KRİTİK: Tırnak ve Enter (Yeni Satır) hatalarını temizleyen zırhlı filtre!
+                // Tırnak ve Enter (Yeni Satır) hatalarını temizleyen zırhlı filtre!
                 const safeTitle = (v.title || '')
                     .replace(/\\/g, "\\\\")
                     .replace(/'/g, "\\'")
@@ -1030,9 +1000,6 @@
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);
             
-            startPreloading();
-            await fetchYouTubeData(); 
-
             const hash = window.location.hash.replace('#', '');
             if (hash && SECTORS[hash]) navigateTo(hash, false);
         });
