@@ -50,6 +50,10 @@
         }
         .reveal-fade.is-visible { opacity: 1; }
 
+        .delay-1 { transition-delay: 0.1s, 0.1s; }
+        .delay-2 { transition-delay: 0.2s, 0.2s; }
+        .delay-3 { transition-delay: 0.3s, 0.3s; }
+
         /* --- DİKEY SIDEBAR & SAAT --- */
         #vertical-ticker {
             position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
@@ -336,6 +340,84 @@
         }
         #popup-overlay.active { display: block; opacity: 1; }
 
+        /* --- 5. LOKASYON / NEREDEYİZ --- */
+        #location-section {
+            width: 100%;
+            background: var(--bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(60px, 10vh, 120px) 5vw;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+        .loc-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--iris-red);
+            margin-bottom: 20px;
+        }
+        .loc-address-line {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 900;
+            color: var(--text-cream);
+            line-height: 1.1;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .loc-address-sub {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            color: rgba(225, 219, 200, 0.7);
+            margin-bottom: 40px;
+        }
+        .loc-map-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: clamp(15px, 2vw, 20px) clamp(30px, 4vw, 50px);
+            background: transparent;
+            border: 1px solid rgba(225, 219, 200, 0.3);
+            border-radius: 50px;
+            color: var(--text-cream);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(12px, 1.2vw, 16px);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .loc-map-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--iris-red);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 0;
+        }
+        .loc-map-btn:hover {
+            border-color: var(--iris-red);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(230, 30, 37, 0.2);
+        }
+        .loc-map-btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .loc-map-btn span, .loc-map-btn svg {
+            position: relative;
+            z-index: 1;
+        }
+
         /* --- FOOTER --- */
         .site-footer { border-top: 1px solid var(--border-color); padding: 6vw 4vw 2vw 4vw; display: flex; flex-direction: column; gap: 8vw; overflow: hidden; background: var(--bg); position: relative; z-index: 4; }
         .footer-giant { text-align: center; position: relative; width: 100%; }
@@ -591,6 +673,16 @@
                 <div class="team-member reveal-up"><div class="tm-img"><img src="https://www.yazihane.com.tr/images/weare/14.jpg" onerror="this.onerror=null; this.src='https://yazihane.com.tr/images/logo/default.png'; this.style.objectFit='contain'; this.style.padding='40px'; this.style.filter='grayscale(100%) opacity(0.3)';"></div><div class="tm-overlay"></div><div class="tm-info"><div class="tm-name">Emek Dilan Özdemir</div><div class="tm-role" data-i18n="role_social_expert">Sosyal Medya Uzmanı</div></div></div>
             </div>
         </section>
+
+        <section id="location-section">
+            <h2 class="loc-title reveal-up" data-i18n="ab_loc_title">NEREDEYİZ?</h2>
+            <div class="loc-address-line reveal-up delay-1">Koşuyolu Mahallesi Batuhan Çıkmazı Sokak No:9</div>
+            <div class="loc-address-sub reveal-up delay-2">Kadıköy / İstanbul</div>
+            <a href="https://maps.app.goo.gl/KtEj9KxiytswdXn26" target="_blank" class="loc-map-btn reveal-up delay-3">
+                <span data-i18n="ab_loc_btn">HARİTADA GÖR</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </a>
+        </section>
     </main>
 
     <footer class="site-footer reveal-up">
@@ -736,28 +828,32 @@
                 role_founder: "Kurucu", role_gm: "Genel Müdür", role_cd: "Kreatif Müdür", role_marketing: "Pazarlama & İş Geliştirme", role_ad: "Art Director", role_hgd: "Head of Graphic Design", role_video: "Videographer", role_gd: "Graphic Designer", role_social: "Social Media", role_sr_art: "Sr. Art Direktör", role_jr_art: "Jr. Art Direktör", role_social_expert: "Sosyal Medya Uzmanı",
                 ab_hero_1: "SÖYLEYECEK", ab_hero_2: "SÖZÜ OLANLAR", ab_hero_3a: "İÇİN", ab_hero_3b: "BURADAYIZ.", ab_hero_red_1: "Herkesin Bir", ab_hero_red_2: "Hikayesi Vardır", ab_hero_est: "2016'DAN BERİ", ab_est: "EST. 2016",
                 ab_intro_title: "Biz Yazıhaneyiz.", ab_intro_sub_1: "Küresel çapta bir", ab_intro_sub_2: "Kreatif Ajans", ab_intro_p: "Farklı disiplinlerde uzmanlaşmış kreatif bir ekip olarak markaların var olan hikayelerini keşfetmeyi ya da baştan yaratmayı ve dijital dünyanın inovatif dinamiklerini kullanarak hedef kitlelerine anlatmayı çok seviyoruz.", ab_intro_link: "HİZMETLERİMİZ ↗",
-                ab_hww_bg: "NASIL<br>YAPTIK?", ab_hww_1: "PROAKTİFLİK", ab_hww_2: "TUTKU", ab_hww_3: "PERFORMANS", ab_hww_link: "NELER YAPTIK? ↗", ab_team_title: "BİZ KİMİZ", ab_team_desc: "Bugüne dek bize güvenen marka sayısı."
+                ab_hww_bg: "NASIL<br>YAPTIK?", ab_hww_1: "PROAKTİFLİK", ab_hww_2: "TUTKU", ab_hww_3: "PERFORMANS", ab_hww_link: "NELER YAPTIK? ↗", ab_team_title: "BİZ KİMİZ", ab_team_desc: "Bugüne dek bize güvenen marka sayısı.",
+                ab_loc_title: "NEREDEYİZ?", ab_loc_btn: "HARİTADA GÖR"
             },
             en: { 
                 nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE.",
                 role_founder: "Founder", role_gm: "General Manager", role_cd: "Creative Manager", role_marketing: "Marketing & Business Dev.", role_ad: "Art Director", role_hgd: "Head of Graphic Design", role_video: "Videographer", role_gd: "Graphic Designer", role_social: "Social Media", role_sr_art: "Sr. Art Director", role_jr_art: "Jr. Art Director", role_social_expert: "Social Media Expert",
                 ab_hero_1: "WE ARE HERE", ab_hero_2: "FOR THOSE WHO", ab_hero_3a: "HAVE", ab_hero_3b: "TO SAY.", ab_hero_red_1: "Everyone Has", ab_hero_red_2: "A Story", ab_hero_est: "SINCE 2016", ab_est: "EST. 2016",
                 ab_intro_title: "We are Yazıhane.", ab_intro_sub_1: "A global scale", ab_intro_sub_2: "Creative Agency", ab_intro_p: "As a creative team specializing in various disciplines, we love discovering or recreating the existing stories of brands and telling them to their target audiences using the innovative dynamics of the digital world.", ab_intro_link: "OUR SERVICES ↗",
-                ab_hww_bg: "HOW WE<br>WORK?", ab_hww_1: "PROACTIVITY", ab_hww_2: "PASSION", ab_hww_3: "PERFORMANCE", ab_hww_link: "VIEW OUR WORK ↗", ab_team_title: "WHO WE ARE", ab_team_desc: "Number of brands that have trusted us so far."
+                ab_hww_bg: "HOW WE<br>WORK?", ab_hww_1: "PROACTIVITY", ab_hww_2: "PASSION", ab_hww_3: "PERFORMANCE", ab_hww_link: "VIEW OUR WORK ↗", ab_team_title: "WHO WE ARE", ab_team_desc: "Number of brands that have trusted us so far.",
+                ab_loc_title: "WHERE ARE WE?", ab_loc_btn: "VIEW ON MAP"
             },
             ru: { 
                 nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE.",
                 role_founder: "Учредитель", role_gm: "Генеральный Менеджер", role_cd: "Креативный Менеджер", role_marketing: "Маркетинг и Развитие", role_ad: "Арт-директор", role_hgd: "Руководитель Графического Дизайна", role_video: "Видеооператор", role_gd: "Графический Дизайнер", role_social: "Социальные Медиа", role_sr_art: "Ст. Арт-директор", role_jr_art: "Мл. Арт-директор", role_social_expert: "SMM Специалист",
                 ab_hero_1: "МЫ ЗДЕСЬ", ab_hero_2: "ДЛЯ ТЕХ КОМУ", ab_hero_3a: "ЕСТЬ ЧТО", ab_hero_3b: "СКАЗАТЬ.", ab_hero_red_1: "У Каждого Есть", ab_hero_red_2: "История", ab_hero_est: "С 2016 ГОДА", ab_est: "EST. 2016",
                 ab_intro_title: "Мы - Yazıhane.", ab_intro_sub_1: "Глобальное", ab_intro_sub_2: "Креативное Агентство", ab_intro_p: "Как творческая команда, специализирующаяся в различных дисциплинах, мы любим открывать или воссоздавать существующие истории брендов и рассказывать их целевой аудитории, используя инновационную динамику цифрового мира.", ab_intro_link: "НАШИ УСЛУГИ ↗",
-                ab_hww_bg: "КАК МЫ<br>РАБОТАЕМ?", ab_hww_1: "ПРОАКТИВНОСТЬ", ab_hww_2: "СТРАСТЬ", ab_hww_3: "ЭФФЕКТИВНОСТЬ", ab_hww_link: "СМОТРЕТЬ РАБОТЫ ↗", ab_team_title: "КТО МЫ", ab_team_desc: "Количество брендов, доверившихся нам на данный момент."
+                ab_hww_bg: "КАК МЫ<br>РАБОТАЕМ?", ab_hww_1: "ПРОАКТИВНОСТЬ", ab_hww_2: "СТРАСТЬ", ab_hww_3: "ЭФФЕКТИВНОСТЬ", ab_hww_link: "СМОТРЕТЬ РАБОТЫ ↗", ab_team_title: "КТО МЫ", ab_team_desc: "Количество брендов, доверившихся нам на данный момент.",
+                ab_loc_title: "ГДЕ МЫ?", ab_loc_btn: "НА КАРТЕ"
             },
             ar: { 
                 nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه.",
                 role_founder: "مؤسس", role_gm: "مدير عام", role_cd: "مدير إبداعي", role_marketing: "التسويق وتطوير الأعمال", role_ad: "مخرج فني", role_hgd: "رئيس قسم التصميم الجرافيكي", role_video: "مصور فيديو", role_gd: "مصمم جرافيك", role_social: "وسائل التواصل الاجتماعي", role_sr_art: "كبير مديري الفن", role_jr_art: "مدير فني مبتدئ", role_social_expert: "خبير وسائل التواصل الاجتماعي",
                 ab_hero_1: "نحن هنا", ab_hero_2: "من أجل أولئك الذين", ab_hero_3a: "لديهم", ab_hero_3b: "ليقولوه.", ab_hero_red_1: "كل شخص لديه", ab_hero_red_2: "قصة", ab_hero_est: "منذ 2016", ab_est: "EST. 2016",
                 ab_intro_title: "نحن يازيهانه.", ab_intro_sub_1: "على نطاق عالمي", ab_intro_sub_2: "وكالة إبداعية", ab_intro_p: "كفريق إبداعي متخصص في تخصصات مختلفة، نحب اكتشاف أو إعادة إنشاء القصص الحالية للعلامات التجارية وروايتها لجمهورها المستهدف باستخدام الديناميكيات المبتكرة للعالم الرقمي.", ab_intro_link: "خدماتنا ↗",
-                ab_hww_bg: "كيف<br>نعمل؟", ab_hww_1: "استباقية", ab_hww_2: "شغف", ab_hww_3: "أداء", ab_hww_link: "تصفح أعمالنا ↗", ab_team_title: "من نحن", ab_team_desc: "عدد العلامات التجارية التي وثقت بنا حتى الآن."
+                ab_hww_bg: "كيف<br>نعمل؟", ab_hww_1: "استباقية", ab_hww_2: "شغف", ab_hww_3: "أداء", ab_hww_link: "تصفح أعمالنا ↗", ab_team_title: "من نحن", ab_team_desc: "عدد العلامات التجارية التي وثقت بنا حتى الآن.",
+                ab_loc_title: "أين نحن؟", ab_loc_btn: "عرض على الخريطة"
             }
         };
 
