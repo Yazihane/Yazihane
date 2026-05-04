@@ -1,6 +1,6 @@
 [functions]
   directory = "netlify/functions"
-  included_files = ["images/logolar/**"]
+  included_files = ["images/logolar/**", "images/nonvideo/**"]
 
 # --- KESTİRME LİNKLER (YÖNLENDİRMELER) ---
 
