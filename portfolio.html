@@ -781,10 +781,18 @@
         }
 
         function navigateBackToEntry() {
-            navigateTo('');
+            // Eğer Eğlence kategorisinin bir alt menüsündeysek (Cafe, Pub vb.),
+            // en başa değil, Eğlence alt menüsü (view-eglence-sub) ekranına dön.
+            if (activeSector === 'eglence' && activeSubSector) {
+                navigateTo('eglence');
+            } else {
+                navigateTo('');
+            }
         }
 
         async function renderSectorUI(sectorKey) {
+            currentService = ''; // Sektör geçişlerinde filtreyi kesin sıfırla
+
             const sector = SECTORS[sectorKey];
             viewEntry.style.display = 'none';
             viewEglenceSub.style.display = 'none';
@@ -826,17 +834,21 @@
             }
 
             renderDynamicTabs(availableServices);
-            if(availableServices.length > 0) applySubFilter(null, availableServices[0]);
-            else portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
+            if(availableServices.length > 0) {
+                applySubFilter(null, availableServices[0]);
+            } else {
+                portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
+            }
 
             imgDataPromise.then(() => {
                 let addedNew = false;
                 for (let srv of ['Fotoğraf', 'Tasarım']) {
                     const folderType = srv === 'Fotoğraf' ? 'foto' : 'tsrm';
                     const hasImg = allImages.some(url => {
-                        let match = sectorKey === 'genel' ? url.includes(`/${folderType}/`) : url.includes(`/images/nonvideo/${sectorKey}/${folderType}/`);
+                        const lowerUrl = url.toLowerCase(); 
+                        let match = sectorKey === 'genel' ? lowerUrl.includes(`/${folderType}/`) : lowerUrl.includes(`/images/nonvideo/${sectorKey}/${folderType}/`);
                         if (sectorKey === 'eglence' && activeSubSector) {
-                            match = match && url.includes(`/${activeSubSector}/`);
+                            match = match && lowerUrl.includes(`/${activeSubSector}/`);
                         }
                         return match;
                     });
@@ -847,7 +859,9 @@
                 }
                 if (addedNew) {
                     renderDynamicTabs(availableServices, currentService);
-                    if (!currentService && availableServices.length > 0) applySubFilter(null, availableServices[0]);
+                    if (!currentService && availableServices.length > 0) {
+                        applySubFilter(null, availableServices[0]);
+                    }
                 }
             });
 
@@ -910,8 +924,8 @@
                 const rawTitle = v.title || '';
                 const brandName = rawTitle.split(/[-|]/)[0].trim();
                 
-                const safeTitle = brandName.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/[\n\r]/g, " ");
-                const safeDesc = (v.description || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, "\\n").replace(/\r/g, "");
+                const safeTitle = brandName.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, """).replace(/[\n\r]/g, " ");
+                const safeDesc = (v.description || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, """).replace(/\n/g, "\\n").replace(/\r/g, "");
 
                 htmlBuffer += `
                     <div class="grid-item video-item ${isFull ? 'full-width' : ''}" onclick="openYTModal('${v.videoId}', '${safeTitle}', '${safeDesc}')">
@@ -937,9 +951,10 @@
             const folderType = serviceType === 'Fotoğraf' ? 'foto' : 'tsrm';
 
             let targetUrls = allImages.filter(url => {
-                let isMatch = sector === 'genel' ? url.includes(`/${folderType}/`) : url.includes(`/images/nonvideo/${sector}/${folderType}/`);
+                const lowerUrl = url.toLowerCase(); 
+                let isMatch = sector === 'genel' ? lowerUrl.includes(`/${folderType}/`) : lowerUrl.includes(`/images/nonvideo/${sector}/${folderType}/`);
                 if (sector === 'eglence' && activeSubSector) {
-                    isMatch = isMatch && url.includes(`/${activeSubSector}/`);
+                    isMatch = isMatch && lowerUrl.includes(`/${activeSubSector}/`);
                 }
                 return isMatch;
             });
