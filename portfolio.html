@@ -588,13 +588,22 @@
         let activeSubSector = '';
         let currentService = '';
 
-        const HASH_RE = /(^|\s)#([\p{L}\p{M}\.\-_0-9]+)/giu;
-        const normTR = s => (s||'').toLowerCase().replace(/ı/g,'i').replace(/ş/g,'s').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ö/g,'o').replace(/ü/g,'u');
-
+        // TAM ZIRHLI HASHTAG DEDEKTİFİ
         function extractHashtags(text) {
-            const out = new Set(); let m;
-            while((m = HASH_RE.exec(String(text||''))) !== null) { out.add(normTR(m[2])); }
-            return out;
+            const out = new Set();
+            const matches = String(text || '').match(/#[^\s#]+/g) || [];
+            matches.forEach(m => {
+                let clean = m.replace('#', '');
+                clean = clean.replace(/İ/g,'i').replace(/I/g,'i').replace(/ı/g,'i')
+                             .replace(/Ş/g,'s').replace(/ş/g,'s')
+                             .replace(/Ç/g,'c').replace(/ç/g,'c')
+                             .replace(/Ğ/g,'g').replace(/ğ/g,'g')
+                             .replace(/Ö/g,'o').replace(/ö/g,'o')
+                             .replace(/Ü/g,'u').replace(/ü/g,'u')
+                             .toLowerCase().replace(/[^a-z0-9]/g, '');
+                if(clean) out.add(clean);
+            });
+            return Array.from(out);
         }
 
         const SECTOR_TAGS = {
@@ -619,8 +628,10 @@
             .then(res => res.ok ? res.json() : [])
             .then(data => {
                 const parsed = []; 
+                console.log("NETLIFY'DAN GELEN TOPLAM YOUTUBE VİDEO SAYISI:", data.length);
+                
                 data.forEach(v => {
-                    const rawTags = Array.from(new Set([...extractHashtags(v.title), ...extractHashtags(v.description)]));
+                    const rawTags = extractHashtags(v.title + ' ' + v.description);
                     let vSectors = Object.keys(SECTOR_TAGS).filter(sec => SECTOR_TAGS[sec].some(t => rawTags.includes(t)));
                     let vServices = Object.keys(SERVICE_TAGS).filter(srv => SERVICE_TAGS[srv].some(t => rawTags.includes(t)));
                     
