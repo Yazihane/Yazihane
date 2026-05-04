@@ -208,7 +208,7 @@
         .filter-nav a { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(225, 219, 200, 0.4); transition: all 0.3s ease; cursor: pointer; }
         .filter-nav a:hover, .filter-nav a.active { color: var(--text-cream); text-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
 
-        /* --- ASİMETRİK GRID VE GÖRSELLER --- */
+        /* --- VİDEOLAR İÇİN STANDART GRID --- */
         .portfolio-grid { padding: 0 5vw 5vw; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; min-height: 300px; position: relative; }
         .grid-loader { position: absolute; top: 50px; left: 5vw; font-family: 'Space Grotesk'; font-size: 12px; letter-spacing: 2px; color: var(--iris-red); }
         
@@ -225,6 +225,28 @@
         .grid-item.video-item:hover .play-icon { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         .play-icon::before { content: ''; border-left: 16px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 5px; }
         .grid-item.video-item img { object-fit: cover; padding: 0; }
+
+        /* --- FOTOĞRAF VE TASARIMLAR İÇİN MASONRY (PINTEREST) GRID --- */
+        .portfolio-grid.image-masonry {
+            display: block;
+            column-count: 2;
+            column-gap: 20px;
+        }
+        .portfolio-grid.image-masonry .grid-item {
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+            aspect-ratio: auto;
+            height: auto;
+            break-inside: avoid;
+        }
+        .portfolio-grid.image-masonry .grid-item img {
+            width: 100%;
+            height: auto;
+            object-fit: contain; 
+            padding: 0; 
+            display: block;
+        }
 
         /* --- YOUTUBE CUSTOM MODAL --- */
         #yt-modal {
@@ -334,7 +356,8 @@
             .sector-item.genel { grid-column: 1; }
 
             .portfolio-grid { grid-template-columns: 1fr; }
-            .grid-item.full-width { grid-column: span 1; aspect-ratio: 16/9; }
+            .portfolio-grid .grid-item.full-width { grid-column: span 1; aspect-ratio: 16/9; }
+            .portfolio-grid.image-masonry { column-count: 1; }
             .item-info { opacity: 1; padding: 15px; } 
 
             #yt-modal { padding: 80px 5vw; }
@@ -781,10 +804,16 @@
         }
 
         function navigateBackToEntry() {
-            navigateTo('');
+            if (activeSector === 'eglence' && activeSubSector) {
+                navigateTo('eglence');
+            } else {
+                navigateTo('');
+            }
         }
 
         async function renderSectorUI(sectorKey) {
+            currentService = ''; 
+
             const sector = SECTORS[sectorKey];
             viewEntry.style.display = 'none';
             viewEglenceSub.style.display = 'none';
@@ -826,17 +855,21 @@
             }
 
             renderDynamicTabs(availableServices);
-            if(availableServices.length > 0) applySubFilter(null, availableServices[0]);
-            else portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
+            if(availableServices.length > 0) {
+                applySubFilter(null, availableServices[0]);
+            } else {
+                portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
+            }
 
             imgDataPromise.then(() => {
                 let addedNew = false;
                 for (let srv of ['Fotoğraf', 'Tasarım']) {
                     const folderType = srv === 'Fotoğraf' ? 'foto' : 'tsrm';
                     const hasImg = allImages.some(url => {
-                        let match = sectorKey === 'genel' ? url.includes(`/${folderType}/`) : url.includes(`/images/nonvideo/${sectorKey}/${folderType}/`);
+                        const lowerUrl = url.toLowerCase(); 
+                        let match = sectorKey === 'genel' ? lowerUrl.includes(`/${folderType}/`) : lowerUrl.includes(`/images/nonvideo/${sectorKey}/${folderType}/`);
                         if (sectorKey === 'eglence' && activeSubSector) {
-                            match = match && url.includes(`/${activeSubSector}/`);
+                            match = match && lowerUrl.includes(`/${activeSubSector}/`);
                         }
                         return match;
                     });
@@ -847,7 +880,9 @@
                 }
                 if (addedNew) {
                     renderDynamicTabs(availableServices, currentService);
-                    if (!currentService && availableServices.length > 0) applySubFilter(null, availableServices[0]);
+                    if (!currentService && availableServices.length > 0) {
+                        applySubFilter(null, availableServices[0]);
+                    }
                 }
             });
 
@@ -875,6 +910,7 @@
         }
 
         async function renderVideosForService(sector, service) {
+            portfolioGrid.classList.remove('image-masonry');
             portfolioGrid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
             
             if(allVideos.length === 0) {
@@ -927,8 +963,8 @@
         }
 
         async function loadImagesForService(sector, serviceType) {
-            const grid = document.getElementById('portfolio-grid');
-            grid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
+            portfolioGrid.classList.add('image-masonry');
+            portfolioGrid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
             
             if(allImages.length === 0) {
                 await imgDataPromise;
@@ -937,16 +973,18 @@
             const folderType = serviceType === 'Fotoğraf' ? 'foto' : 'tsrm';
 
             let targetUrls = allImages.filter(url => {
-                let isMatch = sector === 'genel' ? url.includes(`/${folderType}/`) : url.includes(`/images/nonvideo/${sector}/${folderType}/`);
+                const lowerUrl = url.toLowerCase(); 
+                let isMatch = sector === 'genel' ? lowerUrl.includes(`/${folderType}/`) : lowerUrl.includes(`/images/nonvideo/${sector}/${folderType}/`);
                 if (sector === 'eglence' && activeSubSector) {
-                    isMatch = isMatch && url.includes(`/${activeSubSector}/`);
+                    isMatch = isMatch && lowerUrl.includes(`/${activeSubSector}/`);
                 }
                 return isMatch;
             });
 
-            grid.innerHTML = ''; 
+            portfolioGrid.innerHTML = ''; 
             if(!targetUrls || targetUrls.length === 0) {
-                grid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
+                portfolioGrid.classList.remove('image-masonry');
+                portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
                 return;
             }
 
@@ -954,9 +992,8 @@
             currentGalleryImages = targetUrls; 
             let htmlBuffer = '';
             targetUrls.forEach((url, i) => {
-                const isFull = ((i + 1) % 3 === 0);
                 htmlBuffer += `
-                    <div class="grid-item ${isFull ? 'full-width' : ''}" onclick="openImgLightbox(${i})">
+                    <div class="grid-item" onclick="openImgLightbox(${i})">
                         <img src="${url}" alt="${sector} ${serviceType} ${i+1}" loading="lazy">
                         <div class="item-info">
                             <span class="item-client">${SECTORS[sector === 'genel' ? 'genel' : sector].name}</span>
@@ -964,7 +1001,7 @@
                         </div>
                     </div>`;
             });
-            grid.innerHTML = htmlBuffer;
+            portfolioGrid.innerHTML = htmlBuffer;
         }
 
         async function renderLogoWall(sectorKey) {
@@ -1088,6 +1125,14 @@
             if (hash) {
                 navigateTo(hash, false);
             }
+
+            // Hata Sigortası: Herhangi bir API yanıt vermezse max 3 saniye sonra yükleme ekranı zorla kapanır.
+            setTimeout(() => {
+                const gl = document.getElementById('global-loader');
+                if (gl && !gl.classList.contains('hidden')) {
+                    gl.classList.add('hidden');
+                }
+            }, 3000);
         });
 
     </script>
