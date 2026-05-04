@@ -36,8 +36,21 @@
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.06; pointer-events: none; z-index: 9999;
+            opacity: 0.06; pointer-events: none; z-index: 9998;
         }
+
+        /* --- LOADER EKRANI --- */
+        #global-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--bg); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 1; transition: opacity 0.6s ease; pointer-events: auto;
+        }
+        #global-loader.hidden { opacity: 0; pointer-events: none; }
+        .loader-spinner { width: 40px; height: 40px; border: 3px solid rgba(225, 219, 200, 0.1); border-top-color: var(--iris-red); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loader-text { font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: 3px; color: var(--text-cream); text-transform: uppercase; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
         /* --- AÇILIŞ VE GEÇİŞ ANİMASYONLARI --- */
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -47,6 +60,7 @@
         .page-enter .portfolio-grid { animation-delay: 0.25s; }
         .page-enter #logo-area { animation-delay: 0.35s; } 
         .page-enter .site-footer { animation-delay: 0.5s; }
+        .page-enter .sector-list { animation-delay: 0.15s; }
 
         /* --- DİKEY SIDEBAR --- */
         #vertical-ticker {
@@ -56,8 +70,6 @@
         }
         .pulse-link { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
         .pulse-dot { width: 10px; height: 10px; background: var(--iris-red); border-radius: 50%; transition: all 0.5s ease; }
-        .pulse-dot.open { background: var(--status-green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
-        .pulse-dot.closed { background: var(--iris-red); box-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
         
         #local-time { 
             font-family: 'Oswald', sans-serif !important; 
@@ -78,7 +90,7 @@
             background-size: 100% 200%; background-position: 0% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: background-position 0.1s ease-out;
         }
         html[dir="rtl"] #vertical-ticker { left: auto; right: 0; border-right: none; border-left: 1px solid var(--border-color); }
-        html[dir="rtl"] header, html[dir="rtl"] #view-entry, html[dir="rtl"] #view-portfolio { padding-left: 0; padding-right: var(--sidebar-w); margin-left: 0; margin-right: 0; }
+        html[dir="rtl"] header, html[dir="rtl"] #view-entry, html[dir="rtl"] #view-eglence-sub, html[dir="rtl"] #view-portfolio { padding-left: 0; padding-right: var(--sidebar-w); margin-left: 0; margin-right: 0; }
 
         /* --- GLOBAL HEADER --- */
         header {
@@ -127,24 +139,26 @@
 
         main { margin-left: var(--sidebar-w); overflow: hidden; padding-top: var(--header-h); }
 
-        /* --- 1. GİRİŞ EKRANI (SEKTÖRLER) --- */
-        #view-entry { height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 2vh) 5vw 2vh; margin-left: var(--sidebar-w); overflow: hidden; }
+        /* --- 1. GİRİŞ EKRANLARI (SEKTÖRLER & ALT MENÜ) --- */
+        #view-entry, #view-eglence-sub { height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 2vh) 5vw 2vh; margin-left: var(--sidebar-w); overflow: hidden; }
         .hero-question { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: clamp(1.5rem, min(3.5vw, 4vh), 3rem); margin-bottom: min(3vh, 2rem); color: var(--text-cream); font-weight: 400; opacity: 0; animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
         .color-wipe { background: linear-gradient(to right, var(--iris-red) 50%, var(--text-cream) 50%); background-size: 200% 100%; background-position: 100% 0; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: wipeIn 1.2s cubic-bezier(0.77, 0, 0.175, 1) 1.2s forwards; display: inline-block; }
         @keyframes wipeIn { to { background-position: 0 0; } }
         .sector-list { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 5vw; row-gap: min(1vh, 8px); }
         .sector-item { font-family: 'Big Shoulders Display', sans-serif; font-size: clamp(2rem, min(8.5vw, 9vh), 10rem); font-weight: 900; line-height: 0.85; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px rgba(225, 219, 200, 0.3); cursor: pointer; transition: all 0.4s ease; width: fit-content; opacity: 0; }
-        .sector-item:nth-child(1) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; }
-        .sector-item:nth-child(2) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards; }
-        .sector-item:nth-child(3) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
-        .sector-item:nth-child(4) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards; }
-        .sector-item:nth-child(5) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards; }
-        .sector-item:nth-child(6) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards; }
-        .sector-item:nth-child(7) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards; }
-        .sector-item:nth-child(8) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards; }
-        .sector-item:nth-child(9) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards; }
-        .sector-item:nth-child(10) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.85s forwards; }
-        .sector-item:nth-child(11) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards; }
+        
+        #view-entry .sector-item:nth-child(1) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; }
+        #view-entry .sector-item:nth-child(2) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards; }
+        #view-entry .sector-item:nth-child(3) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+        #view-entry .sector-item:nth-child(4) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards; }
+        #view-entry .sector-item:nth-child(5) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards; }
+        #view-entry .sector-item:nth-child(6) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards; }
+        #view-entry .sector-item:nth-child(7) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards; }
+        #view-entry .sector-item:nth-child(8) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards; }
+        #view-entry .sector-item:nth-child(9) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards; }
+        #view-entry .sector-item:nth-child(10) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.85s forwards; }
+        #view-entry .sector-item:nth-child(11) { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards; }
+        
         .sector-item:hover { color: var(--text-cream); -webkit-text-stroke: 1px var(--text-cream); transform: translateX(20px); }
         .sector-item.genel { grid-column: 1 / -1; font-family: 'Libre Baskerville', serif; font-style: italic; font-size: clamp(1.2rem, min(3vw, 3vh), 2.5rem); margin-top: min(3vh, 3rem); color: var(--text-cream); -webkit-text-stroke: 0; text-transform: none; opacity: 0; animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards; transition: color 0.3s ease, transform 0.3s ease; }
         .sector-item.genel:hover { color: var(--iris-red); transform: translateX(10px); opacity: 1; }
@@ -194,22 +208,23 @@
         .filter-nav a { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(225, 219, 200, 0.4); transition: all 0.3s ease; cursor: pointer; }
         .filter-nav a:hover, .filter-nav a.active { color: var(--text-cream); text-shadow: 0 0 10px rgba(230, 30, 37, 0.5); }
 
-        /* --- ASİMETRİK GRID --- */
+        /* --- ASİMETRİK GRID VE GÖRSELLER --- */
         .portfolio-grid { padding: 0 5vw 5vw; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; min-height: 300px; position: relative; }
         .grid-loader { position: absolute; top: 50px; left: 5vw; font-family: 'Space Grotesk'; font-size: 12px; letter-spacing: 2px; color: var(--iris-red); }
         
-        .grid-item { position: relative; width: 100%; background: #111; overflow: hidden; border-radius: 4px; cursor: pointer; aspect-ratio: 16/9; }
+        .grid-item { position: relative; width: 100%; background: #070707; overflow: hidden; border-radius: 4px; cursor: pointer; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; }
         .grid-item.full-width { grid-column: span 2; aspect-ratio: 21/9; }
-        .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); filter: brightness(0.85) saturate(1.1); }
+        .grid-item img { width: 100%; height: 100%; object-fit: contain; padding: 15px; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); filter: brightness(0.85) saturate(1.1); }
         .grid-item:hover img { transform: scale(1.03); filter: brightness(1) saturate(1.2); }
-        .item-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; display: flex; justify-content: space-between; align-items: flex-end; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); opacity: 0; transition: opacity 0.4s ease; }
+        .item-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; display: flex; justify-content: space-between; align-items: flex-end; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); opacity: 0; transition: opacity 0.4s ease; z-index: 2; pointer-events: none; }
         .grid-item:hover .item-info { opacity: 1; }
         .item-client { font-family: 'Libre Baskerville', serif; font-size: 1.2rem; color: var(--text-cream); }
         .item-project { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: rgba(225, 219, 200, 0.7); }
 
-        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 60px; height: 60px; background: rgba(230, 30, 37, 0.9); border-radius: 50%; display: grid; place-items: center; opacity: 0; transition: opacity 0.3s, transform 0.3s; }
+        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 60px; height: 60px; background: rgba(230, 30, 37, 0.9); border-radius: 50%; display: grid; place-items: center; opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 2; pointer-events: none; }
         .grid-item.video-item:hover .play-icon { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         .play-icon::before { content: ''; border-left: 16px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 5px; }
+        .grid-item.video-item img { object-fit: cover; padding: 0; }
 
         /* --- YOUTUBE CUSTOM MODAL --- */
         #yt-modal {
@@ -248,7 +263,7 @@
         .lb-prev { left: 4vw; }
         .lb-next { right: 4vw; }
 
-        /* --- DİNAMİK ORGANİK LOGO ALANI --- */
+        /* --- ORGANİK LOGO DİZİLİMİ --- */
         #logo-area { border-top: 1px solid var(--border-color); padding: 80px 5vw; margin-top: 40px; opacity: 0; transition: opacity 0.5s ease; }
         .logo-area-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(2rem, 4vw, 3rem); color: var(--text-cream); margin-bottom: 50px; text-align: center; }
         
@@ -280,9 +295,12 @@
         .wax-seal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 8vw; height: 8vw; min-width: 60px; min-height: 60px; 
-            background: #b0151a; border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+            background: #b0151a; 
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
             pointer-events: none; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            border: 2px solid #d42027; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4); z-index: 10;
+            border: 2px solid #d42027; 
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.4);
+            z-index: 10;
         }
         .wax-seal img { width: 60%; height: 60%; object-fit: contain; filter: brightness(0); opacity: 0.7; }
         .footer-giant a:hover .wax-seal { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); }
@@ -302,7 +320,7 @@
 
         @media (max-width: 768px) {
             #vertical-ticker { display: none; }
-            #view-entry, #view-portfolio { margin-left: 0; }
+            #view-entry, #view-eglence-sub, #view-portfolio { margin-left: 0; }
             
             header { left: 0; grid-template-columns: auto 1fr auto; padding: 0 5vw; gap: 10px; }
             .header-nav { display: none !important; }
@@ -311,7 +329,7 @@
             .desktop-lang-dropdown { display: none !important; }
             .header-logo { display: flex; justify-content: center; position: static; transform: none; }
             
-            #view-entry { height: auto; min-height: 100vh; overflow: visible; } 
+            #view-entry, #view-eglence-sub { height: auto; min-height: 100vh; overflow: visible; } 
             .sector-list { grid-template-columns: 1fr; column-gap: 0; } 
             .sector-item.genel { grid-column: 1; }
 
@@ -336,12 +354,10 @@
 </head>
 <body>
 
-    <meta name="description" content="Söyleyecek sözü olanlar için buradayız. Markalara derinlik katan, el yapımı hikayeler üreten 360° kreatif reklam ajansı.">
-    <meta property="og:title" content="Yazıhane Creative | Portfolyo">
-    <meta property="og:description" content="Söyleyecek sözü olanlar için buradayız. Markalara derinlik katan, el yapımı hikayeler üreten 360° kreatif reklam ajansı.">
-    <meta property="og:image" content="https://www.yazihane.com.tr/images/wp-kapak.jpg">
-    <meta property="og:url" content="https://www.yazihane.com.tr/portfolio.html">
-    <meta property="og:type" content="website">
+    <div id="global-loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text" data-i18n="loader_text">İçerikler Hazırlanıyor...</div>
+    </div>
 
     <div id="mobile-menu-overlay">
         <button class="mobile-menu-close" id="mobile-close-btn">
@@ -435,25 +451,37 @@
         </nav>
     </main>
 
+    <main id="view-eglence-sub" style="display: none;">
+        <a href="#" class="back-link portfolio-back" onclick="navigateBackToEntry()" data-i18n="port_back" style="margin-bottom: 4vh;">Geri Dön</a>
+        <h2 class="hero-question" style="opacity: 1; animation: none;"><span class="color-wipe" data-i18n="sec_eglence">Eğlence</span></h2>
+        
+        <nav class="sector-list">
+            <a href="#" class="sector-item" style="opacity: 1; animation: none;" data-sector="eglence-cafe" data-i18n="sub_cafe">Cafe</a>
+            <a href="#" class="sector-item" style="opacity: 1; animation: none;" data-sector="eglence-pub" data-i18n="sub_pub">Pub</a>
+            <a href="#" class="sector-item" style="opacity: 1; animation: none;" data-sector="eglence-restoran" data-i18n="sub_restoran">Restoran</a>
+            <a href="#" class="sector-item" style="opacity: 1; animation: none;" data-sector="eglence-diger" data-i18n="sub_diger">Diğer</a>
+        </nav>
+    </main>
+
     <main id="view-portfolio">
         <div class="portfolio-header" id="portfolio-header">
-            <a href="#" class="back-link portfolio-back" onclick="navigateTo('')" data-i18n="port_back">Geri Dön</a>
+            <a href="#" class="back-link portfolio-back" onclick="navigateBackToEntry()" data-i18n="port_back">Geri Dön</a>
 
             <h1 class="current-sector-title" id="sector-display-name">...</h1>
             
             <div class="filter-nav-wrapper">
-                <a href="#" class="back-link giant-back" onclick="navigateTo('')" data-i18n="port_back">Geri Dön</a>
+                <a href="#" class="back-link giant-back" onclick="navigateBackToEntry()" data-i18n="port_back">Geri Dön</a>
                 <nav class="filter-nav" id="dynamic-filters"></nav>
             </div>
         </div>
         
         <div class="portfolio-grid" id="portfolio-grid">
-            </div>
+        </div>
 
         <div id="logo-area">
             <h4 class="logo-area-title" data-i18n="logo_title">Değer Katanlar</h4>
             <div class="logo-grid" id="logo-grid">
-                </div>
+            </div>
         </div>
 
         <footer class="site-footer">
@@ -511,11 +539,15 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- 0 Saniye Gecikme: Arka Plan Taramaları Hemen Başlatılıyor! ---
         const SESSION_ID = Date.now(); 
 
         let allVideos = [];
+        let allImages = [];
+        let isYtLoaded = false;
+        let isImgLoaded = false;
+
         let activeSector = '';
+        let activeSubSector = '';
         let currentService = '';
 
         const HASH_RE = /(^|\s)#([\p{L}\p{M}\.\-_0-9]+)/giu;
@@ -535,41 +567,49 @@
 
         const SERVICE_TAGS = {
             'Tanıtım Filmleri': ['tanitim', 'tanitimfilmi', 'promo'], 'TV': ['tv', 'reklam', 'tvc'],
-            'Video Prodüksiyon': ['video', 'produksiyon'], 'Drone': ['drone'], 'Sosyal Medya': ['sosyal', 'social', 'sosyalmedya']
+            'Video Prodüksiyon': ['video', 'produksiyon'], 'Drone': ['drone'], 'Etkinlik': ['etkinlik', 'event'],
+            'Sosyal Medya': ['sosyal', 'social', 'sosyalmedya'], 'Yapay Zeka': ['ai', 'yapayzeka']
         };
 
-        // Youtube verilerini sayfa yüklenmesini beklemeden hemen arkada çekmeye başla
+        function checkHideLoader() {
+            if(isYtLoaded && isImgLoaded) {
+                document.getElementById('global-loader').classList.add('hidden');
+            }
+        }
+
         const ytDataPromise = fetch(`/.netlify/functions/youtube?ts=${SESSION_ID}`)
             .then(res => res.ok ? res.json() : [])
             .then(data => {
                 const parsed = []; 
                 data.forEach(v => {
-                    const tags = new Set([...extractHashtags(v.title), ...extractHashtags(v.description)]);
-                    let vSectors = Object.keys(SECTOR_TAGS).filter(sec => SECTOR_TAGS[sec].some(t => tags.has(t)));
-                    let vServices = Object.keys(SERVICE_TAGS).filter(srv => SERVICE_TAGS[srv].some(t => tags.has(t)));
+                    const rawTags = Array.from(new Set([...extractHashtags(v.title), ...extractHashtags(v.description)]));
+                    let vSectors = Object.keys(SECTOR_TAGS).filter(sec => SECTOR_TAGS[sec].some(t => rawTags.includes(t)));
+                    let vServices = Object.keys(SERVICE_TAGS).filter(srv => SERVICE_TAGS[srv].some(t => rawTags.includes(t)));
                     
                     if (vSectors.length > 0 && vServices.length > 0) {
-                        parsed.push({ ...v, sectors: vSectors, services: vServices });
+                        parsed.push({ ...v, sectors: vSectors, services: vServices, rawTags: rawTags });
                     }
                 });
                 allVideos = parsed;
-                
-                // HIZLANDIRICI: Eğer kullanıcı bir kategoride bekliyorsa ve video sekmesindeyse anında renderla!
-                if (currentService && currentService !== 'Fotoğraf' && currentService !== 'Tasarım') {
-                    renderVideosForService(activeSector, currentService);
-                }
-                
+                isYtLoaded = true;
+                checkHideLoader();
                 return parsed;
-            }).catch(e => { console.error("YouTube veri çekme hatası:", e); return []; });
+            }).catch(e => { console.error("YouTube error:", e); isYtLoaded = true; checkHideLoader(); return []; });
 
-        // Logoları anında çek (24 Saat Cache İptal Edildi - Anlık yenileniyor)
+        const imgDataPromise = fetch('/.netlify/functions/getImages')
+            .then(res => res.ok ? res.json() : [])
+            .then(data => {
+                allImages = data;
+                isImgLoaded = true;
+                checkHideLoader();
+                return data;
+            }).catch(e => { console.error("Images error:", e); isImgLoaded = true; checkHideLoader(); return []; });
+
         const logosDataPromise = fetch('/.netlify/functions/getLogos')
             .then(res => res.ok ? res.json() : [])
             .catch(error => { console.error("Logo fetch hatası:", error); return []; });
 
-
-        // --- DİL VE MENÜ MANTIĞI ---
-        const toggleDropdown = function(e) { if(e.target.classList.contains('lang-btn')) return; this.classList.toggle('active'); };
+        const toggleDropdown = function(e) { if(e.target.classList.contains('lang-btn') || e.target.classList.contains('lang-btn-mobile')) return; this.classList.toggle('active'); };
         document.getElementById('desktop-lang-trigger')?.addEventListener('click', toggleDropdown);
         document.getElementById('mobile-lang-trigger')?.addEventListener('click', toggleDropdown);
 
@@ -590,7 +630,6 @@
             }
         });
 
-        // --- YENİ SİBER SAAT MANTIĞI ---
         function updateClock() {
             try {
                 const now = new Date();
@@ -620,17 +659,17 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- I18N (ÇOK DİLLİ YAPI) ---
         const i18n = {
-            tr: { nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.", port_hero: "<span class='color-wipe'>Hangi sektörde</span> hikaye yaratıyoruz?", sec_turizm: "Turizm", sec_tekstil: "Tekstil", sec_saglik: "Sağlık", sec_insaat: "İnşaat", sec_eglence: "Eğlence", sec_emlak: "Emlak", sec_finans: "Finans", sec_egitim: "Eğitim", sec_lojistik: "Lojistik", sec_medya: "Medya", sec_mimari: "Mimari", sec_all: "Tüm İşlerimize Göz Atın", logo_title: "Değer Katanlar", s_tanitim: "Tanıtım Filmleri", s_tv: "TV", s_video: "Video Prodüksiyon", s_drone: "Drone", s_sosyal: "Sosyal Medya", s_foto: "Fotoğraf", s_tasarim: "Tasarım", loading_msg: "Yükleniyor...", empty_msg: "Bu kategoride içerik bulunamadı.", port_back: "Geri Dön" },
-            en: { nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE.", port_hero: "<span class='color-wipe'>In which sector</span> do we create stories?", sec_turizm: "Tourism", sec_tekstil: "Textile", sec_saglik: "Healthcare", sec_insaat: "Construction", sec_eglence: "Entertainment", sec_emlak: "Real Estate", sec_finans: "Finance", sec_egitim: "Education", sec_lojistik: "Logistics", sec_medya: "Media", sec_mimari: "Architecture", sec_all: "Browse All Our Work", logo_title: "Adding Value", s_tanitim: "Promotional Films", s_tv: "TV", s_video: "Video Production", s_drone: "Drone", s_sosyal: "Social Media", s_foto: "Photography", s_tasarim: "Design", loading_msg: "Loading...", empty_msg: "No content found in this category.", port_back: "Back to Main" },
-            ru: { nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE.", port_hero: "<span class='color-wipe'>В каком секторе</span> мы создаем истории?", sec_turizm: "Туризм", sec_tekstil: "Текстиль", sec_saglik: "Здравоохранение", sec_insaat: "Строительство", sec_eglence: "Развлечения", sec_emlak: "Недвижимость", sec_finans: "Финансы", sec_egitim: "Образование", sec_lojistik: "Логистика", sec_medya: "Медиа", sec_mimari: "Архитектура", sec_all: "Смотреть все работы", logo_title: "Добавляем ценность", s_tanitim: "Рекламные Ролики", s_tv: "ТВ", s_video: "Видеопроизводство", s_drone: "Дроны", s_sosyal: "Соцсети", s_foto: "Фотография", s_tasarim: "Дизайн", loading_msg: "Загрузка...", empty_msg: "В этой категории ничего не найдено.", port_back: "Назад" },
-            ar: { nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه.", port_hero: "<span class='color-wipe'>في أي قطاع</span> نصنع القصص؟", sec_turizm: "سياحة", sec_tekstil: "نسيج", sec_saglik: "سياحة علاجية", sec_insaat: "بناء", sec_eglence: "ترفيه", sec_emlak: "عقارات", sec_finans: "تمويل", sec_egitim: "تعليم", sec_lojistik: "خدمات لوجستية", sec_medya: "إعلام", sec_mimari: "هندسة معمارية", sec_all: "تصفح كل أعمالنا", logo_title: "إضافة قيمة", s_tanitim: "أفلام ترويجية", s_tv: "تلفزيون", s_video: "إنتاج فيديو", s_drone: "طائرات بدون طيار", s_sosyal: "وسائل التواصل الاجتماعي", s_foto: "تصوير", s_tasarim: "تصميم", loading_msg: "جار التحميل...", empty_msg: "لم يتم العثور على محتوى في هذه الفئة.", port_back: "العودة" }
+            tr: { nav_home: "ANA SAYFA", nav_work: "PORTFOLYO", nav_about: "HAKKIMIZDA", nav_services: "HİZMETLERİMİZ", nav_careers: "KARİYER", nav_contact: "İLETİŞİM", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "BİZEULAŞIN", leg_1: "KULLANIM KOŞULLARI", leg_2: "GİZLİLİK POLİTİKASI", leg_3: "ÇEREZ POLİTİKASI", copy: "2026 © HER HAKKI YAZIHANE REKLAM AJANSI'NA AİTTİR.", port_hero: "<span class='color-wipe'>Hangi sektörde</span> hikaye yaratıyoruz?", sec_turizm: "Turizm", sec_tekstil: "Tekstil", sec_saglik: "Sağlık", sec_insaat: "İnşaat", sec_eglence: "Eğlence", sec_emlak: "Emlak", sec_finans: "Finans", sec_egitim: "Eğitim", sec_lojistik: "Lojistik", sec_medya: "Medya", sec_mimari: "Mimari", sec_all: "Tüm İşlerimize Göz Atın", logo_title: "Değer Katanlar", s_tanitim: "Tanıtım Filmleri", s_tv: "TV", s_video: "Video Prodüksiyon", s_drone: "Drone", s_etkinlik: "Etkinlik", s_sosyal: "Sosyal Medya", s_ai: "Yapay Zeka", s_foto: "Fotoğraf", s_tasarim: "Tasarım", sub_cafe: "Cafe", sub_pub: "Pub", sub_restoran: "Restoran", sub_diger: "Diğer", loading_msg: "Yükleniyor...", empty_msg: "Bu kategoride içerik bulunamadı.", port_back: "Geri Dön", loader_text: "İçerikler Hazırlanıyor..." },
+            en: { nav_home: "HOME", nav_work: "WORK", nav_about: "ABOUT", nav_services: "SERVICES", nav_careers: "CAREERS", nav_contact: "CONTACT", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "REACH OUT", leg_1: "TERMS OF USE", leg_2: "PRIVACY POLICY", leg_3: "COOKIES POLICY", copy: "2026 © ALL RIGHTS RESERVED BY YAZIHANE.", port_hero: "<span class='color-wipe'>In which sector</span> do we create stories?", sec_turizm: "Tourism", sec_tekstil: "Textile", sec_saglik: "Healthcare", sec_insaat: "Construction", sec_eglence: "Entertainment", sec_emlak: "Real Estate", sec_finans: "Finance", sec_egitim: "Education", sec_lojistik: "Logistics", sec_medya: "Media", sec_mimari: "Architecture", sec_all: "Browse All Our Work", logo_title: "Adding Value", s_tanitim: "Promotional Films", s_tv: "TV", s_video: "Video Production", s_drone: "Drone", s_etkinlik: "Event", s_sosyal: "Social Media", s_ai: "AI", s_foto: "Photography", s_tasarim: "Design", sub_cafe: "Cafe", sub_pub: "Pub", sub_restoran: "Restaurant", sub_diger: "Other", loading_msg: "Loading...", empty_msg: "No content found in this category.", port_back: "Back to Main", loader_text: "Preparing Content..." },
+            ru: { nav_home: "ГЛАВНАЯ", nav_work: "РАБОТЫ", nav_about: "О НАС", nav_services: "УСЛУГИ", nav_careers: "КАРЬЕРА", nav_contact: "КОНТАКТЫ", ticker_text: "ТВОРЧЕСКАЯ РЕВОЛЮЦИЯ — 2026 — YAZIHANE", footer_contact: "СВЯЗАТЬСЯ", leg_1: "УСЛОВИЯ", leg_2: "КОНФИДЕНЦИАЛЬНОСТЬ", leg_3: "ФАЙЛЫ COOKIE", copy: "2026 © ВСЕ ПРАВА ЗАЩИЩЕНЫ YAZIHANE.", port_hero: "<span class='color-wipe'>В каком секторе</span> мы создаем истории?", sec_turizm: "Туризм", sec_tekstil: "Текстиль", sec_saglik: "Здравоохранение", sec_insaat: "Строительство", sec_eglence: "Развлечения", sec_emlak: "Недвижимость", sec_finans: "Финансы", sec_egitim: "Образование", sec_lojistik: "Логистика", sec_medya: "Медиа", sec_mimari: "Архитектура", sec_all: "Смотреть все работы", logo_title: "Добавляем ценность", s_tanitim: "Рекламные Ролики", s_tv: "ТВ", s_video: "Видеопроизводство", s_drone: "Дроны", s_etkinlik: "Мероприятие", s_sosyal: "Соцсети", s_ai: "ИИ", s_foto: "Фотография", s_tasarim: "Дизайн", sub_cafe: "Кафе", sub_pub: "Паб", sub_restoran: "Ресторан", sub_diger: "Другое", loading_msg: "Загрузка...", empty_msg: "В этой категории ничего не найдено.", port_back: "Назад", loader_text: "Подготовка контента..." },
+            ar: { nav_home: "الرئيسية", nav_work: "أعمالنا", nav_about: "معلومات عنا", nav_services: "خدمات", nav_careers: "وظائف", nav_contact: "اتصال", ticker_text: "CREATIVE REVOLUTION — 2026 — YAZIHANE", footer_contact: "تواصل معنا", leg_1: "شروط الاستخدام", leg_2: "سياسة الخصوصية", leg_3: "ملفات تعريف الارتباط", copy: "2026 © جميع الحقوق محفوظة ليازيحانه.", port_hero: "<span class='color-wipe'>في أي قطاع</span> نصنع القصص؟", sec_turizm: "سياحة", sec_tekstil: "نسيج", sec_saglik: "سياحة علاجية", sec_insaat: "بناء", sec_eglence: "ترفيه", sec_emlak: "عقارات", sec_finans: "تمويل", sec_egitim: "تعليم", sec_lojistik: "خدمات لوجستية", sec_medya: "إعلام", sec_mimari: "هندسة معمارية", sec_all: "تصفح كل أعمالنا", logo_title: "إضافة قيمة", s_tanitim: "أفلام ترويجية", s_tv: "تلفزيون", s_video: "إنتاج فيديو", s_drone: "طائرات بدون طيار", s_etkinlik: "حدث", s_sosyal: "وسائل التواصل الاجتماعي", s_ai: "الذكاء الاصطناعي", s_foto: "تصوير", s_tasarim: "تصميم", sub_cafe: "مقهى", sub_pub: "حانة", sub_restoran: "مطعم", sub_diger: "أخرى", loading_msg: "جار التحميل...", empty_msg: "لم يتم العثور على محتوى في هذه الفئة.", port_back: "العودة", loader_text: "تجهيز المحتويات..." }
         };
 
         const SERVICE_KEYS = {
             "Tanıtım Filmleri": "s_tanitim", "TV": "s_tv", "Video Prodüksiyon": "s_video",
-            "Drone": "s_drone", "Sosyal Medya": "s_sosyal", "Fotoğraf": "s_foto", "Tasarım": "s_tasarim"
+            "Drone": "s_drone", "Etkinlik": "s_etkinlik", "Sosyal Medya": "s_sosyal", 
+            "Yapay Zeka": "s_ai", "Fotoğraf": "s_foto", "Tasarım": "s_tasarim"
         };
 
         let activeLang = 'tr';
@@ -653,10 +692,13 @@
             document.getElementById('desktop-lang-trigger')?.classList.remove('active');
             document.getElementById('mobile-lang-trigger')?.classList.remove('active');
             
-            const currentPath = window.location.hash.replace('#', '');
-            if (SECTORS[currentPath]) {
+            if (activeSector) {
                 const sdName = document.getElementById('sector-display-name');
-                if(sdName) sdName.textContent = i18n[lang][`sec_${currentPath === 'genel' ? 'all' : currentPath}`] || SECTORS[currentPath].name;
+                if(sdName) {
+                    let titleText = i18n[lang][`sec_${activeSector === 'genel' ? 'all' : activeSector}`] || SECTORS[activeSector].name;
+                    if (activeSector === 'eglence' && activeSubSector) titleText += ' - ' + (i18n[lang][`sub_${activeSubSector}`] || activeSubSector.toUpperCase());
+                    sdName.textContent = titleText;
+                }
                 document.querySelectorAll('#dynamic-filters a').forEach(a => {
                     const key = a.getAttribute('data-service-key');
                     if(key && i18n[lang][key]) a.textContent = i18n[lang][key];
@@ -666,130 +708,36 @@
 
         document.querySelectorAll('.lang-btn, .lang-btn-mobile').forEach(btn => btn.addEventListener('click', (e) => setLanguage(e.target.dataset.lang)));
 
-        // --- MATRİS VE SEKTÖRLER ---
-        const ALL_SERVICES = ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"];
+        const ALL_SERVICES = ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Etkinlik", "Sosyal Medya", "Yapay Zeka", "Fotoğraf", "Tasarım"];
         const SECTORS = {
-            turizm: { name: "Turizm", services: ["Tanıtım Filmleri", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            tekstil: { name: "Tekstil", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            saglik: { name: "Sağlık", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            insaat: { name: "İnşaat", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            eglence: { name: "Eğlence", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            emlak: { name: "Emlak", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            finans: { name: "Finans", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            egitim: { name: "Eğitim", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            lojistik: { name: "Lojistik", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            medya: { name: "Medya", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
-            mimari: { name: "Mimari", services: ["Tanıtım Filmleri", "TV", "Video Prodüksiyon", "Drone", "Sosyal Medya", "Fotoğraf", "Tasarım"] },
+            turizm: { name: "Turizm", services: ALL_SERVICES },
+            tekstil: { name: "Tekstil", services: ALL_SERVICES },
+            saglik: { name: "Sağlık", services: ALL_SERVICES },
+            insaat: { name: "İnşaat", services: ALL_SERVICES },
+            eglence: { name: "Eğlence", services: ALL_SERVICES },
+            emlak: { name: "Emlak", services: ALL_SERVICES },
+            finans: { name: "Finans", services: ALL_SERVICES },
+            egitim: { name: "Eğitim", services: ALL_SERVICES },
+            lojistik: { name: "Lojistik", services: ALL_SERVICES },
+            medya: { name: "Medya", services: ALL_SERVICES },
+            mimari: { name: "Mimari", services: ALL_SERVICES },
             genel: { name: "TÜM İŞLER", services: ALL_SERVICES } 
         };
 
-        // --- GÖRSEL DEDEKTİFİ ---
-        const EXT_PRIORITY = ['jpg','png','webp','jpeg'];
-        const PRELOADED_CACHE = {}; 
-
-        async function exists(url) {
-            try { const res = await fetch(url, {method:'HEAD', cache:'no-store'}); return res.ok; } 
-            catch(e) { return false; }
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
         }
 
-        async function scanFolder(baseDir, extList, prefix = "", tolerance = 4) {
-            let validUrls = [];
-            let consecutiveMisses = 0;
-            let i = 1;
-            while(consecutiveMisses < tolerance && i <= 200) {
-                const checks = extList.map(ext => {
-                    const url = `${baseDir}${prefix}${i}.${ext}?v=${SESSION_ID}`;
-                    return exists(url).then(ok => ok ? url : null);
-                });
-                
-                const results = await Promise.all(checks);
-                const foundUrl = results.find(url => url !== null);
-                
-                if(foundUrl) { 
-                    validUrls.push(foundUrl); 
-                    consecutiveMisses = 0; 
-                } else { 
-                    consecutiveMisses++; 
-                }
-                i++;
-            }
-            return validUrls;
-        }
-
-        function startPreloading() {
-            Object.keys(SECTORS).forEach(sec => {
-                if(sec !== 'genel') {
-                    PRELOADED_CACHE[`${sec}_Fotoğraf`] = scanFolder(`/images/${sec}/foto/`, EXT_PRIORITY);
-                    PRELOADED_CACHE[`${sec}_Tasarım`] = scanFolder(`/images/${sec}/tsrm/`, EXT_PRIORITY);
-                }
-            });
-        }
-
-        startPreloading();
-
-        async function loadImagesForService(sector, serviceType) {
-            const grid = document.getElementById('portfolio-grid');
-            grid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
-            
-            let targetUrls = [];
-            if(sector === 'genel') {
-                const fetchPromises = Object.keys(SECTORS).filter(s => s !== 'genel').map(s => PRELOADED_CACHE[`${s}_${serviceType}`]);
-                const resultsArray = await Promise.all(fetchPromises);
-                targetUrls = resultsArray.flat();
-            } else {
-                targetUrls = await PRELOADED_CACHE[`${sector}_${serviceType}`]; 
-            }
-
-            grid.innerHTML = ''; 
-            if(!targetUrls || targetUrls.length === 0) {
-                grid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
-                return;
-            }
-
-            currentGalleryImages = targetUrls; 
-            let htmlBuffer = '';
-            targetUrls.forEach((url, i) => {
-                const isFull = ((i + 1) % 3 === 0);
-                htmlBuffer += `
-                    <div class="grid-item ${isFull ? 'full-width' : ''}" onclick="openImgLightbox(${i})">
-                        <img src="${url}" alt="${sector} ${serviceType} ${i+1}" loading="lazy">
-                        <div class="item-info">
-                            <span class="item-client">${SECTORS[sector === 'genel' ? 'genel' : sector].name}</span>
-                            <span class="item-project">${serviceType}</span>
-                        </div>
-                    </div>`;
-            });
-            grid.innerHTML = htmlBuffer;
-        }
-
-        // --- YENİ ORGANİK LOGO DİZİLİMİ ---
-        async function renderLogoWall(sectorKey) {
-            const grid = document.getElementById('logo-grid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            
-            const allLogos = await logosDataPromise;
-            
-            let filteredLogos = [];
-            if(sectorKey === 'genel') {
-                filteredLogos = [...allLogos];
-            } else {
-                filteredLogos = allLogos.filter(logo => logo.toLowerCase().startsWith(sectorKey.toLowerCase()));
-            }
-            
-            if(filteredLogos.length > 0) {
-                filteredLogos = filteredLogos.sort(() => 0.5 - Math.random());
-
-                filteredLogos.forEach(logoName => {
-                    grid.innerHTML += `<div class="logo-box"><img src="/images/logolar/${logoName}" alt="Partner Logo" loading="lazy"></div>`;
-                });
-            } else {
-                grid.innerHTML = `<div style="color: rgba(225,219,200,0.5); width: 100%; text-align: center; padding: 20px;">Bu kategori için henüz çözüm ortağı logosu yüklenmedi.</div>`;
-            }
-        }
-
-        // --- ARAYÜZ VE GEÇİŞLER ---
         const viewEntry = document.getElementById('view-entry');
+        const viewEglenceSub = document.getElementById('view-eglence-sub');
         const viewPortfolio = document.getElementById('view-portfolio');
         const headerContainer = document.getElementById('portfolio-header');
         const sectorDisplayName = document.getElementById('sector-display-name');
@@ -797,24 +745,49 @@
         const portfolioGrid = document.getElementById('portfolio-grid');
 
         function navigateTo(path, updateHistory = true) {
-            const cleanPath = path.replace('/', '').toLowerCase();
+            const parts = path.replace('/', '').toLowerCase().split('-');
+            const cleanPath = parts[0];
+            activeSubSector = parts[1] || '';
+
+            if (cleanPath === 'eglence' && !activeSubSector) {
+                if (updateHistory) history.pushState(null, '', '#eglence');
+                activeSector = 'eglence';
+                viewEntry.style.display = 'none';
+                viewPortfolio.style.display = 'none';
+                document.getElementById('logo-area').style.opacity = '0';
+                
+                viewEglenceSub.style.display = 'flex';
+                viewEglenceSub.classList.remove('page-enter'); 
+                void viewEglenceSub.offsetWidth; 
+                viewEglenceSub.classList.add('page-enter');
+                window.scrollTo(0,0);
+                return;
+            }
+
             if (SECTORS[cleanPath]) {
-                if (updateHistory) history.pushState(null, '', '#' + cleanPath);
+                const finalHash = activeSubSector ? `#${cleanPath}-${activeSubSector}` : `#${cleanPath}`;
+                if (updateHistory) history.pushState(null, '', finalHash);
                 activeSector = cleanPath;
                 renderSectorUI(cleanPath);
             } else {
                 if (updateHistory) history.pushState(null, '', 'portfolio.html');
                 viewPortfolio.classList.remove('page-enter');
                 viewPortfolio.style.display = 'none';
+                viewEglenceSub.style.display = 'none';
                 document.getElementById('logo-area').style.opacity = '0';
                 viewEntry.style.display = 'flex';
                 window.scrollTo(0,0);
             }
         }
 
+        function navigateBackToEntry() {
+            navigateTo('');
+        }
+
         async function renderSectorUI(sectorKey) {
             const sector = SECTORS[sectorKey];
             viewEntry.style.display = 'none';
+            viewEglenceSub.style.display = 'none';
             viewPortfolio.style.display = 'block';
             document.getElementById('logo-area').style.opacity = '1';
             viewPortfolio.classList.add('page-enter');
@@ -823,53 +796,72 @@
             if(sectorKey === 'genel') headerContainer.classList.add('giant-mode');
             else headerContainer.classList.remove('giant-mode');
 
-            sectorDisplayName.textContent = i18n[activeLang][`sec_${sectorKey === 'genel' ? 'all' : sectorKey}`] || sector.name;
+            let titleText = i18n[activeLang][`sec_${sectorKey === 'genel' ? 'all' : sectorKey}`] || sector.name;
+            if (sectorKey === 'eglence' && activeSubSector) {
+                titleText += ' - ' + (i18n[activeLang][`sub_${activeSubSector}`] || activeSubSector.toUpperCase());
+            }
+            sectorDisplayName.textContent = titleText;
 
-            // HIZ VE HATA DÜZELTMESİ (RACE CONDITION)
             if (allVideos.length === 0) {
                 await ytDataPromise;
             }
 
-            const availableServices = [];
-            for (let srv of sector.services) {
-                let hasContent = false;
-                
-                if (srv === 'Fotoğraf' || srv === 'Tasarım') {
-                    let targetUrls = [];
-                    if (sectorKey === 'genel') {
-                        const promises = Object.keys(SECTORS).filter(s => s !== 'genel').map(s => PRELOADED_CACHE[`${s}_${srv}`]);
-                        const results = await Promise.all(promises);
-                        targetUrls = results.flat();
-                    } else {
-                        targetUrls = await PRELOADED_CACHE[`${sectorKey}_${srv}`];
-                    }
-                    if (targetUrls && targetUrls.length > 0) hasContent = true;
-                } else {
+            let availableServices = [];
+            for (let srv of ALL_SERVICES) {
+                if (srv !== 'Fotoğraf' && srv !== 'Tasarım') {
                     const hasVideo = allVideos.some(v => {
                         const matchSec = sectorKey === 'genel' || v.sectors.includes(sectorKey) || v.sectors.includes('genel');
-                        return matchSec && v.services.includes(srv);
+                        if (!matchSec) return false;
+                        if (!v.services.includes(srv)) return false;
+                        
+                        if (sectorKey === 'eglence' && activeSubSector) {
+                            const subTags = { 'cafe': ['cafe'], 'pub': ['pub', 'bar'], 'restoran': ['restoran', 'restaurant'], 'diger': ['diger'] };
+                            if (!subTags[activeSubSector]) return false;
+                            return subTags[activeSubSector].some(t => v.rawTags.includes(t));
+                        }
+                        return true;
                     });
-                    if (hasVideo) hasContent = true;
-                }
-                
-                if (hasContent) {
-                    availableServices.push(srv);
+                    if (hasVideo) availableServices.push(srv);
                 }
             }
 
-            dynamicFilters.innerHTML = availableServices.map((service, index) => {
-                const trKey = SERVICE_KEYS[service];
-                const translatedName = i18n[activeLang][trKey] || service;
-                return `<a onclick="applySubFilter(event, '${service}')" class="${index === 0 ? 'active' : ''}" data-service-key="${trKey}">${translatedName}</a>`;
-            }).join('');
+            renderDynamicTabs(availableServices);
+            if(availableServices.length > 0) applySubFilter(null, availableServices[0]);
+            else portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
 
-            if (availableServices.length > 0) {
-                applySubFilter(null, availableServices[0]);
-            } else {
-                portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
-            }
+            imgDataPromise.then(() => {
+                let addedNew = false;
+                for (let srv of ['Fotoğraf', 'Tasarım']) {
+                    const folderType = srv === 'Fotoğraf' ? 'foto' : 'tsrm';
+                    const hasImg = allImages.some(url => {
+                        let match = sectorKey === 'genel' ? url.includes(`/${folderType}/`) : url.includes(`/images/nonvideo/${sectorKey}/${folderType}/`);
+                        if (sectorKey === 'eglence' && activeSubSector) {
+                            match = match && url.includes(`/${activeSubSector}/`);
+                        }
+                        return match;
+                    });
+                    if(hasImg && !availableServices.includes(srv)) {
+                        availableServices.push(srv);
+                        addedNew = true;
+                    }
+                }
+                if (addedNew) {
+                    renderDynamicTabs(availableServices, currentService);
+                    if (!currentService && availableServices.length > 0) applySubFilter(null, availableServices[0]);
+                }
+            });
 
             renderLogoWall(sectorKey);
+        }
+
+        function renderDynamicTabs(services, activeSrv = null) {
+            if (!activeSrv && services.length > 0) activeSrv = services[0];
+            dynamicFilters.innerHTML = services.map((service) => {
+                const trKey = SERVICE_KEYS[service];
+                const translatedName = i18n[activeLang][trKey] || service;
+                const isActive = service === activeSrv ? 'active' : '';
+                return `<a onclick="applySubFilter(event, '${service}')" class="${isActive}" data-service-key="${trKey}">${translatedName}</a>`;
+            }).join('');
         }
 
         function applySubFilter(event, serviceName) {
@@ -889,34 +881,37 @@
                 await ytDataPromise;
             }
 
-            portfolioGrid.innerHTML = '';
             const filtered = allVideos.filter(v => {
                 const matchSector = sector === 'genel' || v.sectors.includes(sector) || v.sectors.includes('genel');
-                return matchSector && v.services.includes(service);
+                if (!matchSector) return false;
+                if (!v.services.includes(service)) return false;
+
+                if (sector === 'eglence' && activeSubSector) {
+                    const subTags = { 'cafe': ['cafe'], 'pub': ['pub', 'bar'], 'restoran': ['restoran', 'restaurant'], 'diger': ['diger'] };
+                    const requiredTags = subTags[activeSubSector];
+                    if (!requiredTags) return false;
+                    const hasSubTag = requiredTags.some(t => v.rawTags.includes(t));
+                    if (!hasSubTag) return false;
+                }
+                return true;
             });
+
+            portfolioGrid.innerHTML = '';
             if(!filtered.length) {
                 portfolioGrid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
                 return;
             }
+
+            const shuffledFiltered = shuffleArray([...filtered]);
             let htmlBuffer = '';
-            filtered.forEach((v, i) => {
+            shuffledFiltered.forEach((v, i) => {
                 const isFull = ((i + 1) % 3 === 0);
                 
                 const rawTitle = v.title || '';
                 const brandName = rawTitle.split(/[-|]/)[0].trim();
                 
-                const safeTitle = brandName
-                    .replace(/\\/g, "\\\\")
-                    .replace(/'/g, "\\'")
-                    .replace(/"/g, "&quot;")
-                    .replace(/[\n\r]/g, " ");
-                    
-                const safeDesc = (v.description || '')
-                    .replace(/\\/g, "\\\\")
-                    .replace(/'/g, "\\'")
-                    .replace(/"/g, "&quot;")
-                    .replace(/\n/g, "\\n")
-                    .replace(/\r/g, "");
+                const safeTitle = brandName.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/[\n\r]/g, " ");
+                const safeDesc = (v.description || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, "\\n").replace(/\r/g, "");
 
                 htmlBuffer += `
                     <div class="grid-item video-item ${isFull ? 'full-width' : ''}" onclick="openYTModal('${v.videoId}', '${safeTitle}', '${safeDesc}')">
@@ -931,7 +926,70 @@
             portfolioGrid.innerHTML = htmlBuffer;
         }
 
-        // --- YOUTUBE HACK PLAYER ---
+        async function loadImagesForService(sector, serviceType) {
+            const grid = document.getElementById('portfolio-grid');
+            grid.innerHTML = `<div class="grid-loader">${i18n[activeLang].loading_msg}</div>`;
+            
+            if(allImages.length === 0) {
+                await imgDataPromise;
+            }
+
+            const folderType = serviceType === 'Fotoğraf' ? 'foto' : 'tsrm';
+
+            let targetUrls = allImages.filter(url => {
+                let isMatch = sector === 'genel' ? url.includes(`/${folderType}/`) : url.includes(`/images/nonvideo/${sector}/${folderType}/`);
+                if (sector === 'eglence' && activeSubSector) {
+                    isMatch = isMatch && url.includes(`/${activeSubSector}/`);
+                }
+                return isMatch;
+            });
+
+            grid.innerHTML = ''; 
+            if(!targetUrls || targetUrls.length === 0) {
+                grid.innerHTML = `<div style="color:var(--text-cream); width:100%; grid-column:1/-1; text-align:center; padding: 50px 0;">${i18n[activeLang].empty_msg}</div>`;
+                return;
+            }
+
+            targetUrls = shuffleArray([...targetUrls]);
+            currentGalleryImages = targetUrls; 
+            let htmlBuffer = '';
+            targetUrls.forEach((url, i) => {
+                const isFull = ((i + 1) % 3 === 0);
+                htmlBuffer += `
+                    <div class="grid-item ${isFull ? 'full-width' : ''}" onclick="openImgLightbox(${i})">
+                        <img src="${url}" alt="${sector} ${serviceType} ${i+1}" loading="lazy">
+                        <div class="item-info">
+                            <span class="item-client">${SECTORS[sector === 'genel' ? 'genel' : sector].name}</span>
+                            <span class="item-project">${serviceType}</span>
+                        </div>
+                    </div>`;
+            });
+            grid.innerHTML = htmlBuffer;
+        }
+
+        async function renderLogoWall(sectorKey) {
+            const grid = document.getElementById('logo-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            
+            const allLogos = await logosDataPromise;
+            let filteredLogos = [];
+            if(sectorKey === 'genel') {
+                filteredLogos = [...allLogos];
+            } else {
+                filteredLogos = allLogos.filter(logo => logo.toLowerCase().startsWith(sectorKey.toLowerCase()));
+            }
+            
+            if(filteredLogos.length > 0) {
+                filteredLogos = shuffleArray(filteredLogos);
+                filteredLogos.forEach(logoName => {
+                    grid.innerHTML += `<div class="logo-box"><img src="/images/logolar/${logoName}" alt="Partner Logo" loading="lazy"></div>`;
+                });
+            } else {
+                grid.innerHTML = `<div style="color: rgba(225,219,200,0.5); width: 100%; text-align: center; padding: 20px;">Bu kategori için henüz çözüm ortağı logosu yüklenmedi.</div>`;
+            }
+        }
+
         let ytPlayer;
         let ytInterval;
         const ytModal = document.getElementById('yt-modal');
@@ -981,7 +1039,6 @@
         document.getElementById('close-yt').addEventListener('click', closeYTModal);
         ytModal.addEventListener('click', (e) => { if(e.target === ytModal) closeYTModal(); });
 
-        // --- GÖRSEL LIGHTBOX ---
         let currentGalleryImages = [];
         let currImgIndex = 0;
         const imgLightbox = document.getElementById('img-lightbox');
@@ -1015,21 +1072,22 @@
             if (Math.abs(diff) > 40) { if (diff > 0) lbNext(); else lbPrev(); }
         }, {passive:true});
 
-        // --- İNİTİALİZASYON ---
         document.querySelectorAll('.sector-item').forEach(item => {
             item.addEventListener('click', (e) => { 
                 e.preventDefault(); 
-                navigateTo(e.currentTarget.getAttribute('data-sector')); 
+                const path = e.target.getAttribute('data-sector');
+                if (path) navigateTo(path); 
             });
         });
 
         window.addEventListener('DOMContentLoaded', async () => {
-            // SEO Görünümleri vs için HTML'e eklediğimiz <meta> etiketleri aynen korundu
             const savedLang = localStorage.getItem('yazihane_lang') || 'tr';
             setLanguage(savedLang);
 
             const hash = window.location.hash.replace('#', '');
-            if (hash && SECTORS[hash]) navigateTo(hash, false);
+            if (hash) {
+                navigateTo(hash, false);
+            }
         });
 
     </script>
