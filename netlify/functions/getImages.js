@@ -2,70 +2,67 @@ const fs = require('fs');
 const path = require('path');
 
 exports.handler = async (event, context) => {
-    // Netlify (AWS Lambda) ortamındaki olası tüm kök dizinleri tanımlayalım
-    const baseDir = process.env.LAMBDA_TASK_ROOT || process.cwd();
-    
-    // Klasörün saklanmış olabileceği tüm olası yollar:
-    const possiblePaths = [
-        path.join(baseDir, 'images', 'nonvideo'),
-        path.join(baseDir, 'public', 'images', 'nonvideo'),
-        path.join(__dirname, '..', '..', 'images', 'nonvideo'),
-        path.join('/var/task', 'images', 'nonvideo')
-    ];
-
-    let targetDir = null;
-    for (let p of possiblePaths) {
-        if (fs.existsSync(p)) {
-            targetDir = p;
-            break;
-        }
-    }
-
-    // Eğer hiçbir yolda bulamazsa hata logu atıp boş liste dönsün (çökmesin)
-    if (!targetDir) {
-        console.log("HATA: Klasör bulunamadı! Aranan yollar:", possiblePaths);
-        return {
-            statusCode: 200,
-            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify([])
-        };
-    }
-
-    const getAllImages = (dirPath, arrayOfFiles = []) => {
-        const files = fs.readdirSync(dirPath);
-
-        files.forEach((file) => {
-            const fullPath = path.join(dirPath, file);
-            
-            if (fs.statSync(fullPath).isDirectory()) {
-                arrayOfFiles = getAllImages(fullPath, arrayOfFiles);
-            } else {
-                if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file)) {
-                    // İşletim sistemine göre ters/düz slash sorununu çözüyoruz
-                    const urlPath = `/images/nonvideo/` + fullPath.split(/nonvideo[\\\/]/)[1].replace(/\\/g, '/');
-                    arrayOfFiles.push(urlPath);
-                }
-            }
-        });
-
-        return arrayOfFiles;
-    };
-
     try {
-        const images = getAllImages(targetDir);
+        // getLogos.js'de kusursuz çalışan dizin bulma mantığını birebir kullanıyoruz
+        const baseDir = path.join(process.cwd(), 'images', 'nonvideo');
+        
+        // Eğer sunucuda bu klasör henüz oluşmadıysa boş liste dön (çökme olmasın)
+        if (!fs.existsSync(baseDir)) {
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify([])
+            };
+        }
+
+        // Alt klasörlerin (turizm, eglence, foto, tsrm vs.) içine dalacak dedektif fonksiyon
+        const getAllImages = (dirPath, arrayOfFiles = []) => {
+            const files = fs.readdirSync(dirPath);
+
+            files.forEach((file) => {
+                const fullPath = path.join(dirPath, file);
+                
+                if (fs.statSync(fullPath).isDirectory()) {
+                    // Eğer klasörse, kapısını aç ve içini taramaya devam et
+                    arrayOfFiles = getAllImages(fullPath, arrayOfFiles);
+                } else {
+                    // Eğer dosyaysa ve bir görsel formatındaysa al
+                    if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file)) {
+                        // Dizin yolunu alıp tarayıcının anlayacağı URL'ye çeviriyoruz
+                        // Örn: "images/nonvideo/turizm/foto/a.jpg" -> "/images/nonvideo/turizm/foto/a.jpg"
+                        const relativePath = path.relative(process.cwd(), fullPath);
+                        const urlPath = '/' + relativePath.replace(/\\/g, '/');
+                        arrayOfFiles.push(urlPath);
+                    }
+                }
+            });
+
+            return arrayOfFiles;
+        };
+
+        // Bütün listeyi topla
+        const images = getAllImages(baseDir);
+
         return {
             statusCode: 200,
-            headers: { 
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*" 
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(images)
         };
+
     } catch (error) {
-        console.error("Görsel tarama hatası:", error);
+        console.error("Görsel okuma hatası:", error);
         return {
-            statusCode: 500,
-            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
             body: JSON.stringify([])
         };
     }
