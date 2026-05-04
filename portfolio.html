@@ -243,12 +243,12 @@
         .portfolio-grid.image-masonry .grid-item img {
             width: 100%;
             height: auto;
-            object-fit: contain; 
+            object-fit: cover; 
             padding: 0; 
             display: block;
         }
 
-        /* --- YOUTUBE CUSTOM MODAL --- */
+        /* --- YOUTUBE CUSTOM MODAL (DİKEY/YATAY AKILLI KONTROL) --- */
         #yt-modal {
             position: fixed; top:0; left:0; width:100%; height:100vh; background: var(--bg);
             z-index: 5000; display: none; opacity: 0; transition: opacity 0.4s ease;
@@ -262,12 +262,21 @@
         .yt-video-wrapper {
             position: relative; width: 100%; aspect-ratio: 16/9; background: #000;
             border-radius: 8px; overflow: hidden; cursor: pointer; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
         }
-        #yt-player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; pointer-events: none; }
-        .yt-click-shield { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; justify-content: center; align-items: center; }
-        .custom-pause-icon { width: 80px; height: 80px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
-        .yt-click-shield:hover .custom-pause-icon { opacity: 1; }
-        .custom-pause-icon::before, .custom-pause-icon::after { content: ''; width: 8px; height: 30px; background: #fff; margin: 0 4px; }
+        
+        /* Dikey Video Sınıfı (Örn: Shorts / Reels) */
+        .yt-video-wrapper.is-vertical {
+            aspect-ratio: 9/16 !important;
+            height: 75vh;
+            max-width: calc(75vh * (9/16));
+            margin: 0 auto;
+        }
+
+        #yt-player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        /* Orijinal kontrolleri kullanacağımız için kalkanı gizliyoruz */
+        .yt-click-shield { display: none !important; }
         
         .yt-info-area { padding-bottom: 50px; }
         .yt-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--text-cream); margin-bottom: 15px; }
@@ -362,6 +371,12 @@
 
             #yt-modal { padding: 80px 5vw; }
             .yt-title { font-size: 1.8rem; }
+            
+            /* Mobilde dikey videoların ekranı daha iyi doldurması için */
+            .yt-video-wrapper.is-vertical {
+                height: 70vh;
+                max-width: 100%;
+            }
             
             .lb-arrow { display: none !important; }
             .lb-close { top: -50px; right: 10px; }
@@ -948,9 +963,10 @@
                 
                 const safeTitle = brandName.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/[\n\r]/g, " ");
                 const safeDesc = (v.description || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, "\\n").replace(/\r/g, "");
+                const safeTags = (v.rawTags || []).join(',');
 
                 htmlBuffer += `
-                    <div class="grid-item video-item ${isFull ? 'full-width' : ''}" onclick="openYTModal('${v.videoId}', '${safeTitle}', '${safeDesc}')">
+                    <div class="grid-item video-item ${isFull ? 'full-width' : ''}" onclick="openYTModal('${v.videoId}', '${safeTitle}', '${safeDesc}', '${safeTags}')">
                         <img src="${v.thumbnailUrl}" alt="${safeTitle}" loading="lazy">
                         <div class="play-icon"></div>
                         <div class="item-info">
@@ -1032,47 +1048,42 @@
         const ytModal = document.getElementById('yt-modal');
         const ytTitle = document.getElementById('yt-title');
         const ytDesc = document.getElementById('yt-desc');
-        const ytStatusIcon = document.getElementById('yt-status-icon');
-        let isYtPlaying = false;
-
+        
         function onYouTubeIframeAPIReady() { }
 
-        function openYTModal(videoId, title, desc) {
+        function openYTModal(videoId, title, desc, tagsStr = '') {
             ytTitle.textContent = title;
             ytDesc.textContent = desc;
+            
+            const wrapper = document.querySelector('.yt-video-wrapper');
+            const isVertical = tagsStr && (tagsStr.includes('shorts') || tagsStr.includes('reels') || tagsStr.includes('tiktok') || tagsStr.includes('dikey'));
+            
+            if (isVertical) {
+                wrapper.classList.add('is-vertical');
+            } else {
+                wrapper.classList.remove('is-vertical');
+            }
+
             ytModal.classList.add('active');
             document.body.classList.add('no-scroll');
-            if(ytPlayer && ytPlayer.loadVideoById) ytPlayer.loadVideoById(videoId);
-            else {
+            
+            if(ytPlayer && ytPlayer.loadVideoById) {
+                ytPlayer.loadVideoById(videoId);
+            } else {
                 ytPlayer = new YT.Player('yt-player', {
                     videoId: videoId,
-                    playerVars: { 'autoplay': 1, 'controls': 0, 'rel': 0, 'modestbranding': 1, 'playsinline': 1, 'fs': 0, 'disablekb': 1 },
-                    events: { 'onReady': (e) => { e.target.playVideo(); }, 'onStateChange': onPlayerStateChange }
+                    playerVars: { 'autoplay': 1, 'controls': 1, 'rel': 0, 'modestbranding': 1, 'playsinline': 1, 'fs': 1 },
+                    events: { 'onReady': (e) => { e.target.playVideo(); } }
                 });
             }
         }
 
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) { isYtPlaying = true; ytStatusIcon.style.opacity = '0'; startRewindCheck(); } 
-            else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) { isYtPlaying = false; ytStatusIcon.style.opacity = '1'; clearInterval(ytInterval); }
+        function closeYTModal() { 
+            if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); 
+            ytModal.classList.remove('active'); 
+            document.body.classList.remove('no-scroll'); 
         }
-
-        function startRewindCheck() {
-            clearInterval(ytInterval);
-            ytInterval = setInterval(() => {
-                if(ytPlayer && ytPlayer.getCurrentTime) {
-                    const dur = ytPlayer.getDuration();
-                    if(dur > 0 && (dur - ytPlayer.getCurrentTime()) < 0.5) { ytPlayer.seekTo(0); ytPlayer.pauseVideo(); }
-                }
-            }, 200);
-        }
-
-        document.getElementById('yt-shield').addEventListener('click', () => {
-            if(!ytPlayer) return;
-            if(isYtPlaying) ytPlayer.pauseVideo(); else ytPlayer.playVideo();
-        });
-
-        function closeYTModal() { if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); clearInterval(ytInterval); ytModal.classList.remove('active'); document.body.classList.remove('no-scroll'); }
+        
         document.getElementById('close-yt').addEventListener('click', closeYTModal);
         ytModal.addEventListener('click', (e) => { if(e.target === ytModal) closeYTModal(); });
 
