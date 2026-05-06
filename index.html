@@ -134,7 +134,7 @@
         main { margin-left: var(--sidebar-w); overflow: hidden; }
 
         /* --- 1. HERO BÖLÜMÜ --- */
-        #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: height 0.3s ease; }
+        #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .viewfinder { position: absolute; top: 20%; bottom: 20%; left: 10%; right: 10%; border: 1px solid rgba(225, 219, 200, 0.05); pointer-events: none; }
         .viewfinder::before, .viewfinder::after { content: ''; position: absolute; width: 40px; height: 40px; border-color: var(--text-cream); border-style: solid; opacity: 0.5; }
         .viewfinder::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
@@ -152,13 +152,13 @@
         #showreel-container { height: 120vh; position: relative; } 
         .sticky-video { position: sticky; top: 0; height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; background: var(--bg); }
         
-        /* GERÇEK ADAPTIVE MASKE: Eski devasa boyutlar (96vw / 94vh) korundu ve katı 16:9 oranına kilitlendi */
+        /* ADAPTIVE MASKE KORUNARAK ORAN VE BOYUT EKLENDİ */
         .video-mask { 
-            width: 100%;
-            max-width: 96vw; 
-            height: auto;
-            max-height: 94vh;
-            aspect-ratio: 16 / 9;
+            width: 100%; 
+            max-width: 92vw; 
+            height: auto; 
+            max-height: 88vh; 
+            aspect-ratio: 16 / 9; 
             border-radius: 16px; 
             clip-path: circle(5% at 50% 50%); 
             transition: clip-path 0.1s ease-out; 
@@ -168,10 +168,9 @@
             margin: 0 auto; 
             cursor: pointer; 
         }
-        /* Video pointer events iptal, maske tıklamaları yakalayacak (Mobil takılma sorunu çözümü için) */
+        /* Video pointer events yok sayar ki tıklama maskeye gitsin (Mobilde takılmayı önler) */
         .video-mask video { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: opacity 0.5s ease; pointer-events: none; }
         
-        /* PLAY OVERLAY */
         .play-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -191,7 +190,6 @@
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* PAUSE INDICATOR (1.5 Saniye sonra çözünerek kaybolacak) */
         .pause-indicator {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 80px; height: 80px; background: rgba(7, 7, 7, 0.5); border-radius: 50%;
@@ -224,7 +222,7 @@
         #manifesto { padding: 80px 10vw 100px; display: flex; flex-direction: column; align-items: center; text-align: center; }
         .manifesto-text { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 4rem); font-weight: 700; line-height: 1.35; letter-spacing: -0.02em; max-width: 1400px; color: rgba(225, 219, 200, 0.7); }
         
-        /* BİZ YAZIHANEYİZ SİLME (WIPE) EFEKTİ İADESİ */
+        /* BİZ YAZIHANEYİZ YAZISINA SOLDAN SAGA SİLME EFEKTİ GERİ EKLENDİ */
         .turn-red { 
             color: rgba(225, 219, 200, 0.7); 
             background: linear-gradient(to right, var(--iris-red) 50%, rgba(225, 219, 200, 0.7) 50%); 
@@ -402,7 +400,7 @@
             .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 30px; }
             .footer-socials { flex-direction: column; gap: 15px; }
             .footer-legal { flex-direction: column; gap: 10px; }
-            /* BOŞLUK ÇÖZÜMÜ */
+            /* MOBİLDEKİ DEV SİYAH BOŞLUK DÜZELTİLDİ */
             #hero { height: 75vh; min-height: 400px; }
             #showreel-container { margin-top: 2vh !important; }
         }
@@ -705,13 +703,16 @@
             window.addEventListener('resize', updateTeamCarousel);
             setTimeout(updateTeamCarousel, 100);
 
-            // BİZ KİMİZ (CAROUSEL) AUTOPLAY MANTIĞI: IntersectionObserver ile Anında Başlar
+            // BİZ KİMİZ (CAROUSEL) YENİ AUTOPLAY: Sadece alana inince ve 1 saniye bekleyip başlar
             let teamAutoPlay;
-            
+            let isCarouselVisible = false;
+
             const startCarousel = () => {
                 clearInterval(teamAutoPlay);
                 teamAutoPlay = setInterval(() => {
-                    teamCarousel.scrollBy({ left: 320, behavior: 'smooth' });
+                    if (isCarouselVisible) {
+                        teamCarousel.scrollBy({ left: 320, behavior: 'smooth' });
+                    }
                 }, 1500);
             };
 
@@ -721,20 +722,24 @@
 
             const carouselObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if(entry.isIntersecting) {
-                        startCarousel();
+                    if (entry.isIntersecting) {
+                        isCarouselVisible = true;
+                        setTimeout(() => {
+                            if (isCarouselVisible) startCarousel();
+                        }, 1000); // 1 saniye bekletme eklendi
                     } else {
+                        isCarouselVisible = false;
                         stopCarousel();
                     }
                 });
-            }, { threshold: 0.1 });
-            
+            }, { threshold: 0.4 }); // %40'ı görününce başlar
+
             carouselObserver.observe(document.getElementById('team'));
 
             teamCarousel.addEventListener('mouseenter', stopCarousel);
-            teamCarousel.addEventListener('mouseleave', startCarousel);
+            teamCarousel.addEventListener('mouseleave', () => { if (isCarouselVisible) startCarousel(); });
             teamCarousel.addEventListener('touchstart', stopCarousel, {passive: true});
-            teamCarousel.addEventListener('touchend', startCarousel, {passive: true});
+            teamCarousel.addEventListener('touchend', () => { if (isCarouselVisible) setTimeout(startCarousel, 1000); }, {passive: true});
         }
 
         const parallaxSpeeds = [0.1, 0.3, -0.1, 0.4, -0.2, 0.2, -0.3];
@@ -904,13 +909,14 @@
             loadAndShuffleLogos();
         });
 
-        // --- SHOWREEL VIDEO YÜKLENME VE MOBİL/MASAÜSTÜ OYNATMA KONTROLÜ ---
+        // --- SHOWREEL VIDEO YÜKLENME VE İZOLE OYNATMA KONTROLÜ ---
         const videoMaskEl = document.getElementById('video-mask');
         const showreelVideoEl = document.getElementById('showreel-video');
         const videoLoaderEl = document.getElementById('video-loader');
         const playOverlay = document.getElementById('play-overlay');
         const pauseIndicator = document.getElementById('pause-indicator');
         let pauseTimeout;
+        let isVideoStarted = false; // Tıklama karışıklığını önleyen sıkı kural
 
         if (showreelVideoEl && videoLoaderEl && playOverlay && videoMaskEl) {
             const showPlayButton = () => {
@@ -925,9 +931,10 @@
             }
 
             videoMaskEl.addEventListener('click', (e) => {
-                e.preventDefault(); // Mobil cihazlardaki çift tıklama zıplamasını (stutter/hayalet tık) engeller
+                e.preventDefault(); // Hayalet (çift) tıklamayı yok eder
                 
-                if (playOverlay.style.opacity === '1') {
+                if (!isVideoStarted) {
+                    isVideoStarted = true;
                     showreelVideoEl.currentTime = 0; 
                     showreelVideoEl.muted = false; 
                     showreelVideoEl.style.opacity = '1'; 
@@ -936,20 +943,19 @@
                     playOverlay.style.opacity = '0';
                     playOverlay.style.pointerEvents = 'none';
                     setTimeout(() => playOverlay.style.display = 'none', 500);
-                    return;
-                }
-
-                if (showreelVideoEl.paused) {
-                    showreelVideoEl.play();
-                    pauseIndicator.classList.remove('show');
-                    clearTimeout(pauseTimeout);
                 } else {
-                    showreelVideoEl.pause();
-                    pauseIndicator.classList.add('show');
-                    clearTimeout(pauseTimeout);
-                    pauseTimeout = setTimeout(() => {
+                    if (showreelVideoEl.paused) {
+                        showreelVideoEl.play();
                         pauseIndicator.classList.remove('show');
-                    }, 1500);
+                        clearTimeout(pauseTimeout);
+                    } else {
+                        showreelVideoEl.pause();
+                        pauseIndicator.classList.add('show');
+                        clearTimeout(pauseTimeout);
+                        pauseTimeout = setTimeout(() => {
+                            pauseIndicator.classList.remove('show');
+                        }, 1500);
+                    }
                 }
             });
         }
