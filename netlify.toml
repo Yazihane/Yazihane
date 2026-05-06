@@ -1,6 +1,11 @@
 [functions]
   directory = "netlify/functions"
+
+[functions."getLogos"]
   included_files = ["images/logolar/**"]
+
+[functions."getImages"]
+  included_files = ["images/nonvideo/**"]
 
 # --- KESTİRME LİNKLER (YÖNLENDİRMELER) ---
 
