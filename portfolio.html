@@ -894,9 +894,14 @@
                     const hasImg = allImages.some(url => {
                         const lowerUrl = url.toLowerCase(); 
                         let match = sectorKey === 'genel' ? lowerUrl.includes(`/${folderType}/`) : lowerUrl.includes(`/images/nonvideo/${sectorKey}/${folderType}/`);
+                        
+                        // YENİ EKLENEN KISIM: Sadece klasör değil, dosya adındaki kelimeleri de arar
                         if (sectorKey === 'eglence' && activeSubSector) {
-                            match = match && lowerUrl.includes(`/${activeSubSector}/`);
+                            const subTags = { 'cafe': ['cafe'], 'pub': ['pub', 'bar'], 'restoran': ['restoran', 'restaurant'], 'diger': ['diger'] };
+                            const requiredTags = subTags[activeSubSector] || [];
+                            match = match && requiredTags.some(tag => lowerUrl.includes(tag));
                         }
+                        
                         return match;
                     });
                     if(hasImg && !availableServices.includes(srv)) {
@@ -1002,9 +1007,14 @@
             let targetUrls = allImages.filter(url => {
                 const lowerUrl = url.toLowerCase(); 
                 let isMatch = sector === 'genel' ? lowerUrl.includes(`/${folderType}/`) : lowerUrl.includes(`/images/nonvideo/${sector}/${folderType}/`);
+                
+                // YENİ EKLENEN KISIM: Sadece klasör değil, dosya adındaki kelimeleri de arar
                 if (sector === 'eglence' && activeSubSector) {
-                    isMatch = isMatch && lowerUrl.includes(`/${activeSubSector}/`);
+                    const subTags = { 'cafe': ['cafe'], 'pub': ['pub', 'bar'], 'restoran': ['restoran', 'restaurant'], 'diger': ['diger'] };
+                    const requiredTags = subTags[activeSubSector] || [];
+                    isMatch = isMatch && requiredTags.some(tag => lowerUrl.includes(tag));
                 }
+                
                 return isMatch;
             });
 
