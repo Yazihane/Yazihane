@@ -134,7 +134,7 @@
         main { margin-left: var(--sidebar-w); overflow: hidden; }
 
         /* --- 1. HERO BÖLÜMÜ --- */
-        #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: height 0.3s ease; }
         .viewfinder { position: absolute; top: 20%; bottom: 20%; left: 10%; right: 10%; border: 1px solid rgba(225, 219, 200, 0.05); pointer-events: none; }
         .viewfinder::before, .viewfinder::after { content: ''; position: absolute; width: 40px; height: 40px; border-color: var(--text-cream); border-style: solid; opacity: 0.5; }
         .viewfinder::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
@@ -152,12 +152,12 @@
         #showreel-container { height: 120vh; position: relative; } 
         .sticky-video { position: sticky; top: 0; height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; background: var(--bg); }
         
-        /* GERÇEK ADAPTIVE MASKE: Orijinal maksimum boyutlar korunarak 16:9 sabitlenir, croplama yapmaz */
+        /* GERÇEK ADAPTIVE MASKE: Eski devasa boyutlar (96vw / 94vh) korundu ve katı 16:9 oranına kilitlendi */
         .video-mask { 
             width: 100%;
-            max-width: 92vw; 
+            max-width: 96vw; 
             height: auto;
-            max-height: 88vh;
+            max-height: 94vh;
             aspect-ratio: 16 / 9;
             border-radius: 16px; 
             clip-path: circle(5% at 50% 50%); 
@@ -168,7 +168,7 @@
             margin: 0 auto; 
             cursor: pointer; 
         }
-        /* Video artık maskenin %100'ünü kaplar ve pointer-events iptal edilir ki maske tıklamaları yakalasın */
+        /* Video pointer events iptal, maske tıklamaları yakalayacak (Mobil takılma sorunu çözümü için) */
         .video-mask video { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: opacity 0.5s ease; pointer-events: none; }
         
         /* PLAY OVERLAY */
@@ -223,8 +223,19 @@
         /* --- 3. MANİFESTO --- */
         #manifesto { padding: 80px 10vw 100px; display: flex; flex-direction: column; align-items: center; text-align: center; }
         .manifesto-text { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 4rem); font-weight: 700; line-height: 1.35; letter-spacing: -0.02em; max-width: 1400px; color: rgba(225, 219, 200, 0.7); }
-        .turn-red { color: var(--text-cream); transition: color 0.6s ease; }
-        .turn-red.active { color: var(--iris-red); }
+        
+        /* BİZ YAZIHANEYİZ SİLME (WIPE) EFEKTİ İADESİ */
+        .turn-red { 
+            color: rgba(225, 219, 200, 0.7); 
+            background: linear-gradient(to right, var(--iris-red) 50%, rgba(225, 219, 200, 0.7) 50%); 
+            background-size: 200% 100%; 
+            background-position: 100% 0; 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            transition: background-position 1s cubic-bezier(0.25, 1, 0.5, 1); 
+        }
+        .turn-red.active { background-position: 0 0; color: transparent; }
+
         .red-marker { background-image: linear-gradient(120deg, rgba(230, 30, 37, 0.9) 0%, rgba(230, 30, 37, 0.9) 100%); background-repeat: no-repeat; background-size: 0% 25%; background-position: 0 90%; transition: background-size 1s cubic-bezier(0.25, 1, 0.5, 1); color: var(--text-cream); }
         .red-marker.active { background-size: 100% 25%; }
         .more-link { margin-top: 50px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-cream); border-bottom: 1px solid var(--text-cream); padding-bottom: 5px; transition: color 0.3s, border-color 0.3s; }
@@ -254,7 +265,6 @@
         @media (hover: hover) {
             .team-card:hover { transform: scale(1.5) !important; z-index: 100 !important; filter: grayscale(0) !important; opacity: 1 !important; box-shadow: 0 30px 60px rgba(0,0,0,0.9) !important; }
         }
-        .team-card.mobile-expanded { transform: scale(1.25) !important; z-index: 100 !important; filter: grayscale(0) !important; opacity: 1 !important; box-shadow: 0 30px 60px rgba(0,0,0,0.9) !important; }
 
         .card-img-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; border-radius: 4px; overflow: hidden; }
         .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
@@ -374,7 +384,7 @@
         @media (max-width: 1024px) {
             #showreel-container { height: auto !important; margin-top: 5vh; padding: 0 5vw; }
             .sticky-video { position: relative !important; height: auto !important; display: block; }
-            .video-mask { clip-path: none !important; border-radius: 12px; overflow: hidden; width: 100%; max-width: none; height: auto; max-height: none; aspect-ratio: 16/9; }
+            .video-mask { clip-path: none !important; border-radius: 12px; overflow: hidden; width: 100%; max-width: none; height: auto; max-height: none; aspect-ratio: 16/9; margin-top: 0; }
             .video-mask video { position: relative; width: 100%; height: 100%; }
         }
         @media (max-width: 768px) {
@@ -392,6 +402,9 @@
             .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 30px; }
             .footer-socials { flex-direction: column; gap: 15px; }
             .footer-legal { flex-direction: column; gap: 10px; }
+            /* BOŞLUK ÇÖZÜMÜ */
+            #hero { height: 75vh; min-height: 400px; }
+            #showreel-container { margin-top: 2vh !important; }
         }
         @media (max-width: 600px) { .team-card { flex: 0 0 80%; } }
     </style>
@@ -484,7 +497,7 @@
                         <span class="loader-text" data-i18n="loader_text">Showreel yükleniyor...</span>
                     </div>
                     
-                    <div id="play-overlay" class="play-overlay" style="opacity: 0;">
+                    <div id="play-overlay" class="play-overlay" style="opacity: 0; pointer-events: none;">
                         <div class="play-btn-circle">
                             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
@@ -692,41 +705,36 @@
             window.addEventListener('resize', updateTeamCarousel);
             setTimeout(updateTeamCarousel, 100);
 
+            // BİZ KİMİZ (CAROUSEL) AUTOPLAY MANTIĞI: IntersectionObserver ile Anında Başlar
             let teamAutoPlay;
-            let carouselStarted = false;
-
-            teamCarousel.addEventListener('mouseenter', () => {
+            
+            const startCarousel = () => {
                 clearInterval(teamAutoPlay);
-                carouselStarted = true;
-            });
+                teamAutoPlay = setInterval(() => {
+                    teamCarousel.scrollBy({ left: 320, behavior: 'smooth' });
+                }, 1500);
+            };
 
-            teamCarousel.addEventListener('mouseleave', () => {
-                if(carouselStarted) {
-                    teamAutoPlay = setInterval(() => {
-                        teamCarousel.scrollBy({ left: 320, behavior: 'smooth' });
-                    }, 1500); 
-                }
-            });
+            const stopCarousel = () => {
+                clearInterval(teamAutoPlay);
+            };
 
-            document.querySelectorAll('.team-card').forEach(card => {
-                card.addEventListener('click', function(e) {
-                    if (window.innerWidth <= 1024) {
-                        e.stopPropagation();
-                        document.querySelectorAll('.team-card').forEach(c => {
-                            if(c !== this) c.classList.remove('mobile-expanded');
-                        });
-                        this.classList.toggle('mobile-expanded');
-                        document.getElementById('popup-overlay').classList.add('active');
+            const carouselObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        startCarousel();
+                    } else {
+                        stopCarousel();
                     }
                 });
-            });
+            }, { threshold: 0.1 });
+            
+            carouselObserver.observe(document.getElementById('team'));
 
-            document.addEventListener('click', () => {
-                if (window.innerWidth <= 1024) {
-                    document.querySelectorAll('.team-card').forEach(c => c.classList.remove('mobile-expanded'));
-                    document.getElementById('popup-overlay').classList.remove('active');
-                }
-            });
+            teamCarousel.addEventListener('mouseenter', stopCarousel);
+            teamCarousel.addEventListener('mouseleave', startCarousel);
+            teamCarousel.addEventListener('touchstart', stopCarousel, {passive: true});
+            teamCarousel.addEventListener('touchend', startCarousel, {passive: true});
         }
 
         const parallaxSpeeds = [0.1, 0.3, -0.1, 0.4, -0.2, 0.2, -0.3];
@@ -903,12 +911,12 @@
         const playOverlay = document.getElementById('play-overlay');
         const pauseIndicator = document.getElementById('pause-indicator');
         let pauseTimeout;
-        let isFirstPlay = true;
 
         if (showreelVideoEl && videoLoaderEl && playOverlay && videoMaskEl) {
             const showPlayButton = () => {
                 videoLoaderEl.style.opacity = '0';
                 playOverlay.style.opacity = '1';
+                playOverlay.style.pointerEvents = 'auto';
             };
             
             showreelVideoEl.addEventListener('canplay', showPlayButton);
@@ -916,22 +924,21 @@
                 showPlayButton();
             }
 
-            // Tıklamaları video yerine kapsayıcı maskede (video-mask) yakalıyoruz (Mobil/Safari uyumu için)
-            videoMaskEl.addEventListener('click', () => {
-                // Eğer play butonu ekrandaysa ilk oynatmayı yap
-                if (isFirstPlay) {
-                    isFirstPlay = false;
-                    showreelVideoEl.currentTime = 0; // Sadece ilk tıklamada başa sarar
+            videoMaskEl.addEventListener('click', (e) => {
+                e.preventDefault(); // Mobil cihazlardaki çift tıklama zıplamasını (stutter/hayalet tık) engeller
+                
+                if (playOverlay.style.opacity === '1') {
+                    showreelVideoEl.currentTime = 0; 
                     showreelVideoEl.muted = false; 
                     showreelVideoEl.style.opacity = '1'; 
                     showreelVideoEl.play();
                     
                     playOverlay.style.opacity = '0';
+                    playOverlay.style.pointerEvents = 'none';
                     setTimeout(() => playOverlay.style.display = 'none', 500);
                     return;
                 }
-                
-                // Video oynatılırken dokunulursa Pause/Play döngüsünü tetikle
+
                 if (showreelVideoEl.paused) {
                     showreelVideoEl.play();
                     pauseIndicator.classList.remove('show');
@@ -940,7 +947,6 @@
                     showreelVideoEl.pause();
                     pauseIndicator.classList.add('show');
                     clearTimeout(pauseTimeout);
-                    // İkonu 1.5 sn sonra yok et
                     pauseTimeout = setTimeout(() => {
                         pauseIndicator.classList.remove('show');
                     }, 1500);
