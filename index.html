@@ -566,7 +566,7 @@
                 <div class="slogan-line">
                     <span data-i18n="slo_1">SÖYLEYECEK</span>
                     <video class="slogan-video" autoplay loop muted playsinline>
-                        <source src="https://www.yazihane.com.tr/images/showreel.mp4" type="video/mp4">
+                        <source src="https://www.yazihane.com.tr/images/showreel.mp4?v=slogan" type="video/mp4">
                     </video>
                 </div>
                 <div class="slogan-line indent">
@@ -706,9 +706,11 @@
             // BİZ KİMİZ (CAROUSEL) YENİ AUTOPLAY: Sadece alana inince ve 1 saniye bekleyip başlar
             let teamAutoPlay;
             let isCarouselVisible = false;
+            let isHovering = false; // Masaüstünde farenin durumunu takip etmek için eklendi
 
             const startCarousel = () => {
                 clearInterval(teamAutoPlay);
+                if (isHovering) return; // Fare kartın üzerindeyse başlatma
                 teamAutoPlay = setInterval(() => {
                     if (isCarouselVisible) {
                         teamCarousel.scrollBy({ left: 320, behavior: 'smooth' });
@@ -736,10 +738,15 @@
 
             carouselObserver.observe(document.getElementById('team'));
 
-            teamCarousel.addEventListener('mouseenter', stopCarousel);
-            teamCarousel.addEventListener('mouseleave', () => { if (isCarouselVisible) startCarousel(); });
-            teamCarousel.addEventListener('touchstart', stopCarousel, {passive: true});
-            teamCarousel.addEventListener('touchend', () => { if (isCarouselVisible) setTimeout(startCarousel, 1000); }, {passive: true});
+            // Olay dinleyicileri koca bir kutuya değil, doğrudan kartlara eklendi
+            teamCarousel.querySelectorAll('.team-card').forEach(card => {
+                card.addEventListener('mouseenter', () => { isHovering = true; stopCarousel(); });
+                card.addEventListener('mouseleave', () => { isHovering = false; if (isCarouselVisible) startCarousel(); });
+            });
+
+            // Dokunmatik olaylar genel kapsayıcıda güvenle kalabilir
+            teamCarousel.addEventListener('touchstart', () => { isHovering = true; stopCarousel(); }, {passive: true});
+            teamCarousel.addEventListener('touchend', () => { isHovering = false; if (isCarouselVisible) setTimeout(startCarousel, 1000); }, {passive: true});
         }
 
         const parallaxSpeeds = [0.1, 0.3, -0.1, 0.4, -0.2, 0.2, -0.3];
