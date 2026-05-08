@@ -153,14 +153,39 @@
             cursor: crosshair; 
             position: relative;
             z-index: 10;
+            user-select: none; /* Metni tarayabilmek için seçimi engelliyoruz */
+            -webkit-user-select: none;
         }
 
-        #parallax-title.shattered span {
+        /* Sadece parçalanan (vurulan) span etkilenir */
+        #parallax-title span.shattered {
             transform: translate(var(--rx), var(--ry)) rotate(var(--rot)) scale(var(--scl)) !important;
             opacity: 0;
             filter: blur(10px);
-            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out, filter 1s ease-out !important;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out, filter 0.8s ease-out !important;
+            pointer-events: none; /* Vurulduktan sonra tekrar etkileşime girmez */
+        }
+
+        /* Ana yazının arkasındaki gizli kırmızı mesaj */
+        .hero-hidden-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--iris-red);
+            font-style: italic;
+            opacity: 0;
             pointer-events: none;
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1; /* Ana başlığın arkasına saklanıyor */
+            text-align: center;
+            width: 100%;
+        }
+        .hero-hidden-text.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
 
         /* --- 2. SHOWREEL --- */
@@ -500,6 +525,7 @@
     <main>
         <section id="hero">
             <div class="viewfinder"><div class="vf-br"></div><div class="vf-tr"></div></div>
+            <div id="hero-hidden-text" class="hero-hidden-text" data-i18n="slo_red">HERKESİN BİR HİKAYESİ VARDIR.</div>
             <h1 class="hero-title" id="parallax-title"></h1>
         </section>
 
@@ -769,7 +795,9 @@
             const container = document.getElementById('parallax-title');
             if(!container) return;
             
-            container.classList.remove('shattered'); 
+            const hiddenText = document.getElementById('hero-hidden-text');
+            if(hiddenText) hiddenText.classList.remove('show');
+            
             container.innerHTML = '';
             let speedIndex = 0;
             
@@ -794,20 +822,55 @@
                     span.style.setProperty('--rot', randomRot);
                     span.style.setProperty('--scl', randomScale);
 
+                    // --- MAKİNELİ TÜFEK MODU ---
+                    // Tekli Tıklama
+                    span.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        this.classList.add('shattered');
+                        checkIfAllShattered();
+                    });
+                    
+                    // Basılı tutup fareyi gezdirdiğinde (Tarama)
+                    span.addEventListener('mouseenter', function(e) {
+                        if (e.buttons === 1) { // Sol tık basılıyken üzerinden geçerse
+                            this.classList.add('shattered');
+                            checkIfAllShattered();
+                        }
+                    });
+
                     container.appendChild(span);
                     speedIndex++;
                 }
             }
         }
 
-        // Tıklama patlama efekti dinleyicisi
-        const parallaxTitleEl = document.getElementById('parallax-title');
-        if (parallaxTitleEl) {
-            parallaxTitleEl.addEventListener('click', function() {
-                if (!this.classList.contains('shattered')) {
-                    this.classList.add('shattered');
-                }
-            });
+        // Tüm harflerin vurulup vurulmadığını kontrol eden fonksiyon
+        function checkIfAllShattered() {
+            const allSpans = document.querySelectorAll('#parallax-title span');
+            const shatteredSpans = document.querySelectorAll('#parallax-title span.shattered');
+            // Eğer boşluk dışındaki tüm harfler parçalandıysa
+            if (allSpans.length > 0 && allSpans.length === shatteredSpans.length) {
+                const hiddenText = document.getElementById('hero-hidden-text');
+                if(hiddenText) hiddenText.classList.add('show');
+            }
+        }
+
+        // Görüntüden çıkınca yazıları ilk haline çevirme (Reset)
+        const heroSection = document.getElementById('hero');
+        if (heroSection) {
+            const heroObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        // Hero tamamen ekrandan çıkınca temizlik yap
+                        const allSpans = document.querySelectorAll('#parallax-title span');
+                        allSpans.forEach(span => span.classList.remove('shattered'));
+                        
+                        const hiddenText = document.getElementById('hero-hidden-text');
+                        if (hiddenText) hiddenText.classList.remove('show');
+                    }
+                });
+            }, { threshold: 0 }); // threshold: 0 tamamen görünmez olduğunda demek
+            heroObserver.observe(heroSection);
         }
 
         window.addEventListener('scroll', () => {
