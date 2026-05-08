@@ -148,6 +148,21 @@
         }
         .hero-title span { display: inline-block; transition: transform 0.1s ease-out; }
 
+        /* --- PATLAMA EFEKTİ CSS --- */
+        #parallax-title {
+            cursor: crosshair; 
+            position: relative;
+            z-index: 10;
+        }
+
+        #parallax-title.shattered span {
+            transform: translate(var(--rx), var(--ry)) rotate(var(--rot)) scale(var(--scl)) !important;
+            opacity: 0;
+            filter: blur(10px);
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out, filter 1s ease-out !important;
+            pointer-events: none;
+        }
+
         /* --- 2. SHOWREEL --- */
         #showreel-container { height: 120vh; position: relative; } 
         .sticky-video { position: sticky; top: 0; height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; background: var(--bg); }
@@ -753,6 +768,8 @@
         function updateHeroTitle(text, lang) {
             const container = document.getElementById('parallax-title');
             if(!container) return;
+            
+            container.classList.remove('shattered'); 
             container.innerHTML = '';
             let speedIndex = 0;
             
@@ -765,10 +782,32 @@
                     const span = document.createElement('span');
                     span.textContent = el + (lang === 'ar' ? ' ' : '');
                     span.setAttribute('data-speed', parallaxSpeeds[speedIndex % parallaxSpeeds.length]);
+                    
+                    // Rastgele patlama değerleri
+                    const randomX = (Math.random() - 0.5) * 800 + 'px';
+                    const randomY = (Math.random() - 0.5) * 800 + 'px';
+                    const randomRot = (Math.random() - 0.5) * 360 + 'deg';
+                    const randomScale = Math.random() * 2 + 0.5;
+                    
+                    span.style.setProperty('--rx', randomX);
+                    span.style.setProperty('--ry', randomY);
+                    span.style.setProperty('--rot', randomRot);
+                    span.style.setProperty('--scl', randomScale);
+
                     container.appendChild(span);
                     speedIndex++;
                 }
             }
+        }
+
+        // Tıklama patlama efekti dinleyicisi
+        const parallaxTitleEl = document.getElementById('parallax-title');
+        if (parallaxTitleEl) {
+            parallaxTitleEl.addEventListener('click', function() {
+                if (!this.classList.contains('shattered')) {
+                    this.classList.add('shattered');
+                }
+            });
         }
 
         window.addEventListener('scroll', () => {
